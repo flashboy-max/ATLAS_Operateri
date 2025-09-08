@@ -20,35 +20,41 @@
 3. **JP Hrvatske telekomunikacije d.d. Mostar (HT Eronet)** - ✅ Standardizovan
 4. **ONE.Vip d.o.o.** - ✅ Standardizovan
 
-### 🚧 FAZA 2 U TOKU - ISP OPERATERI (5/16):
-✅ **Standardizovano:**
-1. **ADRIA NET Sarajevo** - regionalni ISP
-2. **AKTON d.o.o. Sarajevo** - multi-tehnološki ISP  
-3. **Miss.Net d.o.o. Bihać** - regionalni širokopojasni ISP
-4. **LANACO d.o.o.** - enterprise B2B tehnološki partner
-5. **MEDIASAT d.o.o.** - satelitski operater
+### ✅ FAZA 2 ZAVRŠENA - ISP OPERATERI (16/16): 100% 🎉
+✅ **Aktivni ISP operateri (11):**
+1. **LANACO d.o.o.** - enterprise B2B tehnološki partner
+2. **Logosoft d.o.o. Sarajevo** - hibridni ISP+MVNO u m:tel grupi
+3. **CRA TELECOM d.o.o.** - CRA licencirani operater
+4. **Dasto Semtel d.o.o. Bijeljina (Zona.ba)** - regionalni operater
+5. **GiNet d.o.o. Gornji Vakuf-Uskoplje** - lokalni ISP
+6. **Global Internet d.o.o. Novi Travnik** - regionalni ISP
+7. **AKTON d.o.o. Sarajevo** - multi-tehnološki ISP
+8. **ADRIA NET Sarajevo** - regionalni ISP
+9. **M&H Company d.o.o.** - grupa operatera
+10. **MEDIASAT d.o.o.** - satelitski operater
+11. **Miss.Net d.o.o. Bihać** - regionalni širokopojasni ISP
 
-🔄 **Preostalo za FAZU 2:**
-- M&H Company d.o.o. (preskočeno po zahtevu)
-- **Ortak d.o.o.** ← SLEDEĆI U REDU
-- PROINTER ITSS d.o.o.
-- CRA TELECOM d.o.o.
-- Dasto Semtel d.o.o. Bijeljina (Zona.ba)
-- Elta-kabel d.o.o.
-- GiNet d.o.o. Gornji Vakuf-Uskoplje
-- Global Internet d.o.o. Novi Travnik
-- HKB Net d.o.o.
-- KATV HS d.o.o.
-- Logosoft d.o.o. Sarajevo
+✅ **Arhivirani ISP operateri (5):**
+12. **Elta-kabel d.o.o.** - pripojen Supernova
+13. **HKB Net d.o.o.** - pripojen Telemach
+14. **KATV HS d.o.o.** - pripojen Telemach
+15. **PROINTER ITSS d.o.o.** - pripojen BH Telecom
+16. **MEDIA SKY d.o.o.** - pripojen Logosoft/m:tel
+
+### 🚧 FAZA 3 U TOKU - MVNO I HIBRIDNI OPERATERI (0/5):
+- ✅ Kontinuirano uklanjanje duplikata kroz standardizaciju
+🔄 **U pripremi za FAZU 3:**
+1. **Novotel d.o.o. Sarajevo (MVNO)** ← SLEDEĆI U REDU
+2. **haloo** - MVNO operater
+3. **Ortak d.o.o.** - potencijalni hibridni
+4. **Telinea d.o.o.** - potencijalni hibridni
+5. **Ostali hibridni operateri**
 
 ---
 
 ## 🏗️ REORGANIZACIJA PLANA (POST-STANDARDIZACIJA)
 
 ### KORAK 1: Ujednačavanje i čišćenje baze podataka ✅ PRILIKOM RADA
-- ✅ Kontinuirano uklanjanje duplikata kroz standardizaciju
-- ✅ Migracija na novu proširenu JSON strukturu (tech_ prefiksi)
-- ✅ Verifikacija operateri.json čistoće
 
 ### KORAK 2: Uređenje prikaza tabele (PRIORITET 1) 🔄 SLEDEĆI
 - **Smaniti tabelu sa 8 na 7 kolona** (ukloniti ATLAS Status, Prioritet)
