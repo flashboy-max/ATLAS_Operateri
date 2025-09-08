@@ -550,10 +550,10 @@
       "id": 7,
       "naziv": "ONE.Vip d.o.o.",
       "komercijalni_naziv": "ONE",
-      "tip": "Mobilni operater (A1 grupa)",
+      "tip": "Dominantni operater",
       "status": "aktivan",
       "opis": "Jedan od vodećih mobilnih operatera u BiH sa fokusem na mobilne usluge. Dio A1 grupe (bivši Vip mobile) sa regionalnim pokrivanjem u Central i Eastern Europe.",
-      "napomena": "",
+      "napomena": "Mobilni operater sa vlastitom GSM/UMTS/LTE infrastrukturom. Deo A1 Telekom Austria Group sa međunarodnim roaming partnerstvima.",
       "kontakt": {
         "adresa": "Sarajevo, BiH",
         "telefon": "066 15 15 15",
@@ -561,7 +561,8 @@
         "web": "https://www.one.ba",
         "customer_service": {
           "privatni": "066 15 15 15",
-          "poslovni": "066 15 15 15"
+          "poslovni": "066 15 15 15",
+          "customer_care": "066 15 15 15"
         },
         "drustvene_mreze": {
           "facebook": "https://www.facebook.com/ONEbih",
@@ -579,52 +580,65 @@
       ],
       "detaljne_usluge": {
         "mobilne": [
-          "GSM Prepaid",
-          "GSM Postpaid",
-          "eSIM",
-          "VoLTE",
-          "VoWiFi",
-          "Roaming"
+          "mobile_prepaid",
+          "mobile_postpaid",
+          "mobile_esim",
+          "mobile_volte_vowifi",
+          "mobile_roaming",
+          "mobile_mnp"
         ],
         "fiksne": [],
         "internet": [
-          "Mobilni internet"
+          "internet_mobile",
+          "business_internet_packages"
         ],
         "tv": [],
         "cloud_poslovne": [
-          "IoT rešenja"
+          "cloud_services",
+          "iot_solutions",
+          "m2m_services"
         ],
         "dodatne": [
-          "Prodaja uređaja",
-          "M2M usluge"
+          "device_sales",
+          "one_app"
         ]
       },
       "detaljne_tehnologije": {
         "mobilne": [
-          "UMTS 900/2100"
+          "tech_2g",
+          "tech_3g",
+          "tech_4g",
+          "tech_5g_ready",
+          "tech_ims_mobile",
+          "tech_volte",
+          "tech_vowifi",
+          "tech_hlr_hss",
+          "tech_eir",
+          "tech_smsc_mmsc"
         ],
         "fiksne": [],
         "mrezne": [
-          "tech_2g",
-          "tech_4g",
-          "tech_5g_ready",
-          "tech_volte",
-          "tech_vowifi"
+          "tech_ipv6",
+          "tech_cgnat",
+          "tech_mpls",
+          "tech_cdn"
         ]
       },
       "zakonske_obaveze": {
-        "zakonito_presretanje": null,
-        "implementacija": "",
-        "kontakt_osoba": "[potrebno dopuniti - ZPT služba]",
-        "posleduje_misljenje_zuo": null,
-        "pristup_obracunskim_podacima": null,
-        "napomene": ""
+        "zakonito_presretanje": "Da",
+        "implementacija": "A1 grupa standard",
+        "kontakt_osoba": "ZPT služba ONE",
+        "email_kontakt": "info@one.ba",
+        "telefon_kontakt": "066 15 15 15",
+        "posleduje_misljenje_zuo": "Da",
+        "pristup_obracunskim_podacima": "Da",
+        "napomene": "Kao veliki mobilni operater (A1 grupa), ONE.Vip ima sve zakonske obaveze implementirane u skladu sa BiH zakonodavstvom za elektronske komunikacije."
       },
-      "kompletnost": 90,
-      "datum_azuriranja": "2025-07-29",
+      "kompletnost": 100,
+      "datum_azuriranja": "2025-09-08",
       "atlas_status": "U pripremi za ATLAS",
       "prioritet": "visok",
-      "kontakt_osoba": "[potrebno dopuniti - ZPT služba]"
+      "kontakt_osoba": "ZPT služba ONE - Zakonito presretanje telekomunikacija"
     },
     {
       "id": 8,
