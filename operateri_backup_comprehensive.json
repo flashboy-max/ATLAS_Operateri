@@ -598,6 +598,68 @@
     },
     {
       "id": 9,
+      "naziv": "haloo",
+      "komercijalni_naziv": "haloo",
+      "tip": "Servis provajder (SP) / MVNO",
+      "status": "aktivan",
+      "opis": "\"Flanker\" brend i podružnica HT Eroneta, pokrenut 2011. godine. Pozicionira se kao jednostavan i jeftin provajder mobilnih usluga sa fokusom na transparentnost, bez skrivenih troškova.",
+      "napomena": "",
+      "kontakt": {
+        "adresa": "Kneza Branimira bb, 88000 Mostar (HT Eronet)",
+        "telefon": "064 4 400 400",
+        "email": "info@haloo.ba",
+        "web": "https://www.haloo.ba/",
+        "customer_service": {},
+        "drustvene_mreze": {}
+      },
+      "tehnicki_kontakti": [
+        {
+          "ime": "[potrebno dopuniti] - Korisnička podrška",
+          "pozicija": "Tehnički kontakt",
+          "email": "info@haloo.ba",
+          "telefon": "064 4 400 400",
+          "tip_kontakta": "tehnicki"
+        }
+      ],
+      "detaljne_usluge": {
+        "mobilne": [
+          "GSM Prepaid",
+          "GSM Postpaid"
+        ],
+        "fiksne": [],
+        "internet": [],
+        "tv": [],
+        "cloud_poslovne": [],
+        "dodatne": [
+          "mobile_roaming",
+          "mobile_mnp"
+        ]
+      },
+      "detaljne_tehnologije": {
+        "mobilne": [
+          "UMTS 900/2100"
+        ],
+        "fiksne": [],
+        "mrezne": [
+          "tech_4g"
+        ]
+      },
+      "zakonske_obaveze": {
+        "zakonito_presretanje": null,
+        "implementacija": "",
+        "kontakt_osoba": "[potrebno dopuniti] - Korisnička podrška",
+        "posleduje_misljenje_zuo": null,
+        "pristup_obracunskim_podacima": null,
+        "napomene": ""
+      },
+      "kompletnost": 90,
+      "datum_azuriranja": "2025-07-29",
+      "atlas_status": "Spreman za ATLAS",
+      "prioritet": "visok",
+      "kontakt_osoba": "[potrebno dopuniti] - Korisnička podrška"
+    },
+    {
+      "id": 10,
       "naziv": "Miss.Net d.o.o. Bihać",
       "komercijalni_naziv": "Miss.Net",
       "tip": "Internet servis provajder (ISP)",
@@ -655,7 +717,7 @@
       "kontakt_osoba": "Emir Pačić - Odgovorna osoba za tehničke usluge"
     },
     {
-      "id": 10,
+      "id": 11,
       "naziv": "LANACO d.o.o.",
       "komercijalni_naziv": "LANACO",
       "tip": "IT provajder, Internet servis provajder (ISP), Sistemska integracija",
@@ -715,7 +777,7 @@
       "kontakt_osoba": "[potrebno dopuniti]"
     },
     {
-      "id": 11,
+      "id": 12,
       "naziv": "Logosoft d.o.o. Sarajevo",
       "komercijalni_naziv": "Logosoft",
       "tip": "Internet servis provajder (ISP) + MVNO",
@@ -786,7 +848,142 @@
       "kontakt_osoba": "Fuad Trle - Tehnička podrška"
     },
     {
-      "id": 12,
+      "id": 13,
+      "naziv": "ADRIA NET Sarajevo",
+      "komercijalni_naziv": "",
+      "tip": "Regionalni ISP",
+      "status": "aktivan",
+      "opis": "",
+      "napomena": "",
+      "kontakt": {
+        "adresa": "Kompletni kontakt podaci dodani, potvrđeno sjedište u Mostaru",
+        "telefon": "-",
+        "email": "adrianet@adrianet.ba",
+        "web": "https://adrianet.ba",
+        "customer_service": {},
+        "drustvene_mreze": {}
+      },
+      "tehnicki_kontakti": [],
+      "detaljne_usluge": {
+        "mobilne": [],
+        "fiksne": [],
+        "internet": [
+          "internet_fixed_wireless",
+          "internet_business",
+          "tech_fixed_wireless",
+          "tech_ipv4",
+          "tech_ipv6",
+          "Pristup obračunskim/zadržanim podacima:** Da"
+        ],
+        "tv": [],
+        "cloud_poslovne": [],
+        "dodatne": []
+      },
+      "detaljne_tehnologije": {
+        "mobilne": [
+          "GSM 900/1800",
+          "UMTS 900/2100",
+          "LTE 800/1800/2600",
+          "5G 3500"
+        ],
+        "fiksne": [],
+        "mrezne": [
+          "WiFi/Wireless"
+        ]
+      },
+      "zakonske_obaveze": {
+        "zakonito_presretanje": null,
+        "implementacija": "",
+        "kontakt_osoba": "",
+        "posleduje_misljenje_zuo": null,
+        "pristup_obracunskim_podacima": null,
+        "napomene": "Potrebna provera zakonskih obaveza"
+      },
+      "kompletnost": 75,
+      "datum_azuriranja": "2025-09-08",
+      "atlas_status": "U pripremi za ATLAS",
+      "prioritet": "srednji",
+      "kontakt_osoba": ""
+    },
+    {
+      "id": 14,
+      "naziv": "AKTON d.o.o. Sarajevo",
+      "komercijalni_naziv": "",
+      "tip": "Enterprise/B2B",
+      "status": "aktivan",
+      "opis": "",
+      "napomena": "",
+      "kontakt": {
+        "adresa": " Fra Anđela Zvizdovića 1 / A4, 71000 Sarajevo",
+        "telefon": "-",
+        "email": "info@akton.ba",
+        "web": "https://akton.net/ba/",
+        "customer_service": {},
+        "drustvene_mreze": {}
+      },
+      "tehnicki_kontakti": [],
+      "detaljne_usluge": {
+        "mobilne": [],
+        "fiksne": [
+          "fixed_voip",
+          "tech_voip_fixed",
+          "tech_sip",
+          "tech_mpls",
+          "tech_data_center",
+          "tech_carrier_grade",
+          "Zakonito presretanje komunikacija:** [potrebno dopuniti]",
+          "Način implementacije: [potrebno dopuniti]",
+          "Kontakt osoba za zakonito presretanje: [potrebno dopuniti]",
+          "Email kontakt osobe: [potrebno dopuniti]",
+          "Telefon kontakt osobe: [potrebno dopuniti]",
+          "Posjeduje mišljenje ZUO: [potrebno dopuniti]",
+          "Pristup obračunskim/zadržanim podacima:** [potrebno dopuniti]",
+          "Napomena vezana za zakonske obaveze:** B2B operater sa nacionalnom licencom za veleprodajne usluge.",
+          "Opći uvjeti poslovanja nisu direktno linkovani na web stranici",
+          "Cjenik usluga nije javno dostupan, cijene se formiraju na osnovu upita",
+          "Naziv endpointa: [potrebno dopuniti]",
+          "URL: [potrebno dopuniti]",
+          "Status: Spreman za ATLAS",
+          "Datum posljednje aktivnosti: 28. jul 2025.",
+          "Napomena: B2B \"carrier's carrier\" operator sa nacionalnom licencom, ažurirani podaci",
+          "Problemi: Potrebni specifični kontakti za zakonske obaveze i API dokumentacija"
+        ],
+        "internet": [
+          "internet_business",
+          "data_transfer"
+        ],
+        "tv": [],
+        "cloud_poslovne": [],
+        "dodatne": []
+      },
+      "detaljne_tehnologije": {
+        "mobilne": [
+          "GSM 900/1800",
+          "UMTS 900/2100",
+          "LTE 800/1800/2600",
+          "5G 3500"
+        ],
+        "fiksne": [],
+        "mrezne": [
+          "WiFi/Wireless"
+        ]
+      },
+      "zakonske_obaveze": {
+        "zakonito_presretanje": null,
+        "implementacija": "",
+        "kontakt_osoba": "",
+        "posleduje_misljenje_zuo": null,
+        "pristup_obracunskim_podacima": null,
+        "napomene": "Potrebna provera zakonskih obaveza"
+      },
+      "kompletnost": 75,
+      "datum_azuriranja": "2025-09-08",
+      "atlas_status": "U pripremi za ATLAS",
+      "prioritet": "srednji",
+      "kontakt_osoba": ""
+    },
+    {
+      "id": 15,
       "naziv": "CRA TELECOM d.o.o",
       "komercijalni_naziv": "",
       "tip": "Regionalni ISP",
@@ -850,7 +1047,101 @@
       "kontakt_osoba": ""
     },
     {
-      "id": 13,
+      "id": 16,
+      "naziv": "Dasto Semtel d.o.o. Bijeljina (Zona.ba)",
+      "komercijalni_naziv": "",
+      "tip": "Regionalni ISP",
+      "status": "aktivan",
+      "opis": "",
+      "napomena": "",
+      "kontakt": {
+        "adresa": " Račanska 98, 76300 Bijeljina",
+        "telefon": "-",
+        "email": "tehnika.muxd@zona.ba",
+        "web": "https://x.com/zonadastosemtel",
+        "customer_service": {},
+        "drustvene_mreze": {}
+      },
+      "tehnicki_kontakti": [],
+      "detaljne_usluge": {
+        "mobilne": [
+          "mobile_prepaid",
+          "mobile_postpaid",
+          "mobile_esim",
+          "mobile_volte_vowifi",
+          "mobile_roaming",
+          "mobile_mnp",
+          "tech_2g",
+          "tech_3g",
+          "tech_4g",
+          "tech_mvno"
+        ],
+        "fiksne": [
+          "fixed_voip",
+          "tech_ftth_fttb",
+          "tech_voip_fixed",
+          "tech_satellite",
+          "tech_ipv4",
+          "tech_ipv6",
+          "tech_multiplex_d",
+          "tech_digital_terrestrial",
+          "Zakonito presretanje komunikacija:** Da",
+          "Način implementacije: [potrebno dopuniti]",
+          "Kontakt osoba za zakonito presretanje: [potrebno dopuniti]",
+          "Email kontakt osobe: [potrebno dopuniti]",
+          "Telefon kontakt osobe: [potrebno dopuniti]",
+          "Posjeduje mišljenje ZUO: [potrebno dopuniti]",
+          "Pristup obračunskim/zadržanim podacima:** Da",
+          "Napomena vezana za zakonske obaveze:** Hibridni operater sa podvojenim zakonskim obavezama .",
+          "Naziv endpointa: [potrebno dopuniti]",
+          "URL: [potrebno dopuniti]",
+          "Status: Prioritetan za ATLAS",
+          "Datum posljednje aktivnosti: 28. jul 2025.",
+          "Napomena: Hibridni MVNO/ISP operator sa kompletnim portfolio usluga, ključan za ATLAS",
+          "Problemi: Potrebne informacije o zakonskim obavezama i API endpointi"
+        ],
+        "internet": [
+          "internet_ftth",
+          "internet_satellite",
+          "internet_mobile",
+          "internet_dedicated"
+        ],
+        "tv": [
+          "iptv",
+          "multiplex_d",
+          "satellite_services"
+        ],
+        "cloud_poslovne": [],
+        "dodatne": []
+      },
+      "detaljne_tehnologije": {
+        "mobilne": [
+          "GSM 900/1800",
+          "UMTS 900/2100",
+          "LTE 800/1800/2600"
+        ],
+        "fiksne": [],
+        "mrezne": [
+          "FTTH/FTTB",
+          "WiFi/Wireless"
+        ]
+      },
+      "zakonske_obaveze": {
+        "zakonito_presretanje": null,
+        "implementacija": "",
+        "kontakt_osoba": "",
+        "posleduje_misljenje_zuo": null,
+        "pristup_obracunskim_podacima": null,
+        "napomene": "Potrebna provera zakonskih obaveza"
+      },
+      "kompletnost": 75,
+      "datum_azuriranja": "2025-09-08",
+      "atlas_status": "U pripremi za ATLAS",
+      "prioritet": "srednji",
+      "kontakt_osoba": ""
+    },
+    {
+      "id": 17,
       "naziv": "Elta-kabel d.o.o",
       "komercijalni_naziv": "",
       "tip": "Regionalni ISP",
@@ -912,7 +1203,7 @@
       "kontakt_osoba": ""
     },
     {
-      "id": 14,
+      "id": 18,
       "naziv": "GiNet d.o.o. Gornji Vakuf-Uskoplje",
       "komercijalni_naziv": "",
       "tip": "Regionalni ISP",
@@ -972,7 +1263,7 @@
       "kontakt_osoba": ""
     },
     {
-      "id": 15,
+      "id": 19,
       "naziv": "Global Internet d.o.o. Novi Travnik",
       "komercijalni_naziv": "",
       "tip": "Regionalni ISP",
@@ -1054,7 +1345,51 @@
       "kontakt_osoba": ""
     },
     {
-      "id": 16,
+      "id": 20,
+      "naziv": "Haloo d.o.o. Sarajevo (MVNO)",
+      "komercijalni_naziv": "",
+      "tip": "Mobilni/MVNO",
+      "status": "aktivan",
+      "opis": "",
+      "napomena": "",
+      "kontakt": {
+        "adresa": "",
+        "telefon": "",
+        "email": "",
+        "web": "",
+        "customer_service": {},
+        "drustvene_mreze": {}
+      },
+      "tehnicki_kontakti": [],
+      "detaljne_usluge": {
+        "mobilne": [],
+        "fiksne": [],
+        "internet": [],
+        "tv": [],
+        "cloud_poslovne": [],
+        "dodatne": []
+      },
+      "detaljne_tehnologije": {
+        "mobilne": [],
+        "fiksne": [],
+        "mrezne": []
+      },
+      "zakonske_obaveze": {
+        "zakonito_presretanje": null,
+        "implementacija": "",
+        "kontakt_osoba": "",
+        "posleduje_misljenje_zuo": null,
+        "pristup_obracunskim_podacima": null,
+        "napomene": "Potrebna provera zakonskih obaveza"
+      },
+      "kompletnost": 20,
+      "datum_azuriranja": "2025-09-08",
+      "atlas_status": "U pripremi za ATLAS",
+      "prioritet": "srednji",
+      "kontakt_osoba": ""
+    },
+    {
+      "id": 21,
       "naziv": "HKB Net d.o.o",
       "komercijalni_naziv": "",
       "tip": "Regionalni ISP",
@@ -1111,7 +1446,111 @@
       "kontakt_osoba": ""
     },
     {
-      "id": 17,
+      "id": 22,
+      "naziv": "JP Hrvatske telekomunikacije d.d. Mostar (HT Eronet)",
+      "komercijalni_naziv": "",
+      "tip": "Dominantni",
+      "status": "aktivan",
+      "opis": "",
+      "napomena": "",
+      "kontakt": {
+        "adresa": " Kneza Branimira bb, 88 000 Mostar",
+        "telefon": "-",
+        "email": "mladen.pehar@hteronet.ba",
+        "web": "https://www.linkedin.com/company/hteronet/",
+        "customer_service": {},
+        "drustvene_mreze": {}
+      },
+      "tehnicki_kontakti": [],
+      "detaljne_usluge": {
+        "mobilne": [
+          "mobile_prepaid",
+          "mobile_postpaid",
+          "mobile_volte_vowifi",
+          "mobile_roaming",
+          "mobile_mnp",
+          "roaming_internet_options",
+          "tech_2g",
+          "tech_3g",
+          "tech_4g",
+          "tech_ims_mobile",
+          "tech_volte",
+          "tech_vowifi",
+          "tech_hlr_hss",
+          "tech_smsc_mmsc"
+        ],
+        "fiksne": [
+          "fixed_pstn",
+          "fixed_isdn",
+          "fixed_voip",
+          "tech_pstn",
+          "tech_voip_fixed",
+          "tech_xdsl",
+          "tech_ftth_fttb",
+          "iptv_platform",
+          "tech_ipv6",
+          "Zakonito presretanje komunikacija:** Da",
+          "Način implementacije: Vlastita medijacija",
+          "Kontakt osoba za zakonito presretanje: Slaven Zelenika",
+          "Email kontakt osobe: slaven.zelenika@hteronet.ba",
+          "Telefon kontakt osobe: +387 63 282 020",
+          "Posjeduje mišljenje ZUO: Da",
+          "Pristup obračunskim/zadržanim podacima:** Da",
+          "Napomena vezana za zakonske obaveze:** Kao dominantni operater, HT Eronet ima sve zakonske obaveze implementirane u skladu sa BiH zakonom.",
+          "Dio Hrvatske telekomunikacije grupe",
+          "MVNO partner: Haloo d.o.o. Sarajevo",
+          "Pripojen: ArtNet d.o.o. Kiseljak",
+          "Naziv endpointa: [potrebno dopuniti]",
+          "URL: [potrebno dopuniti]",
+          "Status: U pripremi za ATLAS",
+          "Datum posljednje aktivnosti: 22. jul 2025.",
+          "Napomena: Kompletni podaci uključujući kontakt osobe dodani",
+          "Problemi: Nedostaju samo API endpointi"
+        ],
+        "internet": [
+          "internet_flat",
+          "internet_flying",
+          "internet_adsl_vdsl",
+          "internet_ftth"
+        ],
+        "tv": [
+          "iptv",
+          "4xl_packages",
+          "wholesale_network_services",
+          "device_sales"
+        ],
+        "cloud_poslovne": [],
+        "dodatne": []
+      },
+      "detaljne_tehnologije": {
+        "mobilne": [
+          "GSM 900/1800",
+          "UMTS 900/2100",
+          "LTE 800/1800/2600"
+        ],
+        "fiksne": [],
+        "mrezne": [
+          "FTTH/FTTB",
+          "xDSL",
+          "WiFi/Wireless"
+        ]
+      },
+      "zakonske_obaveze": {
+        "zakonito_presretanje": null,
+        "implementacija": "",
+        "kontakt_osoba": "",
+        "posleduje_misljenje_zuo": null,
+        "pristup_obracunskim_podacima": null,
+        "napomene": "Potrebna provera zakonskih obaveza"
+      },
+      "kompletnost": 75,
+      "datum_azuriranja": "2025-09-08",
+      "atlas_status": "U pripremi za ATLAS",
+      "prioritet": "srednji",
+      "kontakt_osoba": ""
+    },
+    {
+      "id": 23,
       "naziv": "KATV HS d.o.o",
       "komercijalni_naziv": "",
       "tip": "Regionalni ISP",
@@ -1172,7 +1611,7 @@
       "kontakt_osoba": ""
     },
     {
-      "id": 18,
+      "id": 24,
       "naziv": "M&H Company d.o.o",
       "komercijalni_naziv": "",
       "tip": "Enterprise/B2B",
@@ -1229,7 +1668,7 @@
       "kontakt_osoba": ""
     },
     {
-      "id": 19,
+      "id": 25,
       "naziv": "MEDIA SKY d.o.o",
       "komercijalni_naziv": "",
       "tip": "Regionalni ISP",
@@ -1303,7 +1742,7 @@
       "kontakt_osoba": ""
     },
     {
-      "id": 20,
+      "id": 26,
       "naziv": "MEDIASAT d.o.o",
       "komercijalni_naziv": "",
       "tip": "Regionalni ISP",
@@ -1381,7 +1820,64 @@
       "kontakt_osoba": ""
     },
     {
-      "id": 21,
+      "id": 27,
+      "naziv": "Miss.Net d.o.o. Bihac",
+      "komercijalni_naziv": "",
+      "tip": "Regionalni ISP",
+      "status": "aktivan",
+      "opis": "",
+      "napomena": "",
+      "kontakt": {
+        "adresa": " Bihaćkih branilaca 29, 77000 Bihać",
+        "telefon": "-",
+        "email": "podrska@missnet.ba",
+        "web": "https://www.missnet.ba/",
+        "customer_service": {},
+        "drustvene_mreze": {}
+      },
+      "tehnicki_kontakti": [],
+      "detaljne_usluge": {
+        "mobilne": [],
+        "fiksne": [],
+        "internet": [
+          "internet_ftth",
+          "internet_fixed_wireless",
+          "tech_ftth_fttb",
+          "tech_fixed_wireless"
+        ],
+        "tv": [],
+        "cloud_poslovne": [],
+        "dodatne": []
+      },
+      "detaljne_tehnologije": {
+        "mobilne": [
+          "GSM 900/1800",
+          "UMTS 900/2100",
+          "LTE 800/1800/2600",
+          "5G 3500"
+        ],
+        "fiksne": [],
+        "mrezne": [
+          "FTTH/FTTB",
+          "WiFi/Wireless"
+        ]
+      },
+      "zakonske_obaveze": {
+        "zakonito_presretanje": null,
+        "implementacija": "",
+        "kontakt_osoba": "",
+        "posleduje_misljenje_zuo": null,
+        "pristup_obracunskim_podacima": null,
+        "napomene": "Potrebna provera zakonskih obaveza"
+      },
+      "kompletnost": 75,
+      "datum_azuriranja": "2025-09-08",
+      "atlas_status": "U pripremi za ATLAS",
+      "prioritet": "srednji",
+      "kontakt_osoba": ""
+    },
+    {
+      "id": 28,
       "naziv": "Novotel d.o.o. Sarajevo (MVNO) - Profil Telekom Operatera",
       "komercijalni_naziv": "",
       "tip": "Mobilni/MVNO",
@@ -1429,7 +1925,7 @@
       "kontakt_osoba": ""
     },
     {
-      "id": 22,
+      "id": 29,
       "naziv": "Ortak d.o.o",
       "komercijalni_naziv": "",
       "tip": "Regionalni ISP",
@@ -1505,7 +2001,7 @@
       "kontakt_osoba": ""
     },
     {
-      "id": 23,
+      "id": 30,
       "naziv": "PROINTER ITSS d.o.o",
       "komercijalni_naziv": "",
       "tip": "Enterprise/B2B",
@@ -1566,7 +2062,7 @@
       "kontakt_osoba": ""
     },
     {
-      "id": 24,
+      "id": 31,
       "naziv": "Supernova (Blicnet d.o.o. Banja Luka)",
       "komercijalni_naziv": "",
       "tip": "Regionalni ISP",
@@ -1610,7 +2106,126 @@
       "kontakt_osoba": ""
     },
     {
-      "id": 25,
+      "id": 32,
+      "naziv": "Telekom Srpske a.d. Banja Luka (m-tel)",
+      "komercijalni_naziv": "",
+      "tip": "Dominantni",
+      "status": "aktivan",
+      "opis": "",
+      "napomena": "",
+      "kontakt": {
+        "adresa": " Banja Luka, Republika Srpska",
+        "telefon": "-",
+        "email": "slaven.cosic@mtel.ba",
+        "web": "https://www.linkedin.com/company/mtelbih/",
+        "customer_service": {},
+        "drustvene_mreze": {}
+      },
+      "tehnicki_kontakti": [],
+      "detaljne_usluge": {
+        "mobilne": [
+          "mobile_prepaid",
+          "mobile_postpaid",
+          "mobile_esim",
+          "mobile_volte_vowifi",
+          "mobile_roaming",
+          "mobile_mnp",
+          "tech_2g",
+          "tech_3g",
+          "tech_4g",
+          "tech_5g_ready",
+          "tech_ims_mobile",
+          "tech_volte",
+          "tech_vowifi",
+          "tech_hlr_hss",
+          "tech_eir",
+          "tech_smsc_mmsc"
+        ],
+        "fiksne": [
+          "fixed_pstn",
+          "fixed_isdn",
+          "fixed_voip",
+          "ip_centrex",
+          "tech_pstn",
+          "tech_isdn",
+          "tech_voip_fixed",
+          "tech_ims_fixed",
+          "tech_softswitch_fixed",
+          "tech_ftth_fttb",
+          "tech_xdsl",
+          "satellite_tv_infrastructure",
+          "tech_ipv6",
+          "tech_cgnat",
+          "tech_mpls",
+          "tech_sdwan",
+          "Zakonito presretanje komunikacija:** Da",
+          "Način implementacije: Vlastita medijacija",
+          "Kontakt osoba za zakonito presretanje: Zoran Sopka",
+          "Email kontakt osobe: zoran.sopka@mtel.ba",
+          "Telefon kontakt osobe: +387 66 915 505",
+          "Posjeduje mišljenje ZUO: Da",
+          "Pristup obračunskim/zadržanim podacima:** Da",
+          "Napomena vezana za zakonske obaveze:** Kao dominantni operater, m:tel ima sve zakonske obaveze implementirane u skladu sa BiH zakonom.",
+          "Dio MTS grupe",
+          "Podružnice: Logosoft d.o.o., Supernova , Novotel",
+          "Međunarodni MTS partneri",
+          "Naziv endpointa: [potrebno dopuniti]",
+          "URL: [potrebno dopuniti]",
+          "Status: U pripremi za ATLAS",
+          "Datum posljednje aktivnosti: 22. jul 2025.",
+          "Napomena: Kompletni podaci uključujući kontakt osobe dodani",
+          "Problemi: Nedostaju samo API endpointi"
+        ],
+        "internet": [
+          "internet_ftth",
+          "internet_adsl_vdsl",
+          "internet_mobile",
+          "netbiz_packages"
+        ],
+        "tv": [
+          "sat_tv",
+          "iptv",
+          "tv_streaming",
+          "data_center",
+          "system_integration",
+          "smart_city",
+          "smart_home",
+          "wholesale_services",
+          "device_sales"
+        ],
+        "cloud_poslovne": [],
+        "dodatne": []
+      },
+      "detaljne_tehnologije": {
+        "mobilne": [
+          "GSM 900/1800",
+          "UMTS 900/2100",
+          "LTE 800/1800/2600",
+          "5G 3500"
+        ],
+        "fiksne": [],
+        "mrezne": [
+          "FTTH/FTTB",
+          "xDSL",
+          "WiFi/Wireless"
+        ]
+      },
+      "zakonske_obaveze": {
+        "zakonito_presretanje": null,
+        "implementacija": "",
+        "kontakt_osoba": "",
+        "posleduje_misljenje_zuo": null,
+        "pristup_obracunskim_podacima": null,
+        "napomene": "Potrebna provera zakonskih obaveza"
+      },
+      "kompletnost": 75,
+      "datum_azuriranja": "2025-09-08",
+      "atlas_status": "U pripremi za ATLAS",
+      "prioritet": "srednji",
+      "kontakt_osoba": ""
+    },
+    {
+      "id": 33,
       "naziv": "Telinea d.o.o",
       "komercijalni_naziv": "",
       "tip": "Regionalni ISP",
@@ -1690,7 +2305,134 @@
       "kontakt_osoba": ""
     },
     {
-      "id": 26,
+      "id": 34,
+      "naziv": "Telrad Net d.o.o. Bijeljina",
+      "komercijalni_naziv": "",
+      "tip": "Regionalni ISP",
+      "status": "aktivan",
+      "opis": "",
+      "napomena": "",
+      "kontakt": {
+        "adresa": "Sjeveroistočni dio BiH, sjedište Bijeljina",
+        "telefon": "-",
+        "email": "info@telrad.net",
+        "web": "https://www.telrad.net/",
+        "customer_service": {},
+        "drustvene_mreze": {}
+      },
+      "tehnicki_kontakti": [],
+      "detaljne_usluge": {
+        "mobilne": [],
+        "fiksne": [
+          "fixed_voip",
+          "tech_voip_fixed",
+          "tech_ftth_fttb",
+          "tech_fixed_wireless",
+          "tech_docsis",
+          "tech_ipv4",
+          "tech_ipv6",
+          "Zakonito presretanje komunikacija:** Da",
+          "Način implementacije: [potrebno dopuniti - regionalni ISP]",
+          "Kontakt osoba za zakonito presretanje: [potrebno dopuniti]",
+          "Email kontakt osobe: [potrebno dopuniti]",
+          "Telefon kontakt osobe: [potrebno dopuniti]",
+          "Posjeduje mišljenje ZUO: [potrebno dopuniti]",
+          "Pristup obračunskim/zadržanim podacima:** Da",
+          "Napomena vezana za zakonske obaveze:** Regionalni ISP operater sa obavezama za zakonito presretanje i pristup obračunskim podacima u skladu sa BiH zakonodavstvom.",
+          "Sjeveroistočni dio BiH, sjedište Bijeljina",
+          "Regionalni ISP operater",
+          "Triple-play usluge",
+          "Hibridna infrastruktura",
+          "Pripojen Optima d.o.o. Modriča",
+          "Naziv endpointa: [potrebno dopuniti]",
+          "URL: [potrebno dopuniti]",
+          "Status: Spreman za ATLAS",
+          "Datum posljednje aktivnosti: 28. jul 2025.",
+          "Napomena: Aktivan regionalni ISP operater, kompletno prepisan na novi standard",
+          "Problemi: Nedostaju kontakt osobe, email adrese tehničkih kontakata i regulatorne informacije"
+        ],
+        "internet": [
+          "internet_ftth",
+          "internet_fixed_wireless",
+          "internet_cable",
+          "business_internet_packages"
+        ],
+        "tv": [
+          "cable_tv",
+          "digital_tv"
+        ],
+        "cloud_poslovne": [],
+        "dodatne": []
+      },
+      "detaljne_tehnologije": {
+        "mobilne": [],
+        "fiksne": [],
+        "mrezne": [
+          "FTTH/FTTB",
+          "DOCSIS",
+          "WiFi/Wireless"
+        ]
+      },
+      "zakonske_obaveze": {
+        "zakonito_presretanje": null,
+        "implementacija": "",
+        "kontakt_osoba": "",
+        "posleduje_misljenje_zuo": null,
+        "pristup_obracunskim_podacima": null,
+        "napomene": "Potrebna provera zakonskih obaveza"
+      },
+      "kompletnost": 75,
+      "datum_azuriranja": "2025-09-08",
+      "atlas_status": "U pripremi za ATLAS",
+      "prioritet": "srednji",
+      "kontakt_osoba": ""
+    },
+    {
+      "id": 35,
+      "naziv": "Telrad Net d.o.o",
+      "komercijalni_naziv": "",
+      "tip": "Regionalni ISP",
+      "status": "aktivan",
+      "opis": "",
+      "napomena": "",
+      "kontakt": {
+        "adresa": "",
+        "telefon": "",
+        "email": "",
+        "web": "",
+        "customer_service": {},
+        "drustvene_mreze": {}
+      },
+      "tehnicki_kontakti": [],
+      "detaljne_usluge": {
+        "mobilne": [],
+        "fiksne": [],
+        "internet": [],
+        "tv": [],
+        "cloud_poslovne": [],
+        "dodatne": []
+      },
+      "detaljne_tehnologije": {
+        "mobilne": [],
+        "fiksne": [],
+        "mrezne": []
+      },
+      "zakonske_obaveze": {
+        "zakonito_presretanje": null,
+        "implementacija": "",
+        "kontakt_osoba": "",
+        "posleduje_misljenje_zuo": null,
+        "pristup_obracunskim_podacima": null,
+        "napomene": "Potrebna provera zakonskih obaveza"
+      },
+      "kompletnost": 20,
+      "datum_azuriranja": "2025-09-08",
+      "atlas_status": "U pripremi za ATLAS",
+      "prioritet": "srednji",
+      "kontakt_osoba": ""
+    },
+    {
+      "id": 36,
       "naziv": "TX TV d.o.o. Tuzla",
       "komercijalni_naziv": "",
       "tip": "Regionalni ISP",
@@ -1747,7 +2489,7 @@
       "kontakt_osoba": ""
     },
     {
-      "id": 27,
+      "id": 37,
       "naziv": "VKT-Net d.o.o. Bugojno",
       "komercijalni_naziv": "",
       "tip": "Regionalni ISP",
@@ -1826,7 +2568,7 @@
       "kontakt_osoba": ""
     },
     {
-      "id": 28,
+      "id": 38,
       "naziv": "Wirac.Net Pale",
       "komercijalni_naziv": "",
       "tip": "Regionalni ISP",

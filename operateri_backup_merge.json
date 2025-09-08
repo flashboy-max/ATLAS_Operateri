@@ -1885,6 +1885,133 @@
       "atlas_status": "U pripremi za ATLAS",
       "prioritet": "srednji",
       "kontakt_osoba": ""
+    },
+    {
+      "id": 29,
+      "naziv": "Haloo d.o.o. Sarajevo (MVNO)",
+      "komercijalni_naziv": "haloo",
+      "tip": "Mobilni/MVNO",
+      "status": "aktivan",
+      "opis": "",
+      "napomena": "",
+      "kontakt": {
+        "adresa": "",
+        "telefon": "",
+        "email": "",
+        "web": "",
+        "customer_service": {},
+        "drustvene_mreze": {}
+      },
+      "tehnicki_kontakti": [],
+      "detaljne_usluge": {
+        "mobilne": [],
+        "fiksne": [],
+        "internet": [],
+        "tv": [],
+        "cloud_poslovne": [],
+        "dodatne": []
+      },
+      "detaljne_tehnologije": {
+        "mobilne": [],
+        "fiksne": [],
+        "mrezne": []
+      },
+      "zakonske_obaveze": {
+        "zakonito_presretanje": null,
+        "implementacija": "",
+        "kontakt_osoba": "",
+        "posleduje_misljenje_zuo": null,
+        "pristup_obracunskim_podacima": null,
+        "napomene": "Potrebna provera zakonskih obaveza"
+      },
+      "kompletnost": 20,
+      "datum_azuriranja": "2025-09-08",
+      "atlas_status": "U pripremi za ATLAS",
+      "prioritet": "srednji",
+      "kontakt_osoba": ""
+    },
+    {
+      "id": 30,
+      "naziv": "Telrad Net d.o.o.",
+      "komercijalni_naziv": "Telrad Net",
+      "tip": "Regionalni ISP",
+      "status": "aktivan",
+      "opis": "",
+      "napomena": "",
+      "kontakt": {
+        "adresa": "Sjeveroistočni dio BiH, sjedište Bijeljina",
+        "telefon": "-",
+        "email": "info@telrad.net",
+        "web": "https://www.telrad.net/",
+        "customer_service": {},
+        "drustvene_mreze": {}
+      },
+      "tehnicki_kontakti": [],
+      "detaljne_usluge": {
+        "mobilne": [],
+        "fiksne": [
+          "fixed_voip",
+          "tech_voip_fixed",
+          "tech_ftth_fttb",
+          "tech_fixed_wireless",
+          "tech_docsis",
+          "tech_ipv4",
+          "tech_ipv6",
+          "Zakonito presretanje komunikacija:** Da",
+          "Način implementacije: [potrebno dopuniti - regionalni ISP]",
+          "Kontakt osoba za zakonito presretanje: [potrebno dopuniti]",
+          "Email kontakt osobe: [potrebno dopuniti]",
+          "Telefon kontakt osobe: [potrebno dopuniti]",
+          "Posjeduje mišljenje ZUO: [potrebno dopuniti]",
+          "Pristup obračunskim/zadržanim podacima:** Da",
+          "Napomena vezana za zakonske obaveze:** Regionalni ISP operater sa obavezama za zakonito presretanje i pristup obračunskim podacima u skladu sa BiH zakonodavstvom.",
+          "Sjeveroistočni dio BiH, sjedište Bijeljina",
+          "Regionalni ISP operater",
+          "Triple-play usluge",
+          "Hibridna infrastruktura",
+          "Pripojen Optima d.o.o. Modriča",
+          "Naziv endpointa: [potrebno dopuniti]",
+          "URL: [potrebno dopuniti]",
+          "Status: Spreman za ATLAS",
+          "Datum posljednje aktivnosti: 28. jul 2025.",
+          "Napomena: Aktivan regionalni ISP operater, kompletno prepisan na novi standard",
+          "Problemi: Nedostaju kontakt osobe, email adrese tehničkih kontakata i regulatorne informacije"
+        ],
+        "internet": [
+          "internet_ftth",
+          "internet_fixed_wireless",
+          "internet_cable",
+          "business_internet_packages"
+        ],
+        "tv": [
+          "cable_tv",
+          "digital_tv"
+        ],
+        "cloud_poslovne": [],
+        "dodatne": []
+      },
+      "detaljne_tehnologije": {
+        "mobilne": [],
+        "fiksne": [],
+        "mrezne": [
+          "FTTH/FTTB",
+          "DOCSIS",
+          "WiFi/Wireless"
+        ]
+      },
+      "zakonske_obaveze": {
+        "zakonito_presretanje": null,
+        "implementacija": "",
+        "kontakt_osoba": "",
+        "posleduje_misljenje_zuo": null,
+        "pristup_obracunskim_podacima": null,
+        "napomene": "Potrebna provera zakonskih obaveza"
+      },
+      "kompletnost": 75,
+      "datum_azuriranja": "2025-09-08",
+      "atlas_status": "U pripremi za ATLAS",
+      "prioritet": "srednji",
+      "kontakt_osoba": ""
     }
   ],
   "version": "2.1",

@@ -73,60 +73,90 @@ class ATLASApp {
     }
     
     async loadData() {
-        // Proveri verziju u LocalStorage i poredi sa verzijom iz JSON fajla
-        let useLocalStorage = false;
+        console.log('=== Početak loadData() ===');
+        console.log('Storage key:', this.storageKey);
         
         try {
-            // Prvo učitaj JSON da proveriš verziju
-            const response = await fetch('./operateri.json?v=' + Date.now()); // cache busting
-            if (response.ok) {
-                const jsonData = await response.json();
-                const jsonVersion = jsonData.version || "1.0";
-                
-                // Proveri LocalStorage verziju
-                const savedData = localStorage.getItem(this.storageKey);
-                if (savedData) {
-                    const parsedData = JSON.parse(savedData);
-                    const localVersion = parsedData.version || "1.0";
-                    
-                    // Koristi LocalStorage samo ako je verzija ista ili novija
-                    if (localVersion >= jsonVersion && parsedData.operateri && parsedData.operateri.length > 0) {
-                        this.operators = parsedData.operateri;
-                        console.log('Podaci učitani iz LocalStorage:', this.operators.length, 'operatera, verzija:', localVersion);
-                        useLocalStorage = true;
-                    }
-                }
-                
-                // Ako ne koristiš LocalStorage, koristi JSON podatke
-                if (!useLocalStorage) {
-                    this.operators = jsonData.operateri || [];
-                    this.saveToLocalStorage(jsonData); // Sačuvaj najnovije podatke
-                    console.log('Podaci učitani iz JSON fajla:', this.operators.length, 'operatera, verzija:', jsonVersion);
+            // PRIORITET 1: UVIJEK prvo pročitaj LocalStorage
+            const savedData = localStorage.getItem(this.storageKey);
+            let localData = null;
+            let localVersion = '0.0';
+            let localOperatorCount = 0;
+            
+            if (savedData) {
+                try {
+                    localData = JSON.parse(savedData);
+                    localVersion = localData.version || '1.0';
+                    localOperatorCount = localData.operateri ? localData.operateri.length : 0;
+                    console.log('✅ LocalStorage pronađen:');
+                    console.log('   - Verzija:', localVersion);
+                    console.log('   - Broj operatera:', localOperatorCount);
+                    console.log('   - Datum ažuriranja:', localData.metadata ? localData.metadata.lastUpdated : 'Nepoznato');
+                } catch (parseError) {
+                    console.warn('⚠️ Greška pri parsiranju LocalStorage:', parseError);
+                    console.log('   - Nastavljam sa JSON fallback-om');
                 }
             } else {
-                throw new Error('Nije moguće učitati operateri.json');
+                console.log('❌ LocalStorage nije pronađen - koristi JSON');
             }
-        } catch (error) {
-            console.error('Greška pri učitavanju JSON fajla:', error);
             
-            // Fallback na LocalStorage ako JSON ne radi
+            // PRIORITET 2: Ako LocalStorage ima podatke, KORISTI GA ODMAH (bez JSON-a za brisanja)
+            if (localData && Array.isArray(localData.operateri) && localData.operateri.length >= 0) {
+                this.operators = localData.operateri;
+                console.log('🎯 PRIORITET: Učitani podaci IZ LOCALSTORAGE (persistencija brisanja/dodavanja)');
+                console.log('   - Ukupno operatera:', this.operators.length);
+                console.log('   - Verzija:', localVersion);
+                console.log('   - Izvor: LocalStorage (prioritet)');
+                return; // IZLAZ - ne učitavaj JSON ako LocalStorage postoji
+            }
+            
+            // PRIORITET 3: Ako nema LocalStorage-a, učitaj JSON
+            console.log('📥 Učitavam JSON jer LocalStorage nema podatke...');
+            const response = await fetch('./operateri.json?v=' + Date.now()); // cache busting
+            if (!response.ok) {
+                throw new Error(`HTTP ${response.status}: Nije moguće učitati operateri.json`);
+            }
+            
+            const jsonData = await response.json();
+            const jsonVersion = jsonData.version || "1.0";
+            const jsonOperatorCount = jsonData.operateri ? jsonData.operateri.length : 0;
+            
+            console.log('✅ JSON učitan uspješno:');
+            console.log('   - Verzija:', jsonVersion);
+            console.log('   - Broj operatera:', jsonOperatorCount);
+            
+            this.operators = jsonData.operateri || [];
+            this.saveToLocalStorage(jsonData); // Sačuvaj u LocalStorage za budućnost
+            console.log('📄 Podaci učitani IZ JSON FAJLA (fallback):', this.operators.length, 'operatera');
+            console.log('   - Verzija:', jsonVersion);
+            console.log('   - Sačuvano u LocalStorage za sljedeći put');
+            
+        } catch (error) {
+            console.error('❌ Greška pri učitavanju JSON fajla:', error);
+            
+            // FALLBACK 1: Pokušaj LocalStorage
             const savedData = localStorage.getItem(this.storageKey);
             if (savedData) {
                 try {
                     const parsedData = JSON.parse(savedData);
                     this.operators = parsedData.operateri || [];
-                    console.log('Fallback na LocalStorage:', this.operators.length, 'operatera');
+                    console.log('🔄 FALLBACK: Učitani podaci IZ LOCALSTORAGE zbog greške JSON-a:', this.operators.length, 'operatera');
                     return;
                 } catch (parseError) {
-                    console.warn('Greška pri parsiranju LocalStorage podataka:', parseError);
+                    console.warn('⚠️ Greška pri parsiranju LocalStorage u fallback-u:', parseError);
                 }
             }
             
-            // Krajnji fallback na demo podatke
+            // FALLBACK 2: Demo podaci
+            console.log('🚨 KRAJNJ FALLBACK: Koriste se demo podaci');
             this.operators = this.getDemoData();
             this.saveToLocalStorage();
-            console.log('Koriste se demo podaci');
         }
+        
+        console.log('=== loadData() završen ===');
+        console.log('Ukupno operatera učitano:', this.operators.length);
+        console.log('Izvor podataka:', this.operators.length > 0 ? 'LocalStorage ili JSON' : 'Demo');
+        console.log('====================');
     }
     
     // Forsiraj reload iz JSON fajla
@@ -136,7 +166,8 @@ class ATLASApp {
             console.log('Forsiram reload iz JSON...');
             
             // Obriši localStorage cache
-            localStorage.removeItem('atlas_operators');
+            localStorage.removeItem(this.storageKey);
+            console.log('LocalStorage obrisan za reload:', this.storageKey);
             
             // Učitaj svježe iz JSON
             const response = await fetch('./operateri.json?v=' + Date.now());
@@ -185,7 +216,7 @@ class ATLASApp {
                 // Inače kreiraj osnovnu strukturu
                 dataToSave = {
                     operateri: this.operators,
-                    version: '1.0',
+                    version: '2.1', // Sinhronizuj sa JSON verzijom
                     metadata: {
                         lastUpdated: new Date().toISOString(),
                         source: 'local'
@@ -193,8 +224,18 @@ class ATLASApp {
                 };
             }
             
-            localStorage.setItem(this.storageKey, JSON.stringify(dataToSave));
-            console.log('Podaci sačuvani u LocalStorage');
+            const serializedData = JSON.stringify(dataToSave);
+            localStorage.setItem(this.storageKey, serializedData);
+            console.log('Podaci sačuvani u LocalStorage pod ključem:', this.storageKey);
+            console.log('Broj operatera sačuvanih:', dataToSave.operateri.length);
+            console.log('Verzija sačuvana:', dataToSave.version);
+            
+            // Validacija - pročitaj nazad da provjeriš
+            const validation = localStorage.getItem(this.storageKey);
+            if (validation) {
+                const parsed = JSON.parse(validation);
+                console.log('Validacija LocalStorage: učitano', parsed.operateri.length, 'operatera');
+            }
         } catch (error) {
             console.error('Greška pri čuvanju u LocalStorage:', error);
             this.showNotification('Greška pri čuvanju podataka', 'error');
@@ -539,16 +580,27 @@ class ATLASApp {
     }
     
     handleQuickFilter(category) {
+        console.log('handleQuickFilter pozvan sa kategorijom:', category);
+        
         // Update active filter button
         document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
-        document.querySelector(`[data-category="${category}"]`).classList.add('active');
+        const filterBtn = document.querySelector(`[data-category="${category}"]`);
+        if (filterBtn) {
+            filterBtn.classList.add('active');
+            console.log('Filter dugme aktivirano za kategoriju:', category);
+        } else {
+            console.warn('Filter dugme za kategoriju "' + category + '" nije pronađeno');
+            return;
+        }
         
         // Filter operators
         if (category === 'all') {
             this.renderOperators();
+            console.log('Prikazani svi operateri');
         } else {
             const filtered = this.operators.filter(op => this.getCategoryClass(op) === category);
             this.renderOperators(filtered);
+            console.log('Filtrirano operatera po kategoriji "' + category + '":', filtered.length);
         }
     }
     
@@ -1359,7 +1411,12 @@ class ATLASApp {
     deleteOperator(id) {
         const operator = this.operators.find(op => op.id === id);
         if (operator && confirm(`Da li ste sigurni da želite da obrišete operatera "${operator.naziv}"?`)) {
+            console.log('Brisanje operatera sa ID:', id, 'naziv:', operator.naziv);
+            const preCount = this.operators.length;
             this.operators = this.operators.filter(op => op.id !== id);
+            const postCount = this.operators.length;
+            console.log('Operateri prije brisanja:', preCount, 'nakon brisanja:', postCount);
+            
             this.saveToLocalStorage();
             this.renderOperators();
             this.updateStatistics();
