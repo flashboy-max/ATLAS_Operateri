@@ -1,27 +1,72 @@
 # ATLAS STANDARDIZACIJA PODATAKA - MASTER PLAN
 
 **Datum kreiranja:** 8. septembar 2025.  
-**Verzija:** 1.0  
-**Status:** U pripremi  
+**Verzija:** 2.0 - AŽURIRANO SA REORGANIZACIJOM  
+**Status:** FAZA 2 u toku - 5/16 ISP operatera standardizovano  
 
 ---
 
 ## 🎯 CILJ PROJEKTA
 
-Standardizacija svih 28 operatera u ATLAS bazi podataka prema ujednačenoj JSON strukturi, počevši od dominantnih operatera kao prioritet.
+**DVOSTRUKI CILJ:**
+1. **Standardizacija podataka** - svih 28 operatera prema ujednačenoj JSON strukturi
+2. **Reorganizacija prikaza** - implementacija novog UI/UX sistema sa proširivim detaljima
 
 ## 📊 TRENUTNO STANJE
 
-### ✅ KOMPLETNO STANDARDIZOVANI OPERATERI (3/28):
-1. **BH Telecom d.d. Sarajevo** - ✅ Perfektna struktura sa socijalnim mrežama
-2. **Telekom Srpske a.d. Banja Luka (m:tel)** - ✅ Kompletno ažuriran sa .md fajlom
-3. **JP Hrvatske telekomunikacije d.d. Mostar (HT Eronet)** - ✅ Tek ažuriran
+### ✅ FAZA 1 ZAVRŠENA - DOMINANTNI OPERATERI (4/4):
+1. **BH Telecom d.d. Sarajevo** - ✅ Master template osnova
+2. **Telekom Srpske a.d. Banja Luka (m:tel)** - ✅ Kompletno standardizovan
+3. **JP Hrvatske telekomunikacije d.d. Mostar (HT Eronet)** - ✅ Standardizovan
+4. **ONE.Vip d.o.o.** - ✅ Standardizovan
 
-### 🚧 POTREBNA STANDARDIZACIJA (25/28):
-- **Dominantni operateri:** 1 preostao (ONE.Vip)
-- **Regionalni ISP:** ~15 operatera
-- **MVNO/Hibridni:** ~5 operatera
-- **Ostali:** ~4 operatera
+### 🚧 FAZA 2 U TOKU - ISP OPERATERI (5/16):
+✅ **Standardizovano:**
+1. **ADRIA NET Sarajevo** - regionalni ISP
+2. **AKTON d.o.o. Sarajevo** - multi-tehnološki ISP  
+3. **Miss.Net d.o.o. Bihać** - regionalni širokopojasni ISP
+4. **LANACO d.o.o.** - enterprise B2B tehnološki partner
+5. **MEDIASAT d.o.o.** - satelitski operater
+
+🔄 **Preostalo za FAZU 2:**
+- M&H Company d.o.o. (preskočeno po zahtevu)
+- **Ortak d.o.o.** ← SLEDEĆI U REDU
+- PROINTER ITSS d.o.o.
+- CRA TELECOM d.o.o.
+- Dasto Semtel d.o.o. Bijeljina (Zona.ba)
+- Elta-kabel d.o.o.
+- GiNet d.o.o. Gornji Vakuf-Uskoplje
+- Global Internet d.o.o. Novi Travnik
+- HKB Net d.o.o.
+- KATV HS d.o.o.
+- Logosoft d.o.o. Sarajevo
+
+---
+
+## 🏗️ REORGANIZACIJA PLANA (POST-STANDARDIZACIJA)
+
+### KORAK 1: Ujednačavanje i čišćenje baze podataka ✅ PRILIKOM RADA
+- ✅ Kontinuirano uklanjanje duplikata kroz standardizaciju
+- ✅ Migracija na novu proširenu JSON strukturu (tech_ prefiksi)
+- ✅ Verifikacija operateri.json čistoće
+
+### KORAK 2: Uređenje prikaza tabele (PRIORITET 1) 🔄 SLEDEĆI
+- **Smaniti tabelu sa 8 na 7 kolona** (ukloniti ATLAS Status, Prioritet)
+- **Dodati Kategorija kolonu** sa emoji ikonama (🏢, 📱, 🌐)
+- **Ažurirati širine kolona** u styles.css
+- **Kreirati category-badge stilove** (.category-dominantni, .category-mobilni)
+
+### KORAK 3: Prošireni detalji (PRIORITET 2) 🔄 SLEDEĆI  
+- **Implementirati expandable row** umesto modala
+- **toggleOperatorDetails()** funkcija za otvaranje/zatvaranje
+- **generateOperatorDetails()** za dinamički HTML sadržaj
+- **CSS animacije** za glatko otvaranje proširenih redova
+
+### KORAK 4: Poboljšanje UX-a i filtriranja (PRIORITET 3) 🔄 SLEDEĆI
+- **Brza dugmad za filtriranje** po kategorijama  
+- **Search highlighting** sa brojačem rezultata
+- **Keyboard shortcuts** (Ctrl+F, Esc)
+- **Animacije za search rezultate**
 
 ---
 
