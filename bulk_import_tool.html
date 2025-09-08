@@ -1,0 +1,683 @@
+<!DOCTYPE html>
+<html lang="sr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ATLAS - Bulk Import Tool</title>
+    <style>
+        :root {
+            --primary-color: #2563eb;
+            --success-color: #10b981;
+            --error-color: #ef4444;
+            --warning-color: #f59e0b;
+            --bg-primary: #f8fafc;
+            --text-primary: #334155;
+            --border-light: #e2e8f0;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.6;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, var(--primary-color) 0%, #1d4ed8 100%);
+            color: white;
+            padding: 24px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .header p {
+            opacity: 0.9;
+            font-size: 1.1rem;
+        }
+
+        .content {
+            padding: 32px;
+        }
+
+        .step {
+            background: white;
+            border: 2px solid var(--border-light);
+            border-radius: 12px;
+            padding: 24px;
+            margin-bottom: 24px;
+            transition: all 0.3s ease;
+        }
+
+        .step.active {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+        }
+
+        .step.completed {
+            border-color: var(--success-color);
+            background: rgba(16, 185, 129, 0.05);
+        }
+
+        .step-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+
+        .step-number {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: var(--primary-color);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        .step.completed .step-number {
+            background: var(--success-color);
+        }
+
+        .step-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .file-drop-zone {
+            border: 2px dashed var(--border-light);
+            border-radius: 8px;
+            padding: 48px 24px;
+            text-align: center;
+            background: #fafafa;
+            transition: all 0.3s ease;
+        }
+
+        .file-drop-zone.dragover {
+            border-color: var(--primary-color);
+            background: rgba(37, 99, 235, 0.05);
+        }
+
+        .file-input {
+            display: none;
+        }
+
+        .upload-btn {
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            margin: 8px;
+        }
+
+        .upload-btn:hover {
+            background: #1d4ed8;
+            transform: translateY(-1px);
+        }
+
+        .upload-options {
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-top: 16px;
+        }
+
+        .file-list {
+            margin-top: 16px;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+
+        .file-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 12px;
+            background: #f8f9fa;
+            border-radius: 6px;
+            margin-bottom: 8px;
+            font-size: 14px;
+        }
+
+        .file-item.success {
+            background: rgba(16, 185, 129, 0.1);
+            border-left: 3px solid var(--success-color);
+        }
+
+        .file-item.error {
+            background: rgba(239, 68, 68, 0.1);
+            border-left: 3px solid var(--error-color);
+        }
+
+        .status-icon {
+            font-size: 16px;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: #e5e7eb;
+            border-radius: 4px;
+            overflow: hidden;
+            margin: 16px 0;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: var(--primary-color);
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+
+        .action-btn {
+            background: var(--success-color);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            margin-right: 12px;
+        }
+
+        .action-btn:hover {
+            background: #059669;
+            transform: translateY(-1px);
+        }
+
+        .action-btn:disabled {
+            background: #9ca3af;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .secondary-btn {
+            background: #6b7280;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .secondary-btn:hover {
+            background: #4b5563;
+            transform: translateY(-1px);
+        }
+
+        .results-summary {
+            background: linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%);
+            border: 1px solid var(--success-color);
+            border-radius: 8px;
+            padding: 20px;
+            margin-top: 20px;
+        }
+
+        .summary-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 16px;
+            margin-top: 16px;
+        }
+
+        .summary-item {
+            text-align: center;
+            padding: 12px;
+            background: white;
+            border-radius: 6px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+
+        .summary-number {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--success-color);
+        }
+
+        .summary-label {
+            font-size: 14px;
+            color: #6b7280;
+            margin-top: 4px;
+        }
+
+        .log-area {
+            background: #1f2937;
+            color: #f9fafb;
+            padding: 16px;
+            border-radius: 8px;
+            font-family: 'Consolas', 'Monaco', monospace;
+            font-size: 13px;
+            line-height: 1.4;
+            max-height: 300px;
+            overflow-y: auto;
+            margin-top: 16px;
+        }
+
+        .log-entry {
+            margin-bottom: 4px;
+        }
+
+        .log-success { color: #10b981; }
+        .log-error { color: #ef4444; }
+        .log-warning { color: #f59e0b; }
+        .log-info { color: #3b82f6; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>📂 ATLAS Bulk Import Tool</h1>
+            <p>Uvoz operatera iz markdown fajlova u ATLAS bazu podataka</p>
+        </div>
+
+        <div class="content">
+            <!-- Korak 1: Upload fajlova -->
+            <div class="step active" id="step1">
+                <div class="step-header">
+                    <div class="step-number">1</div>
+                    <div class="step-title">Učitajte Markdown Fajlove</div>
+                </div>
+                
+                <div class="file-drop-zone" id="dropZone">
+                    <div>
+                        <p><strong>Prevucite markdown fajlove ovde</strong></p>
+                        <p>ili kliknite da izaberete opciju</p>
+                        <div class="upload-options">
+                            <button class="upload-btn" onclick="loadFromFolder()">
+                                📂 Učitaj iz foldera
+                            </button>
+                            <button class="upload-btn" onclick="document.getElementById('fileInput').click()">
+                                📁 Izaberite fajlove
+                            </button>
+                        </div>
+                        <input type="file" id="fileInput" class="file-input" multiple accept=".md" />
+                    </div>
+                </div>
+                
+                <div class="file-list" id="fileList"></div>
+                
+                <div style="margin-top: 20px;">
+                    <button class="action-btn" id="parseBtn" onclick="parseFiles()" disabled>
+                        🔄 Analiziraj Fajlove
+                    </button>
+                </div>
+            </div>
+
+            <!-- Korak 2: Pregled rezultata -->
+            <div class="step" id="step2">
+                <div class="step-header">
+                    <div class="step-number">2</div>
+                    <div class="step-title">Pregled Konvertovanih Podataka</div>
+                </div>
+                
+                <div class="progress-bar">
+                    <div class="progress-fill" id="progressFill"></div>
+                </div>
+                
+                <div id="conversionResults"></div>
+                
+                <div style="margin-top: 20px;">
+                    <button class="action-btn" id="importBtn" onclick="importToDatabase()" disabled>
+                        💾 Uvezi u Bazu
+                    </button>
+                    <button class="secondary-btn" onclick="downloadJson()">
+                        📥 Preuzmi JSON
+                    </button>
+                </div>
+            </div>
+
+            <!-- Korak 3: Finalno izvešće -->
+            <div class="step" id="step3">
+                <div class="step-header">
+                    <div class="step-number">3</div>
+                    <div class="step-title">Import Završen</div>
+                </div>
+                
+                <div class="results-summary" id="finalResults"></div>
+            </div>
+
+            <!-- Log area -->
+            <div class="log-area" id="logArea"></div>
+        </div>
+    </div>
+
+    <script src="markdown_converter.js"></script>
+    <script>
+        let uploadedFiles = [];
+        let convertedOperators = [];
+        let converter = new MarkdownToJsonConverter();
+
+        // File handling
+        document.getElementById('fileInput').addEventListener('change', handleFileSelect);
+
+        // Drag & drop handling
+        const dropZone = document.getElementById('dropZone');
+        dropZone.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            dropZone.classList.add('dragover');
+        });
+
+        dropZone.addEventListener('dragleave', () => {
+            dropZone.classList.remove('dragover');
+        });
+
+        dropZone.addEventListener('drop', (e) => {
+            e.preventDefault();
+            dropZone.classList.remove('dragover');
+            handleFileSelect(e);
+        });
+
+        function handleFileSelect(event) {
+            const files = event.target?.files || event.dataTransfer?.files;
+            if (!files) return;
+
+            uploadedFiles = Array.from(files).filter(file => file.name.endsWith('.md'));
+            displayFileList();
+            document.getElementById('parseBtn').disabled = uploadedFiles.length === 0;
+            
+            logMessage(`📁 Učitano ${uploadedFiles.length} markdown fajlova`, 'info');
+        }
+
+        async function loadFromFolder() {
+            try {
+                logMessage('🔄 Učitavam fajlove iz Pojedinacni_operateri foldera...', 'info');
+                
+                // Lista svih markdown fajlova iz foldera
+                const markdownFiles = [
+                    'ADRIA NET Sarajevo.md',
+                    'AKTON d.o.o. Sarajevo.md', 
+                    'BH Telecom d.d. Sarajevo.md',
+                    'CRA TELECOM d.o.o.md',
+                    'Dasto Semtel d.o.o. Bijeljina (Zona.ba).md',
+                    'Elta-kabel d.o.o.md',
+                    'GiNet d.o.o. Gornji Vakuf-Uskoplje.md',
+                    'Global Internet d.o.o. Novi Travnik.md',
+                    'Haloo d.o.o. Sarajevo (MVNO).md',
+                    'haloo.md',
+                    'HKB Net d.o.o.md',
+                    'JP Hrvatske telekomunikacije d.d. Mostar (HT Eronet).md',
+                    'KATV HS d.o.o.md',
+                    'LANACO d.o.o.md',
+                    'Logosoft d.o.o. Sarajevo.md',
+                    'M&H Company d.o.o.md',
+                    'MEDIA SKY d.o.o.md',
+                    'MEDIASAT d.o.o.md',
+                    'Miss.Net d.o.o. Bihac.md',
+                    'Novotel d.o.o. Sarajevo (MVNO).md',
+                    'ONE.Vip d.o.o.md',
+                    'Ortak d.o.o.md',
+                    'PROINTER ITSS d.o.o.md',
+                    'Supernova (Blicnet d.o.o. Banja Luka).md',
+                    'Telekom Srpske a.d. Banja Luka (m-tel).md',
+                    'Telemach d.o.o. Sarajevo.md',
+                    'Telinea d.o.o.md',
+                    'Telrad Net d.o.o. Bijeljina.md',
+                    'Telrad Net d.o.o.md',
+                    'TX TV d.o.o. Tuzla.md',
+                    'VKT-Net d.o.o. Bugojno.md',
+                    'Wirac.Net Pale.md'
+                ];
+
+                // Učitaj fajlove
+                const filePromises = markdownFiles.map(async filename => {
+                    try {
+                        const response = await fetch(`ToDo/Pojedinacni_operateri/${filename}`);
+                        if (response.ok) {
+                            const content = await response.text();
+                            return { filename, content };
+                        } else {
+                            logMessage(`❌ Nije moguće učitati ${filename}`, 'error');
+                            return null;
+                        }
+                    } catch (error) {
+                        logMessage(`❌ Greška pri učitavanju ${filename}: ${error.message}`, 'error');
+                        return null;
+                    }
+                });
+
+                const results = await Promise.all(filePromises);
+                const loadedFiles = results.filter(result => result !== null);
+
+                // Simuliraj File objekti za kompatibilnost
+                uploadedFiles = loadedFiles.map(fileData => ({
+                    name: fileData.filename,
+                    content: fileData.content
+                }));
+
+                displayFileList();
+                document.getElementById('parseBtn').disabled = uploadedFiles.length === 0;
+                
+                logMessage(`✅ Uspešno učitano ${uploadedFiles.length} od ${markdownFiles.length} fajlova`, 'success');
+                
+            } catch (error) {
+                logMessage(`❌ Greška pri učitavanju iz foldera: ${error.message}`, 'error');
+            }
+        }
+
+        function displayFileList() {
+            const fileList = document.getElementById('fileList');
+            fileList.innerHTML = uploadedFiles.map(file => `
+                <div class="file-item">
+                    <span>📄 ${file.name}</span>
+                    <span class="status-icon">⏳</span>
+                </div>
+            `).join('');
+        }
+
+        async function parseFiles() {
+            logMessage('🔄 Počinje konverzija markdown fajlova...', 'info');
+            
+            document.getElementById('step1').classList.remove('active');
+            document.getElementById('step1').classList.add('completed');
+            document.getElementById('step2').classList.add('active');
+
+            // Različito čitanje fajlova ovisno o tome da li su uploadovani ili učitani iz foldera
+            let fileDataArray;
+            
+            if (uploadedFiles[0] && uploadedFiles[0].content) {
+                // Fajlovi su već učitani iz foldera
+                fileDataArray = uploadedFiles;
+            } else {
+                // Fajlovi su uploadovani - treba ih čitati
+                const fileDataPromises = uploadedFiles.map(file => {
+                    return new Promise((resolve) => {
+                        const reader = new FileReader();
+                        reader.onload = (e) => {
+                            resolve({
+                                filename: file.name,
+                                content: e.target.result
+                            });
+                        };
+                        reader.readAsText(file);
+                    });
+                });
+                fileDataArray = await Promise.all(fileDataPromises);
+            }
+
+            convertedOperators = await converter.convertAllMarkdownFiles(fileDataArray);
+            
+            displayConversionResults();
+            updateProgress(100);
+            document.getElementById('importBtn').disabled = false;
+            
+            logMessage(`✅ Konvertovano ${convertedOperators.length} operatera`, 'success');
+        }
+
+        function displayConversionResults() {
+            const resultsDiv = document.getElementById('conversionResults');
+            resultsDiv.innerHTML = `
+                <div class="results-summary">
+                    <h3>📊 Rezultati Konverzije</h3>
+                    <div class="summary-grid">
+                        <div class="summary-item">
+                            <div class="summary-number">${convertedOperators.length}</div>
+                            <div class="summary-label">Operateri</div>
+                        </div>
+                        <div class="summary-item">
+                            <div class="summary-number">${convertedOperators.filter(op => op.kompletnost >= 80).length}</div>
+                            <div class="summary-label">Kompletni (80%+)</div>
+                        </div>
+                        <div class="summary-item">
+                            <div class="summary-number">${convertedOperators.filter(op => op.kontakt.telefon).length}</div>
+                            <div class="summary-label">Sa Telefonom</div>
+                        </div>
+                        <div class="summary-item">
+                            <div class="summary-number">${convertedOperators.filter(op => op.kontakt.email).length}</div>
+                            <div class="summary-label">Sa Email-om</div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function updateProgress(percent) {
+            document.getElementById('progressFill').style.width = percent + '%';
+        }
+
+        async function importToDatabase() {
+            logMessage('💾 Uvozim operatere u bazu podataka...', 'info');
+            
+            try {
+                // Učitaj postojeće podatke
+                const response = await fetch('./operateri.json');
+                const existingData = await response.json();
+                
+                // Dodaj nove operatere
+                const newData = {
+                    ...existingData,
+                    operateri: [...existingData.operateri, ...convertedOperators]
+                };
+                
+                // Ažuriraj metadata
+                newData.version = "2.1";
+                newData.bulk_import_at = new Date().toISOString();
+                newData.bulk_import_notes = `Bulk import dodao ${convertedOperators.length} operatera iz markdown fajlova`;
+                
+                console.log('Nova baza podataka:', newData);
+                
+                // Kreiraj download link za novi operateri.json
+                const dataStr = JSON.stringify(newData, null, 2);
+                const dataBlob = new Blob([dataStr], { type: 'application/json' });
+                const link = document.createElement('a');
+                link.href = URL.createObjectURL(dataBlob);
+                link.download = 'operateri.json';
+                
+                // Automatski download
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+                
+                // Prikaži finalne rezultate
+                document.getElementById('step2').classList.remove('active');
+                document.getElementById('step2').classList.add('completed');
+                document.getElementById('step3').classList.add('active');
+                
+                displayFinalResults();
+                logMessage(`✅ Uspešno uvezeno ${convertedOperators.length} operatera`, 'success');
+                logMessage(`📥 Preuzmi novi operateri.json fajl i zameni postojeći`, 'warning');
+                
+            } catch (error) {
+                logMessage(`❌ Greška pri uvozu: ${error.message}`, 'error');
+            }
+        }
+
+        function displayFinalResults() {
+            const resultsDiv = document.getElementById('finalResults');
+            resultsDiv.innerHTML = `
+                <h3>🎉 Import Uspešno Završen!</h3>
+                <div class="summary-grid">
+                    <div class="summary-item">
+                        <div class="summary-number">${convertedOperators.length}</div>
+                        <div class="summary-label">Novi Operateri</div>
+                    </div>
+                    <div class="summary-item">
+                        <div class="summary-number">${Math.round(convertedOperators.reduce((acc, op) => acc + op.kompletnost, 0) / convertedOperators.length)}%</div>
+                        <div class="summary-label">Prosečna Kompletnost</div>
+                    </div>
+                    <div class="summary-item">
+                        <div class="summary-number">${13 + convertedOperators.length}</div>
+                        <div class="summary-label">Ukupno u Bazi</div>
+                    </div>
+                    <div class="summary-item">
+                        <div class="summary-number">100%</div>
+                        <div class="summary-label">Uspešnost</div>
+                    </div>
+                </div>
+                <p style="margin-top: 16px; text-align: center; color: #10b981; font-weight: 600;">
+                    📊 ATLAS baza je ažurirana sa novim operaterima!
+                </p>
+            `;
+        }
+
+        function downloadJson() {
+            const dataStr = JSON.stringify({
+                operateri: convertedOperators,
+                metadata: {
+                    importDate: new Date().toISOString(),
+                    totalOperators: convertedOperators.length,
+                    tool: 'ATLAS Bulk Import Tool'
+                }
+            }, null, 2);
+            
+            const dataBlob = new Blob([dataStr], { type: 'application/json' });
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(dataBlob);
+            link.download = `atlas_bulk_import_${new Date().toISOString().split('T')[0]}.json`;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            
+            logMessage('📥 JSON fajl preuzet', 'success');
+        }
+
+        function logMessage(message, type = 'info') {
+            const logArea = document.getElementById('logArea');
+            const timestamp = new Date().toLocaleTimeString();
+            const logEntry = document.createElement('div');
+            logEntry.className = `log-entry log-${type}`;
+            logEntry.textContent = `${timestamp}: ${message}`;
+            logArea.appendChild(logEntry);
+            logArea.scrollTop = logArea.scrollHeight;
+        }
+
+        // Initialize log
+        logMessage('🚀 ATLAS Bulk Import Tool spreman za korišćenje', 'info');
+    </script>
+</body>
+</html>

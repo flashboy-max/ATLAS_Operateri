@@ -1,0 +1,130 @@
+{
+  "id": "telekom-srpske-mtel",
+  "naziv": "Telekom Srpske a.d. Banja Luka",
+  "komercijalni_naziv": "m:tel",
+  "tip": "Dominantni operater",
+  "status": "aktivan",
+  
+  "opis": "Drugi najveći telekom operater u BiH sa vlastitom infrastrukturom. Osnovan kao nasljednik Telekoma Srpske, m:tel je razvio kompletnu telekomunikacionu mrežu na teritoriji Republike Srpske i proširio svoje usluge na celokupnu BiH.",
+  "napomena": "Nacionalni operater sa vlastitom core network infrastrukturom, vlastiti PLMN kod 218 05, implementirana vlastitta medijacija za zakonito presretanje.",
+  
+  "kontakt": {
+    "adresa": "Bana Milosavljevića 8, 78000 Banja Luka",
+    "telefon": "+387 51 321 321",
+    "email": "info@mtel.ba",
+    "web": "https://www.mtel.ba",
+    "customer_service": {
+      "privatni": "066 10 10 10",
+      "poslovni": "0800 50 905",
+      "dopuna": "1201",
+      "msat": "063 67 000"
+    },
+    "drustvene_mreze": {
+      "facebook": "https://www.facebook.com/mtelBiH",
+      "instagram": "https://www.instagram.com/mtel_bih/",
+      "twitter": "https://twitter.com/mtel_bih",
+      "linkedin": "https://www.linkedin.com/company/mtel-bih/"
+    }
+  },
+  
+  "tehnicki_kontakti": [
+    {
+      "ime": "Zoran Sopka",
+      "pozicija": "Šef Službe za bezbjednost",
+      "email": "zoran.sopka@mtel.ba",
+      "telefon": "+387 66 915 505",
+      "tip_kontakta": "bezbednost"
+    },
+    {
+      "ime": "Slaven Ćosić",
+      "pozicija": "Šef Službe za ISP - Funkcija eksploatacije i održavanja",
+      "email": "slaven.cosic@mtel.ba",
+      "telefon": "+387 65 901 873",
+      "tip_kontakta": "tehnicki"
+    }
+  ],
+  
+  "detaljne_usluge": {
+    "mobilne": [
+      "GSM Prepaid",
+      "GSM Postpaid",
+      "eSIM",
+      "VoLTE",
+      "MVNO",
+      "Roaming"
+    ],
+    "fiksne": [
+      "PSTN",
+      "IP telefonija",
+      "IP Centrex",
+      "VPN"
+    ],
+    "internet": [
+      "FTTH",
+      "xDSL",
+      "Mobilni internet",
+      "Dedicated internet"
+    ],
+    "tv": [
+      "m:SAT",
+      "IPTV",
+      "Streaming"
+    ],
+    "cloud_poslovne": [
+      "Data center",
+      "Cloud hosting",
+      "Smart city",
+      "Smart home",
+      "IoT"
+    ],
+    "dodatne": [
+      "Prodaja uređaja",
+      "IT konsalting",
+      "Tehnička podrška",
+      "Obuka"
+    ]
+  },
+  
+  "detaljne_tehnologije": {
+    "mobilne": [
+      "GSM 900/1800",
+      "UMTS 900/2100",
+      "LTE 800/1800/2600",
+      "5G 3500",
+      "VoLTE",
+      "VoWiFi",
+      "eSIM",
+      "NB-IoT",
+      "LTE-M"
+    ],
+    "fiksne": [
+      "PSTN",
+      "ISDN",
+      "IP telefonija",
+      "SIP",
+      "H.323",
+      "SS7"
+    ],
+    "mrezne": [
+      "FTTH/FTTB",
+      "xDSL",
+      "Metro Ethernet",
+      "MPLS"
+    ]
+  },
+  
+  "zakonske_obaveze": {
+    "zakonito_presretanje": true,
+    "implementacija": "Vlastita medijacija",
+    "kontakt_osoba": "Zoran Sopka",
+    "posleduje_misljenje_zuo": true,
+    "pristup_obracunskim_podacima": true,
+    "napomene": "Implementiran je vlastiti sistem za zakonito presretanje komunikacija u skladu sa zakonom BiH. Operator posjeduje vlastitu medijaciju i može da odgovori na zahtjeve nadležnih organa."
+  },
+  
+  "kompletnost": 95,
+  "datum_azuriranja": "2025-09-08",
+  "atlas_status": "Spreman za ATLAS",
+  "prioritet": "visok",
+  "kontakt_osoba": "Zoran Sopka - Šef Službe za bezbjednost"
+}

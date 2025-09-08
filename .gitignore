@@ -1,0 +1,33 @@
+# Backup fajlovi
+*_backup.*
+*_migrated.*
+*.bak
+
+# Node modules 
+node_modules/
+
+# Log fajlovi
+*.log
+logs/
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# IDE fajlovi
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Temporary fajlovi
+tmp/
+temp/
+
+# Windows fajlovi
+desktop.ini

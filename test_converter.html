@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="sr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Markdown Converter</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        pre { background: #f5f5f5; padding: 10px; border-radius: 5px; overflow-x: auto; }
+        .result { margin-top: 20px; border: 1px solid #ddd; padding: 15px; border-radius: 5px; }
+    </style>
+</head>
+<body>
+    <h1>Test Markdown Converter</h1>
+    
+    <button onclick="testConverter()">Test konverter sa ADRIA NET fajlom</button>
+    <button onclick="testMtelConverter()">Test konverter sa m:tel fajlom</button>
+    
+    <div id="result" class="result"></div>
+
+    <script src="markdown_converter.js"></script>
+    <script>
+        async function testConverter() {
+            try {
+                const response = await fetch('test_adria_net.md');
+                const content = await response.text();
+                
+                const converter = new MarkdownToJsonConverter();
+                const result = converter.parseMarkdownFile(content, 'test_adria_net.md');
+                
+                document.getElementById('result').innerHTML = 
+                    '<h3>ADRIA NET konverter rezultat:</h3>' +
+                    '<pre>' + JSON.stringify(result, null, 2) + '</pre>';
+            } catch (error) {
+                document.getElementById('result').innerHTML = 
+                    '<h3>Greška:</h3><pre>' + error.message + '</pre>';
+            }
+        }
+
+        async function testMtelConverter() {
+            try {
+                const response = await fetch('test_mtel_rs.md');
+                const content = await response.text();
+                
+                const converter = new MarkdownToJsonConverter();
+                const result = converter.parseMarkdownFile(content, 'test_mtel_rs.md');
+                
+                document.getElementById('result').innerHTML = 
+                    '<h3>m:tel konverter rezultat:</h3>' +
+                    '<pre>' + JSON.stringify(result, null, 2) + '</pre>';
+            } catch (error) {
+                document.getElementById('result').innerHTML = 
+                    '<h3>Greška:</h3><pre>' + error.message + '</pre>';
+            }
+        }
+    </script>
+</body>
+</html>

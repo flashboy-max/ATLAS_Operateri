@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="sr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ATLAS Migration Tool - PRIORITET 5</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #f8fafc;
+        }
+        .container {
+            background: white;
+            border-radius: 12px;
+            padding: 30px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            border-bottom: 3px solid #3b82f6;
+            padding-bottom: 20px;
+        }
+        .status {
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+            font-weight: bold;
+        }
+        .status.info { background: #dbeafe; color: #1e40af; }
+        .status.success { background: #dcfce7; color: #166534; }
+        .status.error { background: #fee2e2; color: #dc2626; }
+        .status.warning { background: #fef3c7; color: #92400e; }
+        
+        .btn {
+            background: #3b82f6;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 10px;
+            transition: all 0.2s ease;
+        }
+        .btn:hover { background: #2563eb; transform: translateY(-1px); }
+        .btn:disabled { background: #9ca3af; cursor: not-allowed; transform: none; }
+        
+        .step {
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 15px 0;
+        }
+        .step.completed { border-color: #10b981; background: #f0fdf4; }
+        .step.active { border-color: #3b82f6; background: #eff6ff; }
+        
+        .migration-log {
+            background: #1f2937;
+            color: #e5e7eb;
+            padding: 15px;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            max-height: 300px;
+            overflow-y: auto;
+            white-space: pre-line;
+        }
+        
+        .comparison-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+        .comparison-table th,
+        .comparison-table td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #e5e7eb;
+        }
+        .comparison-table th {
+            background: #f9fafb;
+            font-weight: bold;
+        }
+        .old-structure { color: #ef4444; }
+        .new-structure { color: #10b981; }
+        .new-field { background: #dcfce7; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🚀 ATLAS Migration Tool</h1>
+            <h2>PRIORITET 5: Proširena Struktura Podataka</h2>
+            <p>Migracija postojećih operatera u novu detaljnu strukturu</p>
+        </div>
+
+        <!-- Status Panel -->
+        <div id="statusPanel">
+            <div class="status info">
+                ℹ️ Spreman za migraciju. Kliknite "Započni Migraciju" za početak.
+            </div>
+        </div>
+
+        <!-- Migration Steps -->
+        <div class="migration-steps">
+            <div class="step" id="step1">
+                <h3>📂 Korak 1: Učitavanje Postojećih Podataka</h3>
+                <p>Učitava postojeće operatere iz operateri.json</p>
+                <button class="btn" onclick="loadExistingData()">Učitaj Podatke</button>
+            </div>
+            
+            <div class="step" id="step2">
+                <h3>🔄 Korak 2: Pregled Migracije</h3>
+                <p>Prikazuje šta će biti promenjeno i dodano</p>
+                <button class="btn" disabled onclick="previewMigration()">Pregled Promena</button>
+            </div>
+            
+            <div class="step" id="step3">
+                <h3>✅ Korak 3: Izvršavanje Migracije</h3>
+                <p>Migrira podatke u novu strukturu</p>
+                <button class="btn" disabled onclick="executeMigration()">Izvršiti Migraciju</button>
+            </div>
+            
+            <div class="step" id="step4">
+                <h3>💾 Korak 4: Sačuvaj Rezultate</h3>
+                <p>Čuva migriranu bazu u novi fajl</p>
+                <button class="btn" disabled onclick="saveResults()">Sačuvaj</button>
+            </div>
+        </div>
+
+        <!-- Migration Log -->
+        <div class="migration-log-container" style="display: none;">
+            <h3>📋 Migration Log</h3>
+            <div id="migrationLog" class="migration-log"></div>
+        </div>
+
+        <!-- Results Preview -->
+        <div id="resultsPreview" style="display: none;">
+            <h3>📊 Rezultati Migracije</h3>
+            <div id="resultsContent"></div>
+        </div>
+    </div>
+
+    <script src="migration_prioritet5.js"></script>
+    <script>
+        let existingData = null;
+        let migratedData = null;
+        let migrator = null;
+
+        // Status updating
+        function updateStatus(message, type = 'info') {
+            const panel = document.getElementById('statusPanel');
+            panel.innerHTML = `<div class="status ${type}">${message}</div>`;
+        }
+
+        function logMessage(message) {
+            const logDiv = document.getElementById('migrationLog');
+            const logContainer = document.querySelector('.migration-log-container');
+            logContainer.style.display = 'block';
+            logDiv.textContent += new Date().toLocaleTimeString() + ': ' + message + '\n';
+            logDiv.scrollTop = logDiv.scrollHeight;
+        }
+
+        function markStepCompleted(stepId) {
+            document.getElementById(stepId).classList.add('completed');
+        }
+
+        function enableStep(stepId) {
+            const step = document.getElementById(stepId);
+            step.classList.add('active');
+            const btn = step.querySelector('button');
+            btn.disabled = false;
+        }
+
+        // Step 1: Load existing data
+        async function loadExistingData() {
+            try {
+                updateStatus('🔄 Učitavam postojeće podatke...', 'info');
+                logMessage('Početak učitavanja podataka...');
+                
+                const response = await fetch('./operateri.json');
+                if (!response.ok) {
+                    throw new Error('Greška pri učitavanju operateri.json');
+                }
+                
+                existingData = await response.json();
+                migrator = new OperatorMigrator();
+                
+                logMessage(`Uspešno učitano ${existingData.operateri.length} operatera`);
+                updateStatus(`✅ Učitano ${existingData.operateri.length} operatera. Spremno za pregled migracije.`, 'success');
+                
+                markStepCompleted('step1');
+                enableStep('step2');
+                
+            } catch (error) {
+                logMessage('Greška: ' + error.message);
+                updateStatus('❌ Greška pri učitavanju podataka: ' + error.message, 'error');
+            }
+        }
+
+        // Step 2: Preview migration
+        function previewMigration() {
+            if (!existingData || !migrator) {
+                updateStatus('❌ Prvo učitajte postojeće podatke', 'error');
+                return;
+            }
+
+            updateStatus('🔍 Kreiranje pregleda migracije...', 'info');
+            logMessage('Kreiranje pregleda migracije...');
+
+            // Create preview of changes
+            const preview = document.getElementById('resultsPreview');
+            const content = document.getElementById('resultsContent');
+            
+            let previewHTML = `
+                <h4>📋 Šta će biti promenjeno:</h4>
+                <table class="comparison-table">
+                    <tr>
+                        <th>Polje</th>
+                        <th>Trenutno Stanje</th>
+                        <th>Nakon Migracije</th>
+                        <th>Status</th>
+                    </tr>
+                    <tr>
+                        <td>Osnovna struktura</td>
+                        <td class="old-structure">8 osnovnih polja</td>
+                        <td class="new-structure">15+ polja sa kategorijama</td>
+                        <td>🔄 Prošireno</td>
+                    </tr>
+                    <tr class="new-field">
+                        <td>opis</td>
+                        <td class="old-structure">❌ Ne postoji</td>
+                        <td class="new-structure">✅ Detaljni opis operatera</td>
+                        <td>➕ Novo</td>
+                    </tr>
+                    <tr class="new-field">
+                        <td>napomena</td>
+                        <td class="old-structure">❌ Ne postoji</td>
+                        <td class="new-structure">✅ Specifične napomene</td>
+                        <td>➕ Novo</td>
+                    </tr>
+                    <tr class="new-field">
+                        <td>tehnicki_kontakti</td>
+                        <td class="old-structure">Jednostavan string</td>
+                        <td class="new-structure">✅ Array objekata sa detaljima</td>
+                        <td>🔄 Reorganizovano</td>
+                    </tr>
+                    <tr class="new-field">
+                        <td>detaljne_usluge</td>
+                        <td class="old-structure">Array stringova</td>
+                        <td class="new-structure">✅ Kategorisane po tipovima</td>
+                        <td>🔄 Reorganizovano</td>
+                    </tr>
+                    <tr class="new-field">
+                        <td>detaljne_tehnologije</td>
+                        <td class="old-structure">Array stringova</td>
+                        <td class="new-structure">✅ Kategorisane po tipovima</td>
+                        <td>🔄 Reorganizovano</td>
+                    </tr>
+                    <tr class="new-field">
+                        <td>zakonske_obaveze</td>
+                        <td class="old-structure">❌ Ne postoji</td>
+                        <td class="new-structure">✅ Kompletan objekat</td>
+                        <td>➕ Novo</td>
+                    </tr>
+                    <tr class="new-field">
+                        <td>kontakt.customer_service</td>
+                        <td class="old-structure">❌ Ne postoji</td>
+                        <td class="new-structure">✅ Organizovani brojevi</td>
+                        <td>➕ Novo</td>
+                    </tr>
+                    <tr class="new-field">
+                        <td>kontakt.drustvene_mreze</td>
+                        <td class="old-structure">❌ Ne postoji</td>
+                        <td class="new-structure">✅ Linkovi za sve platforme</td>
+                        <td>➕ Novo</td>
+                    </tr>
+                </table>
+                
+                <h4>📊 Statistike migracije:</h4>
+                <ul>
+                    <li><strong>Broj operatera:</strong> ${existingData.operateri.length}</li>
+                    <li><strong>Nova polja:</strong> 6+ po operateru</li>
+                    <li><strong>Reorganizovana polja:</strong> 3 po operateru</li>
+                    <li><strong>Backward compatibility:</strong> ✅ Sva postojeća polja zadržana</li>
+                </ul>
+            `;
+
+            content.innerHTML = previewHTML;
+            preview.style.display = 'block';
+
+            logMessage('Pregled migracije kreiran');
+            updateStatus('✅ Pregled migracije spreman. Možete pokrenuti migraciju.', 'success');
+            
+            markStepCompleted('step2');
+            enableStep('step3');
+        }
+
+        // Step 3: Execute migration
+        function executeMigration() {
+            if (!existingData || !migrator) {
+                updateStatus('❌ Potrebno je prvo učitati podatke i kreirati pregled', 'error');
+                return;
+            }
+
+            updateStatus('🚀 Izvršavam migraciju...', 'info');
+            logMessage('=== POČETAK MIGRACIJE ===');
+
+            try {
+                // Override console.log to capture migration logs
+                const originalLog = console.log;
+                console.log = function(message) {
+                    logMessage(message);
+                    originalLog.apply(console, arguments);
+                };
+
+                migratedData = migrator.migrateDatabase(existingData);
+
+                // Restore console.log
+                console.log = originalLog;
+
+                logMessage('=== MIGRACIJA ZAVRŠENA ===');
+                logMessage(`Uspešno migrirano ${migratedData.operateri.length} operatera`);
+                
+                updateStatus('✅ Migracija završena uspešno! Možete sačuvati rezultate.', 'success');
+                
+                markStepCompleted('step3');
+                enableStep('step4');
+
+            } catch (error) {
+                logMessage('GREŠKA TOKOM MIGRACIJE: ' + error.message);
+                updateStatus('❌ Greška tokom migracije: ' + error.message, 'error');
+            }
+        }
+
+        // Step 4: Save results
+        function saveResults() {
+            if (!migratedData) {
+                updateStatus('❌ Nema podataka za čuvanje', 'error');
+                return;
+            }
+
+            try {
+                const dataStr = JSON.stringify(migratedData, null, 2);
+                const dataBlob = new Blob([dataStr], {type: 'application/json'});
+                
+                const link = document.createElement('a');
+                link.href = URL.createObjectURL(dataBlob);
+                link.download = 'operateri_migrated_prioritet5.json';
+                link.click();
+
+                logMessage('Fajl sačuvan kao: operateri_migrated_prioritet5.json');
+                updateStatus('✅ Migracija kompletna! Fajl je sačuvan. Zameni postojeći operateri.json sa novim fajlom.', 'success');
+                
+                markStepCompleted('step4');
+
+            } catch (error) {
+                logMessage('Greška pri čuvanju: ' + error.message);
+                updateStatus('❌ Greška pri čuvanju: ' + error.message, 'error');
+            }
+        }
+    </script>
+</body>
+</html>
