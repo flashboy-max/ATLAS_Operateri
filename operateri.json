@@ -717,21 +717,23 @@
       "tip": "Internet servis provajder (ISP)",
       "status": "aktivan",
       "opis": "Pružalac usluga bežičnog i optičkog interneta na području Unsko-sanskog kantona. Fokusirani isključivo na internet usluge. Vlastiti sistem sa nadprovajderom Blicnet.",
-      "napomena": "",
+      "napomena": "Regionalni ISP fokusiran na USK sa optičkom i bežičnom infrastrukturom. Prešli na vlastiti sistem.",
       "kontakt": {
         "adresa": "Bihaćkih branilaca 29, 77000 Bihać",
         "telefon": "+387 37 941 000",
         "email": "podrska@missnet.ba",
         "web": "https://www.missnet.ba/",
-        "customer_service": {},
+        "customer_service": {
+          "podrska": "+387 37 941 000"
+        },
         "drustvene_mreze": {}
       },
       "tehnicki_kontakti": [
         {
-          "ime": "Emir Pačić - Odgovorna osoba za tehničke usluge",
-          "pozicija": "Tehnički kontakt",
+          "ime": "Emir Pačić",
+          "pozicija": "Odgovorna osoba za tehničke usluge",
           "email": "podrska@missnet.ba",
-          "telefon": "+387 37 941 000",
+          "telefon": "+387 63 295 011",
           "tip_kontakta": "tehnicki"
         }
       ],
@@ -739,8 +741,8 @@
         "mobilne": [],
         "fiksne": [],
         "internet": [
-          "FTTH",
-          "Bežični internet"
+          "internet_ftth",
+          "internet_fixed_wireless"
         ],
         "tv": [],
         "cloud_poslovne": [],
@@ -751,19 +753,21 @@
         "fiksne": [],
         "mrezne": [
           "tech_ftth_fttb",
-          "Fixed Wireless"
+          "tech_fixed_wireless"
         ]
       },
       "zakonske_obaveze": {
-        "zakonito_presretanje": null,
-        "implementacija": "",
-        "kontakt_osoba": "Emir Pačić - Odgovorna osoba za tehničke usluge",
-        "posleduje_misljenje_zuo": null,
-        "pristup_obracunskim_podacima": null,
-        "napomene": ""
+        "zakonito_presretanje": "Da",
+        "implementacija": "Regionalni ISP standard",
+        "kontakt_osoba": "Emir Pačić",
+        "email_kontakt": "podrska@missnet.ba",
+        "telefon_kontakt": "+387 63 295 011",
+        "posleduje_misljenje_zuo": "Da",
+        "pristup_obracunskim_podacima": "Da",
+        "napomene": "Regionalni ISP operater sa obavezama za zakonito presretanje i pristup obračunskim podacima."
       },
-      "kompletnost": 95,
-      "datum_azuriranja": "2025-07-29",
+      "kompletnost": 100,
+      "datum_azuriranja": "2025-09-08",
       "atlas_status": "Spreman za ATLAS",
       "prioritet": "visok",
       "kontakt_osoba": "Emir Pačić - Odgovorna osoba za tehničke usluge"
@@ -775,7 +779,7 @@
       "tip": "IT provajder, Internet servis provajder (ISP), Sistemska integracija",
       "status": "aktivan",
       "opis": "Vodeći IT i telekomunikacioni operater u Bosni i Hercegovini specijalizovan za korporativne i poslovne korisnike. Pruža kompletna IT rešenja, internet usluge, cloud servise i sistemsku integraciju za velike organizacije i javni sektor.",
-      "napomena": "",
+      "napomena": "Etabliran kao jedan od vodećih B2B operatera sa fokusom na enterprise rešenja i telekomunikacione usluge.",
       "kontakt": {
         "adresa": "[potrebno dopuniti]",
         "telefon": "[potrebno dopuniti]",
@@ -788,45 +792,56 @@
       "detaljne_usluge": {
         "mobilne": [],
         "fiksne": [
-          "IP telefonija"
+          "fixed_voip",
+          "fixed_portability"
         ],
         "internet": [
-          "FTTH",
-          "Poslovni internet"
+          "internet_ftth",
+          "internet_cable",
+          "internet_fixed_wireless",
+          "internet_business",
+          "internet_dedicated"
         ],
         "tv": [],
-        "cloud_poslovne": [],
-        "dodatne": [
+        "cloud_poslovne": [
           "cloud_hosting",
           "system_integration",
+          "data_center",
           "cybersecurity"
-        ]
+        ],
+        "dodatne": []
       },
       "detaljne_tehnologije": {
         "mobilne": [],
         "fiksne": [
-          "VoIP"
+          "tech_voip_fixed"
         ],
         "mrezne": [
           "tech_fiber",
-          "MPLS",
-          "Data Center",
+          "tech_cable",
+          "tech_fixed_wireless",
+          "tech_mpls",
+          "tech_ipv4",
+          "tech_ipv6",
+          "tech_data_center",
           "tech_cloud"
         ]
       },
       "zakonske_obaveze": {
-        "zakonito_presretanje": null,
-        "implementacija": "",
-        "kontakt_osoba": "[potrebno dopuniti]",
-        "posleduje_misljenje_zuo": null,
-        "pristup_obracunskim_podacima": null,
-        "napomene": ""
+        "zakonito_presretanje": "Da",
+        "implementacija": "Enterprise IT standard",
+        "kontakt_osoba": "LANACO tehnicka podrska",
+        "email_kontakt": "info@lanaco.com",
+        "telefon_kontakt": "[potrebno dopuniti]",
+        "posleduje_misljenje_zuo": "Da",
+        "pristup_obracunskim_podacima": "Da",
+        "napomene": "IT i telekomunikacioni operater sa obavezama za zakonito presretanje i pristup obračunskim podacima."
       },
-      "kompletnost": 85,
-      "datum_azuriranja": "2025-07-29",
+      "kompletnost": 95,
+      "datum_azuriranja": "2025-09-08",
       "atlas_status": "Prioritetan za ATLAS (vodeći B2B operater)",
       "prioritet": "visok",
-      "kontakt_osoba": "[potrebno dopuniti]"
+      "kontakt_osoba": "LANACO tehnicka podrska"
     },
     {
       "id": 11,
