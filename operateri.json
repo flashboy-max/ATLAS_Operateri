@@ -161,82 +161,84 @@
       ],
       "detaljne_usluge": {
         "mobilne": [
-          "GSM Prepaid",
-          "GSM Postpaid",
-          "eSIM",
-          "VoLTE",
-          "VoWiFi",
-          "Roaming"
+          "mobile_prepaid",
+          "mobile_postpaid",
+          "mobile_esim",
+          "mobile_volte_vowifi",
+          "mobile_roaming",
+          "mobile_mnp"
         ],
         "fiksne": [
-          "PSTN",
-          "ISDN",
-          "IP telefonija",
-          "Glasovna pošta"
+          "fixed_pstn",
+          "fixed_isdn",
+          "fixed_voip",
+          "voice_mail"
         ],
         "internet": [
-          "FTTH",
-          "xDSL",
-          "Mobilni internet",
-          "Dedicated internet"
+          "internet_ftth",
+          "internet_adsl_vdsl",
+          "internet_mobile",
+          "dedicated_internet"
         ],
         "tv": [
-          "IPTV"
+          "iptv"
         ],
         "cloud_poslovne": [
-          "Cloud hosting",
-          "Cloud backup",
-          "Data center",
-          "Office365",
-          "Smart city",
-          "Smart home",
-          "Digitalni potpis"
+          "cloud_hosting",
+          "cloud_backup",
+          "data_center",
+          "office365",
+          "smart_city",
+          "smart_home",
+          "digital_signature"
         ],
         "dodatne": [
-          "Prodaja uređaja",
-          "Prodaja rutera",
-          "Sistemska integracija"
+          "device_sales",
+          "router_sales",
+          "system_integration"
         ]
       },
       "detaljne_tehnologije": {
         "mobilne": [
-          "GSM 900/1800",
-          "UMTS 900/2100",
-          "LTE 800/1800/2600",
-          "5G Ready",
-          "VoLTE",
-          "VoWiFi",
-          "HLR/HSS",
-          "EIR",
-          "SMSC/MMSC"
+          "tech_2g",
+          "tech_3g",
+          "tech_4g",
+          "tech_5g_ready",
+          "tech_volte",
+          "tech_vowifi",
+          "tech_hlr_hss",
+          "tech_eir",
+          "tech_smsc_mmsc"
         ],
         "fiksne": [
-          "PSTN",
-          "ISDN",
-          "VoIP",
-          "IMS"
+          "tech_pstn",
+          "tech_isdn",
+          "tech_voip_fixed",
+          "tech_ims_fixed"
         ],
         "mrezne": [
-          "FTTH/FTTB",
-          "xDSL",
-          "DOCSIS",
-          "IPv6",
-          "CGNAT",
-          "MPLS",
-          "SD-WAN",
-          "CDN"
+          "tech_ftth_fttb",
+          "tech_xdsl",
+          "tech_docsis",
+          "tech_ipv6",
+          "tech_cgnat",
+          "tech_mpls",
+          "tech_sdwan",
+          "tech_cdn"
         ]
       },
       "zakonske_obaveze": {
-        "zakonito_presretanje": true,
+        "zakonito_presretanje": "Da",
         "implementacija": "Vlastita medijacija",
         "kontakt_osoba": "Nedim Fazlibegović",
-        "posleduje_misljenje_zuo": true,
-        "pristup_obracunskim_podacima": true,
+        "email_kontakt": "nedim.fazlibegovic@bhtelecom.ba",
+        "telefon_kontakt": "+387 61 616 034",
+        "posleduje_misljenje_zuo": "Da",
+        "pristup_obracunskim_podacima": "Da",
         "napomene": "Kao dominantni operater, BH Telecom ima sve zakonske obaveze implementirane u skladu sa BiH zakonom. Vlastita medijacija za zakonito presretanje."
       },
       "kompletnost": 100,
-      "datum_azuriranja": "2025-07-29",
+      "datum_azuriranja": "2025-09-08",
       "atlas_status": "Spreman za ATLAS",
       "prioritet": "visok",
       "kontakt_osoba": "Nedim Fazlibegović - Šef službe za ZPT i saradnju sa sudovima"
