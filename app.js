@@ -463,11 +463,20 @@ class ATLASApp {
         });
         
         // Quick Category Filters
-        document.querySelectorAll('.filter-btn').forEach(btn => {
+        console.log('🔧 === SETUP FILTER EVENT LISTENERS ===');
+        const filterButtons = document.querySelectorAll('.filter-btn');
+        console.log('📊 Pronađeno filter dugmića:', filterButtons.length);
+        
+        filterButtons.forEach((btn, index) => {
+            const category = btn.dataset.category;
+            console.log(`   ${index + 1}. "${btn.textContent.trim()}" → data-category="${category}"`);
+            
             btn.addEventListener('click', (e) => {
+                console.log('🖱️ KLIK na filter dugme:', e.target.dataset.category);
                 this.handleQuickFilter(e.target.dataset.category);
             });
         });
+        console.log('🔧 === FILTER SETUP ZAVRŠEN ===');
         
         // Modal Controls
         this.elements.addOperatorBtn.addEventListener('click', () => {
@@ -665,33 +674,33 @@ class ATLASApp {
     }
     
     applyFilters() {
+        console.log('🔍 === APPLY FILTERS DEBUG START ===');
         let filtered = this.filteredOperators.length > 0 ? [...this.filteredOperators] : [...this.operators];
+        console.log('📊 Početni broj operatera za filtriranje:', filtered.length);
         
         // Status filter
         const statusFilter = this.elements.statusFilter.value;
+        console.log('📋 Status filter vrednost:', statusFilter);
         if (statusFilter) {
+            const beforeCount = filtered.length;
             filtered = filtered.filter(op => op.status === statusFilter);
+            console.log(`   Status filter: ${beforeCount} → ${filtered.length} operatera`);
         }
         
         // Type filter
         const typeFilter = this.elements.typeFilter.value;
+        console.log('📋 Type filter vrednost:', typeFilter);
         if (typeFilter) {
-            const categories = {
-                'dominantni': ['BH Telecom', 'HT Eronet', 'm:tel'],
-                'mobilni_mvno': ['ONE', 'Zona.ba', 'haloo', 'Novotel', 'Logosoft'],
-                'regionalni_isp': ['Telemach', 'ADRIA NET', 'Miss.Net'],
-                'enterprise_b2b': ['AKTON', 'LANACO']
-            };
+            const beforeCount = filtered.length;
             
-            if (categories[typeFilter]) {
-                filtered = filtered.filter(op => 
-                    categories[typeFilter].some(cat => 
-                        op.komercijalni_naziv.includes(cat) || op.naziv.includes(cat)
-                    )
-                );
-            }
+            // Koristimo getCategoryClass umesto hardkodiranih kategorija
+            filtered = filtered.filter(op => this.getCategoryClass(op) === typeFilter);
+            console.log(`   Type filter: ${beforeCount} → ${filtered.length} operatera`);
+            console.log('   Filtrirani operateri:', filtered.map(op => `${op.naziv} (${this.getCategoryClass(op)})`));
         }
         
+        console.log('📊 Finalni broj operatera:', filtered.length);
+        console.log('🔍 === APPLY FILTERS DEBUG END ===');
         this.renderOperators(filtered);
     }
     
@@ -827,28 +836,41 @@ class ATLASApp {
     }
     
     handleQuickFilter(category) {
-        console.log('handleQuickFilter pozvan sa kategorijom:', category);
+        console.log('🔍 === QUICK FILTER DEBUG START ===');
+        console.log('📥 Primljena kategorija:', category);
+        console.log('📊 Ukupno operatera u aplikaciji:', this.operators.length);
         
         // Update active filter button
         document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
         const filterBtn = document.querySelector(`[data-category="${category}"]`);
         if (filterBtn) {
             filterBtn.classList.add('active');
-            console.log('Filter dugme aktivirano za kategoriju:', category);
+            console.log('✅ Filter dugme aktivirano za kategoriju:', category);
         } else {
-            console.warn('Filter dugme za kategoriju "' + category + '" nije pronađeno');
+            console.warn('❌ Filter dugme za kategoriju "' + category + '" nije pronađeno');
             return;
         }
         
         // Filter operators
         if (category === 'all') {
             this.renderOperators();
-            console.log('Prikazani svi operateri');
+            console.log('📋 Prikazani svi operateri (', this.operators.length, ')');
         } else {
+            console.log('🔎 Filtriranje operatera po kategoriji "' + category + '"...');
+            
+            // Debug: prikaz kategorizacije za sve operatere
+            this.operators.forEach(op => {
+                const opCategory = this.getCategoryClass(op);
+                console.log(`   - ${op.naziv}: kategorija="${opCategory}", tip="${op.tip}"`);
+            });
+            
             const filtered = this.operators.filter(op => this.getCategoryClass(op) === category);
+            console.log('📊 Filtrirano operatera:', filtered.length);
+            console.log('📋 Filtrirani operateri:', filtered.map(op => op.naziv));
+            
             this.renderOperators(filtered);
-            console.log('Filtrirano operatera po kategoriji "' + category + '":', filtered.length);
         }
+        console.log('🔍 === QUICK FILTER DEBUG END ===');
     }
     
     openModal(mode, operatorId = null) {
@@ -2067,10 +2089,21 @@ class ATLASApp {
         const komercijalni = (operator.komercijalni_naziv || '').toLowerCase();
         const tip = operator.tip.toLowerCase();
         
+        // Debug logging za kategorizaciju
+        const debugInfo = {
+            naziv: operator.naziv,
+            komercijalni: operator.komercijalni_naziv,
+            tip: operator.tip,
+            nazivLower: naziv,
+            komercijalniLower: komercijalni,
+            tipLower: tip
+        };
+        
         // Dominantni operateri
         if (naziv.includes('bh telecom') || komercijalni.includes('bh telecom') ||
             naziv.includes('ht eronet') || komercijalni.includes('eronet') ||
             naziv.includes('telekom srpske') || komercijalni.includes('m:tel') || komercijalni.includes('mtel')) {
+            console.log('🏢 DOMINANTNI:', debugInfo);
             return 'dominantni';
         }
         
@@ -2079,6 +2112,7 @@ class ATLASApp {
             komercijalni.includes('zona.ba') || komercijalni.includes('haloo') ||
             komercijalni.includes('one') || komercijalni.includes('logosoft') ||
             komercijalni.includes('novotel')) {
+            console.log('📱 MOBILNI:', debugInfo);
             return 'mobilni';
         }
         
@@ -2086,10 +2120,12 @@ class ATLASApp {
         if (tip.includes('b2b') || tip.includes('enterprise') || tip.includes('carrier') ||
             tip.includes('veleprodajne') || tip.includes('konsalting') ||
             naziv.includes('akton') || naziv.includes('lanaco') || naziv.includes('prointer')) {
+            console.log('💼 B2B:', debugInfo);
             return 'b2b';
         }
         
         // ISP operateri (default za sve ostale)
+        console.log('🌐 ISP:', debugInfo);
         return 'isp';
     }
     
