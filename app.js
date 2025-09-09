@@ -5,17 +5,8 @@
 // Import standard catalog
 import { standardCatalog, catalogUtils } from './generated/standard_catalog.js';
 
-// Import utilities
-import {
-    getReadableTechName,
-    getReadableServiceName,
-    getTechTooltip,
-    getServiceTooltip
-} from './src/utils/formatters.js';
-import { CATEGORY_TYPE_MAP } from './src/utils/constants.js';
-import { NotificationManager } from './src/components/NotificationManager.js';
-import { StorageService } from './src/services/StorageService.js';
-import { SearchFilter } from './src/components/SearchFilter.js';
+// Import components
+import { OperatorCard } from './src/components/OperatorCard.js';
 
 // Catalog loaded successfully
 console.log('✅ Standard catalog loaded:', standardCatalog?.services?.length || 0, 'services,', standardCatalog?.technologies?.length || 0, 'technologies');
@@ -40,10 +31,201 @@ window.testCatalog = function() {
     console.log('🧪 === END CATALOG TEST ===');
 };
 
-// ===== MODULAR COMPONENTS START =====
-// Global functions moved to src/utils/formatters.js
-// Constants moved to src/utils/constants.js
-// ===== MODULAR COMPONENTS END =====
+// Mapping funkcije za čitljive nazive
+function getReadableTechName(techKey) {
+    const techMap = {
+        // Mobilne tehnologije
+        'tech_2g': 'GSM 2G',
+        'tech_3g': 'UMTS 3G', 
+        'tech_4g': 'LTE 4G',
+        'tech_4g_lte': 'LTE 4G',
+        'tech_5g_ready': '5G Ready',
+        'tech_5g': '5G',
+        'tech_volte': 'VoLTE',
+        'tech_vowifi': 'VoWiFi',
+        'tech_ims_mobile': 'IMS Mobile',
+        'tech_hlr_hss': 'HLR/HSS',
+        'tech_eir': 'EIR',
+        'tech_smsc_mmsc': 'SMSC/MMSC',
+        'tech_mvno': 'MVNO Platform',
+        'tech_esim': 'eSIM',
+        'tech_mnp': 'MNP',
+        
+        // Fiksne tehnologije
+        'tech_pstn': 'PSTN',
+        'tech_isdn': 'ISDN',
+        'tech_voip_fixed': 'VoIP Fixed',
+        'tech_ims_fixed': 'IMS Fixed',
+        'tech_softswitch_fixed': 'Softswitch',
+        
+        // Mrežne tehnologije
+        'tech_ftth_fttb': 'FTTH/FTTB',
+        'tech_xdsl': 'xDSL',
+        'tech_docsis': 'DOCSIS',
+        'tech_ipv4': 'IPv4',
+        'tech_ipv6': 'IPv6',
+        'tech_cgnat': 'CG-NAT',
+        'tech_mpls': 'MPLS',
+        'tech_sdwan': 'SD-WAN',
+        'tech_cdn': 'CDN',
+        'tech_fixed_wireless': 'Fixed Wireless',
+        'tech_satellite': 'Satellite',
+        'tech_vsat': 'VSAT',
+        'tech_cable': 'Cable',
+        'tech_fiber': 'Fiber Optic',
+        'tech_data_center': 'Data Center',
+        'tech_cloud': 'Cloud',
+        'tech_cybersecurity': 'Cybersecurity',
+        'tech_sip': 'SIP',
+        'tech_vpn': 'VPN',
+        'iptv_platform': 'IPTV Platform',
+        'satellite_tv_infrastructure': 'Satellite TV',
+        'tech_multiplex_d': 'Multiplex D',
+        'tech_digital_terrestrial': 'Digital Terrestrial'
+    };
+    
+    return techMap[techKey] || techKey.replace('tech_', '').replace(/_/g, ' ').toUpperCase();
+}
+
+function getReadableServiceName(serviceKey) {
+    const serviceMap = {
+        // Mobilne usluge
+        'mobile_prepaid': 'Mobilni Prepaid',
+        'mobile_postpaid': 'Mobilni Postpaid',
+        'mobile_esim': 'eSIM',
+        'mobile_volte_vowifi': 'VoLTE/VoWiFi',
+        'mobile_roaming': 'Roaming',
+        'mobile_mnp': 'MNP',
+        'roaming_internet_options': 'Roaming Internet',
+        
+        // Fiksne usluge
+        'fixed_pstn': 'PSTN',
+        'fixed_isdn': 'ISDN',
+        'fixed_voip': 'VoIP',
+        'ip_centrex': 'IP Centrex',
+        'fixed_portability': 'Portabilnost Brojeva',
+        'glasovna_posta': 'Glasovna Pošta',
+        
+        // Internet usluge
+        'internet_ftth': 'FTTH Internet',
+        'internet_flat': 'Flat Internet',
+        'internet_flying': 'Flying Internet',
+        'internet_adsl_vdsl': 'ADSL/VDSL',
+        'internet_mobile': 'Mobilni Internet',
+        'internet_business': 'Poslovni Internet',
+        'internet_dedicated': 'Dedicated Internet',
+        'internet_vpn': 'VPN Internet',
+        'internet_fixed_wireless': 'Fixed Wireless',
+        'internet_satellite': 'Satelitski Internet',
+        'internet_cable': 'Kablovski Internet',
+        'netbiz_packages': 'NetBiz Paketi',
+        'business_internet_packages': 'Poslovni Paketi',
+        
+        // TV usluge
+        'sat_tv': 'Satelitska TV',
+        'iptv': 'IPTV',
+        'tv_streaming': 'TV Streaming',
+        'cable_tv': 'Kablovska TV',
+        'digital_tv': 'Digitalna TV',
+        'multiplex_d_tv': 'Multiplex D TV',
+        
+        // Cloud/Poslovne usluge
+        'data_center': 'Data Center',
+        'system_integration': 'Sistemska Integracija',
+        'smart_city': 'Smart City',
+        'smart_home': 'Smart Home',
+        'cloud_hosting': 'Cloud Hosting',
+        'cloud_backup': 'Cloud Backup',
+        'cloud_infra': 'Cloud Infrastruktura',
+        'cybersecurity': 'Cyber Security',
+        'it_consulting': 'IT Konsalting',
+        'colocation': 'Colocation',
+        'wholesale_services': 'Veleprodajne Usluge',
+        'sms_gateway': 'SMS Gateway',
+        'telemach_app': 'Telemach App',
+        
+        // Dodatne usluge
+        'device_sales': 'Prodaja Uređaja',
+        'terminal_equipment': 'Terminalna Oprema',
+        'router_sales': 'Prodaja Rutera'
+    };
+    
+    return serviceMap[serviceKey] || serviceKey.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
+}
+
+function getTechTooltip(techKey) {
+    const tooltips = {
+        'tech_2g': 'Druga generacija mobilnih mreža (GSM 900/1800 MHz)',
+        'tech_3g': 'Treća generacija mobilnih mreža (UMTS 900/2100 MHz)',
+        'tech_4g': 'Četvrta generacija mobilnih mreža (LTE 800/1800/2600 MHz)',
+        'tech_4g_lte': 'Long Term Evolution - napredna 4G tehnologija',
+        'tech_5g_ready': '5G Ready infrastruktura spremna za nadogradnju',
+        'tech_volte': 'Voice over LTE - glasovni pozivi preko 4G mreže',
+        'tech_vowifi': 'Voice over WiFi - glasovni pozivi preko WiFi',
+        'tech_ims_mobile': 'IP Multimedia Subsystem za mobilne usluge',
+        'tech_hlr_hss': 'Home Location Register / Home Subscriber Server',
+        'tech_eir': 'Equipment Identity Register - registar uređaja',
+        'tech_smsc_mmsc': 'SMS/MMS Center - centri za tekstualne poruke',
+        'tech_ftth_fttb': 'Fiber to the Home/Building - optika do objekta',
+        'tech_xdsl': 'Digital Subscriber Line tehnologije',
+        'tech_docsis': 'Data Over Cable Service Interface - kablovski internet',
+        'tech_ipv4': 'Internet Protocol verzija 4',
+        'tech_ipv6': 'Internet Protocol verzija 6 - nova generacija',
+        'tech_cgnat': 'Carrier Grade Network Address Translation',
+        'tech_mpls': 'Multi-Protocol Label Switching',
+        'tech_sdwan': 'Software Defined Wide Area Network',
+        'tech_fixed_wireless': 'Bežični pristup fiksnoj lokaciji',
+        'tech_satellite': 'Satelitske komunikacije',
+        'tech_vsat': 'Very Small Aperture Terminal',
+        'tech_pstn': 'Public Switched Telephone Network',
+        'tech_isdn': 'Integrated Services Digital Network',
+        'tech_voip_fixed': 'Voice over IP za fiksne linije',
+        'iptv_platform': 'Internet Protocol Television platforma',
+        'tech_multiplex_d': 'Multiplex D - digitalna radiodifuzija',
+        'tech_digital_terrestrial': 'Digitalna zemaljska radiodifuzija',
+        'tech_esim': 'Embedded SIM - digitalna SIM kartica',
+        'tech_mnp': 'Mobile Number Portability - prenos brojeva'
+    };
+    
+    return tooltips[techKey] || 'Napredna telekomunikaciona tehnologija';
+}
+
+function getServiceTooltip(serviceKey) {
+    const tooltips = {
+        'mobile_prepaid': 'Mobilne usluge sa pretplatom - plaćanje unapred',
+        'mobile_postpaid': 'Mobilne usluge sa pretplatom - mesečno naplaćivanje',
+        'mobile_esim': 'Embedded SIM - digitalna SIM kartica',
+        'mobile_volte_vowifi': 'HD glasovni pozivi preko 4G/WiFi mreža',
+        'mobile_roaming': 'Korišćenje usluga van domaće mreže',
+        'mobile_mnp': 'Mobile Number Portability - prenos broja',
+        'internet_ftth': 'Optički internet direktno do objekta',
+        'internet_flat': 'Neograničeni internet bez FUP ograničenja',
+        'internet_adsl_vdsl': 'Internet preko bakarnih linija',
+        'internet_business': 'Poslovni internet sa SLA garantijama',
+        'internet_dedicated': 'Dedicirani internet sa garantovanom brzinom',
+        'sat_tv': 'Satelitska televizija sa HD/4K kvalitetom',
+        'iptv': 'Televizija preko internet protokola',
+        'data_center': 'Hosting i colocation usluge',
+        'cloud_hosting': 'Virtuelni serveri u oblaku',
+        'cybersecurity': 'Zaštita od cyber pretnji i napada',
+        'smart_city': 'IoT rešenja za pametne gradove',
+        'wholesale_services': 'B2B2C usluge za druge operatere',
+        'internet_cable': 'Internet preko kablovskih mreža',
+        'digital_tv': 'Digitalna televizija sa HD kvalitetom',
+        'cable_tv': 'Kablovska televizija',
+        'fixed_voip': 'VoIP telefonija za domaćinstva i preduzeća'
+    };
+    
+    return tooltips[serviceKey] || 'Telekomunikaciona usluga za krajnje korisnike';
+}
+
+// Category-Type mapping for dynamic filtering
+const categoryTypeMap = {
+  'dominantni': ['Dominantni operater'],
+  'mobilni_mvno': ['Mobilni operater', 'MVNO operater'],
+  'regionalni_isp': ['Internet servis provajder', 'Kablovski operater'],
+  'enterprise_b2b': ['B2B provajder', 'IT provajder']
+};
 
 class ATLASApp {
     constructor() {
@@ -51,15 +233,6 @@ class ATLASApp {
         this.filteredOperators = [];
         this.currentEditId = null;
         this.storageKey = 'atlas_operators_data';
-        
-        // Initialize NotificationManager
-        this.notificationManager = new NotificationManager();
-        
-        // Initialize StorageService
-        this.storageService = new StorageService(this.notificationManager);
-        
-        // Initialize SearchFilter
-        this.searchFilter = new SearchFilter(this, this.notificationManager);
         
         // DOM Elements
         this.elements = {
@@ -118,13 +291,19 @@ class ATLASApp {
             closeHelpModalBtn: document.getElementById('closeHelpModalBtn')
         };
         
+        // Initialize services and components
+        this.notificationManager = new NotificationManager();
+        this.storageService = new StorageService(this.notificationManager);
+        this.searchFilter = new SearchFilter(this, this.notificationManager);
+        this.operatorCard = new OperatorCard(this, this.notificationManager, this.storageService);
+        
         this.init();
     }
     
     async init() {
         try {
             this.showLoading(true);
-            this.operators = await this.storageService.loadData();
+            await this.loadData();
             
             // Dodaj test podatke za usluge i tehnologije
             this.addTestServicesAndTechnologies();
@@ -154,7 +333,7 @@ class ATLASApp {
         } catch (error) {
             console.error('Greška pri pokretanju aplikacije:', error);
             this.showLoading(false);
-            this.notificationManager.showNotification('Greška pri učitavanju podataka', 'error');
+            this.showNotification('Greška pri učitavanju podataka', 'error');
         }
     }
     
@@ -212,7 +391,7 @@ class ATLASApp {
             console.log('   - Broj operatera:', jsonOperatorCount);
             
             this.operators = jsonData.operateri || [];
-            this.storageService.saveToLocalStorage(this.operators, jsonData); // Sačuvaj u LocalStorage za budućnost
+            this.saveToLocalStorage(jsonData); // Sačuvaj u LocalStorage za budućnost
             console.log('📄 Podaci učitani IZ JSON FAJLA (fallback):', this.operators.length, 'operatera');
             console.log('   - Verzija:', jsonVersion);
             console.log('   - Sačuvano u LocalStorage za sljedeći put');
@@ -246,7 +425,7 @@ class ATLASApp {
             // FALLBACK 2: Demo podaci
             console.log('🚨 KRAJNJ FALLBACK: Koriste se demo podaci');
             this.operators = this.getDemoData();
-            this.storageService.saveToLocalStorage(this.operators, );
+            this.saveToLocalStorage();
         }
         
         console.log('=== loadData() završen ===');
@@ -275,7 +454,7 @@ class ATLASApp {
             
             if (Array.isArray(data)) {
                 this.operators = data;
-                this.storageService.saveToLocalStorage(this.operators, );
+                this.saveToLocalStorage();
                 this.renderOperators();
                 this.updateStatistics();
                 console.log(`✅ Reload uspješan! Učitano ${data.length} operatera`);
@@ -334,11 +513,33 @@ class ATLASApp {
             }
             
             // Prikažemo sync status bar kada se čuvaju lokalni podaci
-            this.notificationManager.showSyncStatus();
+            this.showSyncStatus();
             
         } catch (error) {
             console.error('Greška pri čuvanju u LocalStorage:', error);
-            this.notificationManager.showNotification('Greška pri čuvanju podataka', 'error');
+            this.showNotification('Greška pri čuvanju podataka', 'error');
+        }
+    }
+    
+    // Sync Status Bar funkcije
+    showSyncStatus() {
+        const statusBar = document.getElementById('sync-status-bar');
+        if (statusBar) {
+            statusBar.style.display = 'block';
+            
+            // Sakrij posle 10 sekundi ako nema interakcije
+            setTimeout(() => {
+                if (statusBar.style.display === 'block') {
+                    this.hideSyncStatus();
+                }
+            }, 10000);
+        }
+    }
+    
+    hideSyncStatus() {
+        const statusBar = document.getElementById('sync-status-bar');
+        if (statusBar) {
+            statusBar.style.display = 'none';
         }
     }
     
@@ -384,11 +585,11 @@ class ATLASApp {
                 timestamp: exportData.metadata.exportedAt
             });
             
-            this.notificationManager.showNotification(`📥 Izvoženo ${exportData.operateri.length} operatera u fajl: ${a.download}`, 'success', 5000);
+            this.showNotification(`📥 Izvoženo ${exportData.operateri.length} operatera u fajl: ${a.download}`, 'success', 5000);
             
         } catch (error) {
             console.error('❌ Greška pri exportu:', error);
-            this.notificationManager.showNotification('Greška pri exportu podataka', 'error');
+            this.showNotification('Greška pri exportu podataka', 'error');
         }
     }
     
@@ -417,7 +618,7 @@ class ATLASApp {
                     this.operators = importedData.operateri;
                     
                     // Sačuvaj u LocalStorage
-                    this.storageService.saveToLocalStorage(this.operators, importedData);
+                    this.saveToLocalStorage(importedData);
                     
                     // Refresh display
                     this.renderOperators();
@@ -429,11 +630,11 @@ class ATLASApp {
                         version: importedData.version
                     });
                     
-                    this.notificationManager.showNotification(`📤 Učitano ${importedData.operateri.length} operatera iz fajla: ${file.name}`, 'success', 5000);
+                    this.showNotification(`📤 Učitano ${importedData.operateri.length} operatera iz fajla: ${file.name}`, 'success', 5000);
                     
                 } catch (error) {
                     console.error('❌ Greška pri importu:', error);
-                    this.notificationManager.showNotification('Greška pri čitanju fajla - proverite format', 'error');
+                    this.showNotification('Greška pri čitanju fajla - proverite format', 'error');
                 }
             };
             
@@ -448,23 +649,23 @@ class ATLASApp {
     setupEventListeners() {
         // Search and Filter
         this.elements.searchInput.addEventListener('input', (e) => {
-            this.searchFilter.handleSearch(e.target.value);
+            this.handleSearch(e.target.value);
         });
         
         this.elements.clearSearchBtn.addEventListener('click', () => {
-            this.searchFilter.clearSearch();
+            this.clearSearch();
         });
         
         this.elements.statusFilter.addEventListener('change', () => {
-            this.searchFilter.applyFilters();
+            this.applyFilters();
         });
         
         this.elements.typeFilter.addEventListener('change', () => {
-            this.searchFilter.applyFilters();
+            this.applyFilters();
         });
         
         this.elements.categoryFilter.addEventListener('change', () => {
-            this.searchFilter.applyFilters();
+            this.applyFilters();
         });
         
         // Quick Category Filters
@@ -478,7 +679,7 @@ class ATLASApp {
             
             btn.addEventListener('click', (e) => {
                 console.log('🖱️ KLIK na filter dugme:', e.target.dataset.category);
-                this.searchFilter.handleQuickFilter(e.target.dataset.category);
+                this.handleQuickFilter(e.target.dataset.category);
             });
         });
         console.log('🔧 === FILTER SETUP ZAVRŠEN ===');
@@ -517,7 +718,7 @@ class ATLASApp {
         
         window.testFilter = (category) => {
             console.log(`🧪 Test filter: ${category}`);
-            this.searchFilter.handleQuickFilter(category);
+            this.handleQuickFilter(category);
         };
         
         // Modal Controls
@@ -526,17 +727,8 @@ class ATLASApp {
         });
         
         // Reload Data Button
-        this.elements.reloadDataBtn.addEventListener('click', async () => {
-            this.showLoading(true);
-            try {
-                this.operators = await this.storageService.forceReloadFromJSON();
-                this.renderOperators();
-                this.updateStatistics();
-            } catch (error) {
-                console.error('Reload failed:', error);
-            } finally {
-                this.showLoading(false);
-            }
+        this.elements.reloadDataBtn.addEventListener('click', () => {
+            this.forceReloadFromJSON();
         });
         
         this.elements.closeModal.addEventListener('click', () => {
@@ -616,16 +808,16 @@ class ATLASApp {
         
         // Export Data
         this.elements.exportDataBtn.addEventListener('click', () => {
-            this.storageService.exportData(this.operators);
+            this.exportData();
         });
         
         // Import Data
         this.elements.importDataBtn.addEventListener('click', () => {
-            this.storageService.importDataFromFile((operators, importData) => {
-                this.operators = operators;
-                this.renderOperators();
-                this.updateStatistics();
-            });
+            this.elements.fileImportInput.click();
+        });
+        
+        this.elements.fileImportInput.addEventListener('change', (e) => {
+            this.handleFileImport(e);
         });
         
         // Help Modal
@@ -646,7 +838,7 @@ class ATLASApp {
             if (e.key === 'Escape') {
                 // If search is active, clear it first, then close modal
                 if (this.elements.searchInput.value) {
-                    this.searchFilter.clearSearch();
+                    this.clearSearch();
                     this.elements.searchInput.blur();
                 } else {
                     this.closeModal();
@@ -659,7 +851,7 @@ class ATLASApp {
             }
             // Enter to search when input is focused
             if (e.key === 'Enter' && document.activeElement === this.elements.searchInput) {
-                this.searchFilter.handleSearch();
+                this.handleSearch();
             }
         });
     }
@@ -667,6 +859,118 @@ class ATLASApp {
     showLoading(show) {
         this.elements.loadingIndicator.style.display = show ? 'block' : 'none';
         this.elements.operatorsTableBody.style.display = show ? 'none' : '';
+    }
+    
+    handleSearch(searchTerm) {
+        const term = searchTerm.toLowerCase().trim();
+        
+        // Clear any existing highlights
+        this.clearSearchHighlights();
+        
+        if (term === '') {
+            this.filteredOperators = [...this.operators];
+            // Reset search filter buttons
+            this.resetQuickFilters();
+            // Hide clear button and results info
+            this.elements.clearSearchBtn.style.display = 'none';
+            this.elements.searchResults.style.display = 'none';
+        } else {
+            this.filteredOperators = this.operators.filter(operator => {
+                return (
+                    operator.naziv.toLowerCase().includes(term) ||
+                    (operator.komercijalni_naziv && operator.komercijalni_naziv.toLowerCase().includes(term)) ||
+                    operator.tip.toLowerCase().includes(term) ||
+                    operator.adresa.toLowerCase().includes(term) ||
+                    operator.email.toLowerCase().includes(term) ||
+                    operator.kontakt_osoba.toLowerCase().includes(term)
+                );
+            });
+            
+            // Highlight search term in results
+            this.highlightSearchTerm = term;
+            
+            // Show clear button and results info
+            this.elements.clearSearchBtn.style.display = 'block';
+            this.elements.searchResults.style.display = 'flex';
+            
+            // Update results info
+            const resultsCount = this.filteredOperators.length;
+            const totalCount = this.operators.length;
+            this.elements.searchResultsText.textContent = 
+                `${resultsCount} od ${totalCount} operatera • "${term}"`;
+        }
+        
+        this.applyFilters();
+    }
+    
+    clearSearchHighlights() {
+        this.highlightSearchTerm = null;
+        // Remove existing highlights
+        document.querySelectorAll('.search-highlight').forEach(el => {
+            el.outerHTML = el.innerHTML;
+        });
+    }
+    
+    highlightText(text, searchTerm) {
+        if (!searchTerm || !text) return text;
+        
+        const regex = new RegExp(`(${searchTerm})`, 'gi');
+        return text.replace(regex, '<span class="search-highlight">$1</span>');
+    }
+    
+    clearSearch() {
+        this.elements.searchInput.value = '';
+        this.clearSearchHighlights();
+        this.resetQuickFilters();
+        this.elements.clearSearchBtn.style.display = 'none';
+        this.elements.searchResults.style.display = 'none';
+        this.filteredOperators = [...this.operators];
+        this.applyFilters();
+    }
+
+    resetQuickFilters() {
+        document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
+        document.querySelector('[data-category="all"]').classList.add('active');
+    }
+    
+    applyFilters() {
+        console.log('🔍 === APPLY FILTERS DEBUG START ===');
+        let filtered = this.filteredOperators.length > 0 ? [...this.filteredOperators] : [...this.operators];
+        console.log('📊 Početni broj operatera za filtriranje:', filtered.length);
+        
+        // Status filter
+        const statusFilter = this.elements.statusFilter.value;
+        console.log('📋 Status filter vrednost:', statusFilter);
+        if (statusFilter) {
+            const beforeCount = filtered.length;
+            filtered = filtered.filter(op => op.status === statusFilter);
+            console.log(`   Status filter: ${beforeCount} → ${filtered.length} operatera`);
+        }
+        
+        // Category filter
+        const categoryFilter = this.elements.categoryFilter.value;
+        console.log('📋 Category filter vrednost:', categoryFilter);
+        if (categoryFilter) {
+            const beforeCount = filtered.length;
+            filtered = filtered.filter(op => this.getCategoryClass(op) === categoryFilter);
+            console.log(`   Category filter: ${beforeCount} → ${filtered.length} operatera`);
+        }
+        
+        // Type filter
+        const typeFilter = this.elements.typeFilter.value;
+        console.log('📋 Type filter vrednost:', typeFilter);
+        if (typeFilter) {
+            const beforeCount = filtered.length;
+            
+            // Koristimo direktno tip operatera
+            filtered = filtered.filter(op => op.tip.includes(typeFilter));
+            console.log(`   Type filter: ${beforeCount} → ${filtered.length} operatera`);
+            console.log('   Filtrirani operateri:', filtered.map(op => `${op.naziv} (${op.tip})`));
+        }
+        
+        console.log('📊 Finalni broj operatera:', filtered.length);
+        console.log('🔍 === APPLY FILTERS DEBUG END ===');
+        this.renderOperators(filtered);
     }
     
     renderOperators(operatorsToRender = null) {
@@ -684,14 +988,14 @@ class ATLASApp {
         tbody.innerHTML = operators.map(operator => {
             // Apply highlighting if search term exists
             const naziv = this.highlightSearchTerm ? 
-                this.searchFilter.highlightText(operator.naziv, this.highlightSearchTerm) : operator.naziv;
+                this.highlightText(operator.naziv, this.highlightSearchTerm) : operator.naziv;
             const komercijalni = this.highlightSearchTerm && operator.komercijalni_naziv ? 
-                this.searchFilter.highlightText(operator.komercijalni_naziv, this.highlightSearchTerm) : operator.komercijalni_naziv;
+                this.highlightText(operator.komercijalni_naziv, this.highlightSearchTerm) : operator.komercijalni_naziv;
             const tip = this.highlightSearchTerm ? 
-                this.searchFilter.highlightText(operator.tip, this.highlightSearchTerm) : operator.tip;
+                this.highlightText(operator.tip, this.highlightSearchTerm) : operator.tip;
             
             return `
-            <tr class="fade-in operator-row" data-id="${operator.id}" onclick="app.toggleOperatorDetails(${operator.id})">
+            <tr class="fade-in operator-row" data-id="${operator.id}" onclick="app.operatorCard.toggleOperatorDetails(${operator.id})">
                 <td class="operator-col">
                     <div class="operator-name">
                         <strong>${naziv}</strong>
@@ -744,7 +1048,7 @@ class ATLASApp {
                         <button class="action-btn edit" onclick="event.stopPropagation(); app.editOperator(${operator.id})" title="Uredi">
                             <i class="fas fa-edit"></i>
                         </button>
-                        <button class="action-btn delete" onclick="event.stopPropagation(); app.deleteOperator(${operator.id})" title="Obriši">
+                        <button class="action-btn delete" onclick="event.stopPropagation(); app.operatorCard.deleteOperator(${operator.id})" title="Obriši">
                             <i class="fas fa-trash"></i>
                         </button>
                     </div>
@@ -753,7 +1057,7 @@ class ATLASApp {
             <tr class="operator-details" id="details-${operator.id}">
                 <td colspan="7">
                     <div class="operator-details-content">
-                        ${this.generateOperatorDetails(operator)}
+                        ${this.operatorCard.generateOperatorDetails(operator)}
                     </div>
                 </td>
             </tr>
@@ -798,6 +1102,51 @@ class ATLASApp {
                 countElement.textContent = count;
             }
         });
+    }
+    
+    handleQuickFilter(category) {
+        console.log('🔍 === QUICK FILTER DEBUG START ===');
+        console.log('📥 Primljena kategorija:', category);
+        console.log('📊 Ukupno operatera u aplikaciji:', this.operators.length);
+        console.log('📋 Trenutno filtrirani operateri (search):', this.filteredOperators.length);
+        
+        // Reset search filters when using quick filter
+        this.filteredOperators = [...this.operators];
+        this.elements.searchInput.value = '';
+        this.highlightSearchTerm = '';
+        console.log('🔄 Search resetovan - sada koristimo sve operatere');
+        
+        // Update active filter button
+        document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
+        const filterBtn = document.querySelector(`[data-category="${category}"]`);
+        if (filterBtn) {
+            filterBtn.classList.add('active');
+            console.log('✅ Filter dugme aktivirano za kategoriju:', category);
+        } else {
+            console.warn('❌ Filter dugme za kategoriju "' + category + '" nije pronađeno');
+            return;
+        }
+        
+        // Filter operators
+        if (category === 'all') {
+            this.renderOperators();
+            console.log('📋 Prikazani svi operateri (', this.operators.length, ')');
+        } else {
+            console.log('🔎 Filtriranje operatera po kategoriji "' + category + '"...');
+            
+            // Debug: prikaz kategorizacije za sve operatere
+            this.operators.forEach(op => {
+                const opCategory = this.getCategoryClass(op);
+                console.log(`   - ${op.naziv}: kategorija="${opCategory}", tip="${op.tip}"`);
+            });
+            
+            const filtered = this.operators.filter(op => this.getCategoryClass(op) === category);
+            console.log('📊 Filtrirano operatera:', filtered.length);
+            console.log('📋 Filtrirani operateri:', filtered.map(op => op.naziv));
+            
+            this.renderOperators(filtered);
+        }
+        console.log('🔍 === QUICK FILTER DEBUG END ===');
     }
     
     openModal(mode, operatorId = null) {
@@ -1189,7 +1538,7 @@ class ATLASApp {
             }
         });
         
-        this.notificationManager.showNotification('Molimo ispravite greške u formi', 'error');
+        this.showNotification('Molimo ispravite greške u formi', 'error');
     }
     
     calculateCompleteness(formData) {
@@ -1312,11 +1661,11 @@ class ATLASApp {
         };
         
         this.operators.push(newOperator);
-        this.storageService.saveToLocalStorage(this.operators, );
+        this.saveToLocalStorage();
         this.renderOperators();
         this.updateStatistics();
         this.closeModal();
-        this.notificationManager.showNotification('Operater je uspešno dodat!', 'success');
+        this.showNotification('Operater je uspešno dodat!', 'success');
     }
     
     updateOperator(id, operatorData) {
@@ -1326,11 +1675,11 @@ class ATLASApp {
                 ...this.operators[index],
                 ...operatorData
             };
-            this.storageService.saveToLocalStorage(this.operators, );
+            this.saveToLocalStorage();
             this.renderOperators();
             this.updateStatistics();
             this.closeModal();
-            this.notificationManager.showNotification('Operater je uspešno ažuriran!', 'success');
+            this.showNotification('Operater je uspešno ažuriran!', 'success');
         }
     }
     
@@ -1342,7 +1691,7 @@ class ATLASApp {
         const operator = this.operators.find(op => op.id === id);
         if (operator) {
             // Open the expandable details instead of modal
-            this.toggleOperatorDetails(id);
+            this.operatorCard.toggleOperatorDetails(id);
         }
     }
     
@@ -1379,453 +1728,6 @@ class ATLASApp {
         setTimeout(() => {
             this.cleanupDuplicateTooltips();
         }, 150);
-    }
-    
-    generateOperatorDetails(operator) {
-        return `
-            <div class="details-grid-enhanced">
-                <!-- 📋 Osnovne informacije -->
-                <div class="details-section">
-                    <h4><i class="fas fa-info-circle"></i> 📋 Osnovne Informacije</h4>
-                    <div class="detail-item">
-                        <span class="detail-label">Naziv:</span>
-                        <span class="detail-value"><strong>${operator.naziv}</strong></span>
-                    </div>
-                    ${operator.komercijalni_naziv ? `
-                    <div class="detail-item">
-                        <span class="detail-label">Komercijalni naziv:</span>
-                        <span class="detail-value">${operator.komercijalni_naziv}</span>
-                    </div>
-                    ` : ''}
-                    <div class="detail-item">
-                        <span class="detail-label">Tip operatera:</span>
-                        <span class="detail-value">${operator.tip}</span>
-                    </div>
-                    <div class="detail-item">
-                        <span class="detail-label">Status:</span>
-                        <span class="detail-value">
-                            <span class="status-badge status-${operator.status}">${operator.status}</span>
-                        </span>
-                    </div>
-                    ${operator.opis ? `
-                    <div class="detail-item">
-                        <span class="detail-label">Opis:</span>
-                        <span class="detail-value description">${operator.opis}</span>
-                    </div>
-                    ` : ''}
-                    ${operator.napomena ? `
-                    <div class="detail-item">
-                        <span class="detail-label">Napomena:</span>
-                        <span class="detail-value note">${operator.napomena}</span>
-                    </div>
-                    ` : ''}
-                    <div class="detail-item">
-                        <span class="detail-label">Kompletnost podataka:</span>
-                        <span class="detail-value">
-                            <div class="progress-container">
-                                <div class="progress-bar">
-                                    <div class="progress-fill" style="width: ${operator.kompletnost || 0}%"></div>
-                                </div>
-                                <span class="progress-text">${operator.kompletnost || 0}%</span>
-                            </div>
-                        </span>
-                    </div>
-                </div>
-
-                <!-- 📞 Kontakt Informacije -->
-                <div class="details-section">
-                    <h4><i class="fas fa-address-book"></i> 📞 Kontakt Informacije</h4>
-                    ${this.generateContactInfo(operator)}
-                </div>
-
-                <!-- 👥 Tehnički Kontakti -->
-                ${operator.tehnicki_kontakti && operator.tehnicki_kontakti.length > 0 ? `
-                <div class="details-section tech-contacts-section" style="grid-column: 1 / -1;">
-                    <h4><i class="fas fa-users-cog"></i> 👥 Tehnički Kontakti za Agencije</h4>
-                    <div class="tech-contacts-grid">
-                        ${operator.tehnicki_kontakti.map(kontakt => `
-                            <div class="tech-contact-card">
-                                <div class="contact-header">
-                                    <h5>${kontakt.ime}</h5>
-                                    <span class="contact-position">${kontakt.pozicija}</span>
-                                </div>
-                                <div class="contact-details">
-                                    ${kontakt.email ? `
-                                    <div class="contact-item">
-                                        <i class="fas fa-envelope"></i>
-                                        <a href="mailto:${kontakt.email}" class="contact-link">${kontakt.email}</a>
-                                    </div>
-                                    ` : ''}
-                                    ${kontakt.telefon ? `
-                                    <div class="contact-item">
-                                        <i class="fas fa-phone"></i>
-                                        <a href="tel:${kontakt.telefon}" class="contact-link">${kontakt.telefon}</a>
-                                    </div>
-                                    ` : ''}
-                                </div>
-                                <span class="contact-type-badge">${this.getContactTypeName(kontakt.tip_kontakta)}</span>
-                            </div>
-                        `).join('')}
-                    </div>
-                </div>
-                ` : ''}
-
-                <!-- 🔧 Detaljne Usluge -->
-                <div class="details-section services-detailed">
-                    <h4><i class="fas fa-concierge-bell"></i> 🔧 Detaljne Usluge</h4>
-                    ${this.generateDetailedServices(operator)}
-                </div>
-
-                <!-- ⚙️ Detaljne Tehnologije -->
-                <div class="details-section technologies-detailed">
-                    <h4><i class="fas fa-microchip"></i> ⚙️ Detaljne Tehnologije</h4>
-                    ${this.generateDetailedTechnologies(operator)}
-                </div>
-
-                <!-- ⚖️ Zakonske Obaveze -->
-                ${operator.zakonske_obaveze ? `
-                <div class="details-section legal-obligations" style="grid-column: 1 / -1;">
-                    <h4><i class="fas fa-balance-scale"></i> ⚖️ Zakonske Obaveze</h4>
-                    <div class="legal-grid">
-                        <div class="legal-item">
-                            <span class="legal-label">Zakonito presretanje:</span>
-                            <span class="legal-value ${operator.zakonske_obaveze.zakonito_presretanje ? 'positive' : 'negative'}">
-                                ${operator.zakonske_obaveze.zakonito_presretanje === true ? '✅ Implementirano' : 
-                                  operator.zakonske_obaveze.zakonito_presretanje === false ? '❌ Nije implementirano' : '⚠️ Nepoznato'}
-                            </span>
-                        </div>
-                        ${operator.zakonske_obaveze.implementacija ? `
-                        <div class="legal-item">
-                            <span class="legal-label">Implementacija:</span>
-                            <span class="legal-value">${operator.zakonske_obaveze.implementacija}</span>
-                        </div>
-                        ` : ''}
-                        ${operator.zakonske_obaveze.kontakt_osoba ? `
-                        <div class="legal-item">
-                            <span class="legal-label">Kontakt osoba:</span>
-                            <span class="legal-value">${operator.zakonske_obaveze.kontakt_osoba}</span>
-                        </div>
-                        ` : ''}
-                        <div class="legal-item">
-                            <span class="legal-label">Pristup obračunskim podacima:</span>
-                            <span class="legal-value ${operator.zakonske_obaveze.pristup_obracunskim_podacima ? 'positive' : 'negative'}">
-                                ${operator.zakonske_obaveze.pristup_obracunskim_podacima === true ? '✅ Dostupno' : 
-                                  operator.zakonske_obaveze.pristup_obracunskim_podacima === false ? '❌ Nije dostupno' : '⚠️ Nepoznato'}
-                            </span>
-                        </div>
-                        ${operator.zakonske_obaveze.napomene ? `
-                        <div class="legal-item legal-notes">
-                            <span class="legal-label">Napomene:</span>
-                            <span class="legal-value">${operator.zakonske_obaveze.napomene}</span>
-                        </div>
-                        ` : ''}
-                    </div>
-                </div>
-                ` : ''}
-            </div>
-        `;
-    }
-
-    generateContactInfo(operator) {
-        let contactHTML = '';
-        
-        // Koristiti novu strukturu kontakt objekata ako postoji
-        if (operator.kontakt && typeof operator.kontakt === 'object') {
-            const kontakt = operator.kontakt;
-            
-            if (kontakt.adresa) {
-                contactHTML += `
-                <div class="detail-item">
-                    <span class="detail-label">🏢 Adresa:</span>
-                    <span class="detail-value">${kontakt.adresa}</span>
-                </div>`;
-            }
-            
-            if (kontakt.telefon) {
-                contactHTML += `
-                <div class="detail-item">
-                    <span class="detail-label">☎️ Telefon:</span>
-                    <span class="detail-value">
-                        <a href="tel:${kontakt.telefon}" class="contact-link">
-                            <i class="fas fa-phone"></i> ${kontakt.telefon}
-                        </a>
-                    </span>
-                </div>`;
-            }
-            
-            if (kontakt.email) {
-                contactHTML += `
-                <div class="detail-item">
-                    <span class="detail-label">✉️ Email:</span>
-                    <span class="detail-value">
-                        <a href="mailto:${kontakt.email}" class="contact-link">
-                            <i class="fas fa-envelope"></i> ${kontakt.email}
-                        </a>
-                    </span>
-                </div>`;
-            }
-            
-            if (kontakt.web) {
-                contactHTML += `
-                <div class="detail-item">
-                    <span class="detail-label">� Web stranica:</span>
-                    <span class="detail-value">
-                        <a href="${kontakt.web}" target="_blank" class="contact-link">
-                            <i class="fas fa-external-link-alt"></i> ${kontakt.web}
-                        </a>
-                    </span>
-                </div>`;
-            }
-            
-            // Customer Service brojevi
-            if (kontakt.customer_service && Object.keys(kontakt.customer_service).length > 0) {
-                contactHTML += `
-                <div class="detail-item">
-                    <span class="detail-label">📞 Customer Service:</span>
-                    <div class="customer-service-list">
-                        ${Object.entries(kontakt.customer_service).map(([tip, broj]) => `
-                            <div class="customer-service-item">
-                                <span class="service-type">${this.getServiceTypeName(tip)}:</span>
-                                <a href="tel:${broj}" class="contact-link">
-                                    <i class="fas fa-phone"></i> ${broj}
-                                </a>
-                            </div>
-                        `).join('')}
-                    </div>
-                </div>`;
-            }
-            
-            // Društvene mreže
-            if (kontakt.drustvene_mreze && Object.keys(kontakt.drustvene_mreze).length > 0) {
-                contactHTML += `
-                <div class="detail-item">
-                    <span class="detail-label">🌐 Društvene mreže:</span>
-                    <div class="social-media-links">
-                        ${Object.entries(kontakt.drustvene_mreze).map(([platform, url]) => `
-                            <a href="${url}" target="_blank" class="social-link social-${platform}" title="${this.getSocialPlatformName(platform)}">
-                                <i class="fab fa-${platform}"></i>
-                            </a>
-                        `).join('')}
-                    </div>
-                </div>`;
-            }
-        } else {
-            // Fallback za staru strukturu
-            if (operator.adresa) {
-                contactHTML += `
-                <div class="detail-item">
-                    <span class="detail-label">�🏢 Adresa:</span>
-                    <span class="detail-value">${operator.adresa}</span>
-                </div>`;
-            }
-            
-            if (operator.telefon) {
-                contactHTML += `
-                <div class="detail-item">
-                    <span class="detail-label">☎️ Telefon:</span>
-                    <span class="detail-value">
-                        <a href="tel:${operator.telefon}" class="contact-link">
-                            <i class="fas fa-phone"></i> ${operator.telefon}
-                        </a>
-                    </span>
-                </div>`;
-            }
-            
-            if (operator.email) {
-                contactHTML += `
-                <div class="detail-item">
-                    <span class="detail-label">✉️ Email:</span>
-                    <span class="detail-value">
-                        <a href="mailto:${operator.email}" class="contact-link">
-                            <i class="fas fa-envelope"></i> ${operator.email}
-                        </a>
-                    </span>
-                </div>`;
-            }
-            
-            if (operator.web) {
-                contactHTML += `
-                <div class="detail-item">
-                    <span class="detail-label">🌐 Web:</span>
-                    <span class="detail-value">
-                        <a href="${operator.web}" target="_blank" class="contact-link">
-                            <i class="fas fa-external-link-alt"></i> ${operator.web}
-                        </a>
-                    </span>
-                </div>`;
-            }
-        }
-        
-        return contactHTML;
-    }
-
-    generateDetailedServices(operator) {
-        if (operator.detaljne_usluge && typeof operator.detaljne_usluge === 'object') {
-            // Nova struktura - kategorisane usluge
-            return Object.entries(operator.detaljne_usluge).map(([kategorija, usluge]) => {
-                if (!usluge || usluge.length === 0) return '';
-                
-                return `
-                <div class="service-category">
-                    <h5 class="category-title">
-                        ${this.getServiceCategoryIcon(kategorija)} ${this.getServiceCategoryName(kategorija)}
-                    </h5>
-                    <div class="service-tags">
-                        ${usluge.map(usluga => `
-                            <span class="service-tag service-${kategorija}" 
-                                  data-tooltip="${getServiceTooltip(usluga)}">
-                                ${getReadableServiceName(usluga)}
-                            </span>
-                        `).join('')}
-                    </div>
-                </div>
-                `;
-            }).join('');
-        } else {
-            // Fallback za staru strukturu
-            return this.formatServicesList(operator.usluge || []);
-        }
-    }
-
-    formatServicesList(services) {
-        if (!services || services.length === 0) {
-            return '<span class="no-data">Nisu navedene usluge</span>';
-        }
-        
-        return services.map(service => {
-            const serviceName = typeof service === 'string' ? service : service.naziv || service;
-            return `<span class="service-tag">${serviceName}</span>`;
-        }).join('');
-    }
-
-    formatTechnologiesList(technologies) {
-        if (!technologies || technologies.length === 0) {
-            return '<span class="no-data">Nisu navedene tehnologije</span>';
-        }
-        
-        return technologies.map(tech => {
-            const techName = typeof tech === 'string' ? tech : tech.naziv || tech;
-            return `<span class="tech-tag">${techName}</span>`;
-        }).join('');
-    }
-
-    generateDetailedTechnologies(operator) {
-        if (operator.detaljne_tehnologije && typeof operator.detaljne_tehnologije === 'object') {
-            // Nova struktura - kategorisane tehnologije
-            return Object.entries(operator.detaljne_tehnologije).map(([kategorija, tehnologije]) => {
-                if (!tehnologije || tehnologije.length === 0) return '';
-                
-                return `
-                <div class="tech-category">
-                    <h5 class="category-title">
-                        ${this.getTechCategoryIcon(kategorija)} ${this.getTechCategoryName(kategorija)}
-                    </h5>
-                    <div class="tech-tags">
-                        ${tehnologije.map(tehnologija => `
-                            <span class="tech-tag tech-${kategorija}"
-                                  data-tooltip="${getTechTooltip(tehnologija)}">
-                                ${getReadableTechName(tehnologija)}
-                            </span>
-                        `).join('')}
-                    </div>
-                </div>
-                `;
-            }).join('');
-        } else {
-            // Fallback za staru strukturu
-            return this.formatTechnologiesList(operator.tehnologije || []);
-        }
-    }
-
-    // Helper funkcije za nove podatke
-    getContactTypeName(tip) {
-        const tipovi = {
-            'bezbednost': 'Bezbednost',
-            'tehnicki': 'Tehnički',
-            'pravni': 'Pravni',
-            'poslovni': 'Poslovni'
-        };
-        return tipovi[tip] || tip;
-    }
-
-    getServiceTypeName(tip) {
-        const tipovi = {
-            'privatni': 'Privatni',
-            'poslovni': 'Poslovni', 
-            'dopuna': 'Dopuna',
-            'msat': 'm:SAT',
-            'hitni': 'Hitni'
-        };
-        return tipovi[tip] || tip;
-    }
-
-    getSocialPlatformName(platform) {
-        const platforme = {
-            'facebook': 'Facebook',
-            'instagram': 'Instagram',
-            'twitter': 'Twitter',
-            'linkedin': 'LinkedIn',
-            'youtube': 'YouTube'
-        };
-        return platforme[platform] || platform;
-    }
-
-    getServiceCategoryIcon(kategorija) {
-        const ikone = {
-            'mobilne': '📱',
-            'fiksne': '📞',
-            'internet': '🌐',
-            'tv': '📺',
-            'cloud_poslovne': '☁️',
-            'dodatne': '🛒'
-        };
-        return ikone[kategorija] || '🔧';
-    }
-
-    getServiceCategoryName(kategorija) {
-        const nazivi = {
-            'mobilne': 'Mobilne usluge',
-            'fiksne': 'Fiksne usluge',
-            'internet': 'Internet usluge',
-            'tv': 'TV usluge',
-            'cloud_poslovne': 'Cloud/Poslovne usluge',
-            'dodatne': 'Dodatne usluge'
-        };
-        return nazivi[kategorija] || kategorija;
-    }
-
-    getTechCategoryIcon(kategorija) {
-        const ikone = {
-            'mobilne': '📱',
-            'fiksne': '📞',
-            'mrezne': '🌐'
-        };
-        return ikone[kategorija] || '⚙️';
-    }
-
-    getTechCategoryName(kategorija) {
-        const nazivi = {
-            'mobilne': 'Mobilne tehnologije',
-            'fiksne': 'Fiksne tehnologije',
-            'mrezne': 'Mrežne tehnologije'
-        };
-        return nazivi[kategorija] || kategorija;
-    }
-
-    deleteOperator(id) {
-        const operator = this.operators.find(op => op.id === id);
-        if (operator && confirm(`Da li ste sigurni da želite da obrišete operatera "${operator.naziv}"?`)) {
-            console.log('Brisanje operatera sa ID:', id, 'naziv:', operator.naziv);
-            const preCount = this.operators.length;
-            this.operators = this.operators.filter(op => op.id !== id);
-            const postCount = this.operators.length;
-            console.log('Operateri prije brisanja:', preCount, 'nakon brisanja:', postCount);
-            
-            this.storageService.saveToLocalStorage(this.operators, );
-            this.renderOperators();
-            this.updateStatistics();
-            this.notificationManager.showNotification('Operater je uspešno obrisan!', 'success');
-        }
     }
     
     exportData() {
@@ -1870,19 +1772,19 @@ class ATLASApp {
                 timestamp: exportData.metadata.exportedAt
             });
             
-            this.notificationManager.showNotification(`📥 Izvoženo ${exportData.operateri.length} operatera u fajl: ${link.download}`, 'success', 5000);
+            this.showNotification(`📥 Izvoženo ${exportData.operateri.length} operatera u fajl: ${link.download}`, 'success', 5000);
             
             // Sakrij sync status bar jer su podaci izvezeni
-            this.notificationManager.hideSyncStatus();
+            this.hideSyncStatus();
             
             // Dodaj visual feedback sa instrukcijama
             setTimeout(() => {
-                this.notificationManager.showNotification('💡 Tip: Zamenite stari operateri.json sa novo izvoženim fajlom da sačuvate promene', 'info', 8000);
+                this.showNotification('💡 Tip: Zamenite stari operateri.json sa novo izvoženim fajlom da sačuvate promene', 'info', 8000);
             }, 2000);
             
         } catch (error) {
             console.error('❌ Greška pri exportu:', error);
-            this.notificationManager.showNotification('Greška pri exportu podataka', 'error');
+            this.showNotification('Greška pri exportu podataka', 'error');
         }
     }
     
@@ -1891,7 +1793,7 @@ class ATLASApp {
         if (!file) return;
         
         if (!file.name.endsWith('.json')) {
-            this.notificationManager.showNotification('Molimo izaberite JSON fajl', 'error');
+            this.showNotification('Molimo izaberite JSON fajl', 'error');
             return;
         }
         
@@ -1900,7 +1802,7 @@ class ATLASApp {
             const importData = JSON.parse(fileContent);
             
             if (!this.validateImportData(importData)) {
-                this.notificationManager.showNotification('Neispravni format JSON fajla', 'error');
+                this.showNotification('Neispravni format JSON fajla', 'error');
                 return;
             }
             
@@ -1908,7 +1810,7 @@ class ATLASApp {
             
         } catch (error) {
             console.error('Import error:', error);
-            this.notificationManager.showNotification('Greška pri učitavanju fajla: ' + error.message, 'error');
+            this.showNotification('Greška pri učitavanju fajla: ' + error.message, 'error');
         } finally {
             // Clear file input
             event.target.value = '';
@@ -1987,18 +1889,18 @@ class ATLASApp {
                 }
             }
             
-            this.storageService.saveToLocalStorage(this.operators, );
+            this.saveToLocalStorage();
             this.renderOperators();
             this.updateStatistics();
             
-            this.notificationManager.showNotification(
+            this.showNotification(
                 `Uspešno uvezeno: ${importedCount} novih, ${updatedCount} ažuriranih operatera`,
                 'success'
             );
             
         } catch (error) {
             console.error('Processing error:', error);
-            this.notificationManager.showNotification('Greška pri obradi podataka: ' + error.message, 'error');
+            this.showNotification('Greška pri obradi podataka: ' + error.message, 'error');
         } finally {
             this.showLoading(false);
         }
@@ -2028,6 +1930,36 @@ class ATLASApp {
         const optionalPercentage = (filledOptional / optionalFields.length) * 40;
         
         return Math.round(requiredPercentage + optionalPercentage);
+    }
+    
+    showNotification(message, type = 'info') {
+        // Simple notification system
+        const notification = document.createElement('div');
+        notification.className = `notification notification-${type}`;
+        notification.style.cssText = `
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 16px 24px;
+            background: ${type === 'success' ? '#22c55e' : type === 'error' ? '#ef4444' : '#3b82f6'};
+            color: white;
+            border-radius: 8px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            z-index: 10000;
+            animation: slideIn 0.3s ease-out;
+        `;
+        notification.textContent = message;
+        
+        document.body.appendChild(notification);
+        
+        setTimeout(() => {
+            notification.style.animation = 'fadeOut 0.3s ease-out';
+            setTimeout(() => {
+                if (notification.parentNode) {
+                    notification.parentNode.removeChild(notification);
+                }
+            }, 300);
+        }, 3000);
     }
     
     // Utility functions
@@ -3699,3 +3631,16 @@ notificationStyles.textContent = `
     }
 `;
 document.head.appendChild(notificationStyles);
+
+
+
+
+
+
+
+
+
+
+
+
+

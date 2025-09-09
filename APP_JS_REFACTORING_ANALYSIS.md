@@ -10,7 +10,15 @@
 
 ### **1. Formatters ekstrakcija - COMPLETED ✅**
 - **Fajl:** `src/utils/formatters.js` (194 linije)
-- **Fajl:** `src/utils/constants.js` (izdvojene konstante)
+- **Fajl:**## 🎯 **SPREMAN ZA SLEDEĆI KORAK?**
+
+**OperatorCard ekstrakcija** je sledeći logičan korak jer:
+- ✅ Najveći pojedinačni komad koda (~600 linija)
+- ✅ Nezavisan od drugih komponenti
+- ✅ Lako za testiranje
+- ✅ Priprema teren za kraj modularizacije
+
+**Da počnemo sa OperatorCard ekstrakcijom?** 🔥ls/constants.js` (izdvojene konstante)
 - **Uklonjeno iz app.js:** Linije 32-226 (194 linije)
 - **Status:** ✅ Testirano i funkcioniše
 - **Commit:** `feature/formatters-extraction`
@@ -350,11 +358,11 @@ this.storageService.saveToLocalStorage(data) // umesto this.saveToLocalStorage(d
 | Formatters | ✅ Completed | 194 | `src/utils/formatters.js`, `src/utils/constants.js` |
 | NotificationManager | ✅ Completed | 50 | `src/components/NotificationManager.js` |
 | StorageService | ✅ Completed | ~500 | `src/services/StorageService.js` |
-| SearchFilter | 🔄 Next | ~300 | `src/components/SearchFilter.js` |
-| OperatorCard | ⏳ Pending | ~600 | `src/components/OperatorCard.js` |
+| SearchFilter | ✅ Completed | ~146 | `src/components/SearchFilter.js` |
+| OperatorCard | ⏳ Next | ~600 | `src/components/OperatorCard.js` |
 
-**Ukupno uklonjeno:** 744 linije (18% od originalnih 4071)
-**Preostalo:** ~3330 linija u app.js
+**Ukupno uklonjeno:** 890 linije (21.5% od originalnih 4071)
+**Preostalo:** ~3181 linija u app.js
 
 ---
 
