@@ -1772,36 +1772,9 @@ body {
     border-color: currentColor;
 }
 
-/* Tooltips */
-.service-tag[data-tooltip], .tech-tag[data-tooltip] {
+/* Service and tech tags use global tooltip system */
+.service-tag, .tech-tag {
     position: relative;
-}
-
-.service-tag[data-tooltip]:hover::after, .tech-tag[data-tooltip]:hover::after {
-    content: attr(data-tooltip);
-    position: absolute;
-    bottom: 100%;
-    left: 50%;
-    transform: translateX(-50%);
-    background: rgba(0, 0, 0, 0.9);
-    color: white;
-    padding: 8px 12px;
-    border-radius: 6px;
-    font-size: 12px;
-    white-space: nowrap;
-    z-index: 1000;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
-}
-
-.service-tag[data-tooltip]:hover::before, .tech-tag[data-tooltip]:hover::before {
-    content: '';
-    position: absolute;
-    bottom: 100%;
-    left: 50%;
-    transform: translateX(-50%) translateY(100%);
-    border: 5px solid transparent;
-    border-top-color: rgba(0, 0, 0, 0.9);
-    z-index: 1001;
 }
 
 /* Zakonske obaveze */
@@ -1912,4 +1885,198 @@ body {
         align-items: flex-start;
         gap: 4px;
     }
+}
+
+/* ===== TOOLTIP SYSTEM - POBOLJŠANI ===== */
+[data-tooltip] {
+    position: relative;
+    cursor: help;
+    border-bottom: 1px dotted var(--border-medium);
+}
+
+/* Clean, single tooltip system - NO DUPLICATES */
+[data-tooltip] {
+    position: relative;
+    display: inline-block;
+    cursor: help;
+}
+
+/* Remove any title attribute tooltips */
+[data-tooltip][title] {
+    /* Hide native tooltips completely */
+    pointer-events: none;
+}
+
+/* Single tooltip content */
+[data-tooltip]:hover::before {
+    content: attr(data-tooltip);
+    position: absolute;
+    bottom: calc(100% + 8px);
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: #1f2937;
+    color: white;
+    padding: 8px 12px;
+    border-radius: 6px;
+    z-index: 10000;
+    font-size: 12px;
+    line-height: 1.4;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.25);
+    pointer-events: none;
+    opacity: 0;
+    animation: tooltipFadeIn 0.3s ease forwards;
+    max-width: 280px;
+    white-space: normal;
+    text-align: center;
+    min-width: 120px;
+    
+    /* Smart viewport containment */
+    left: max(10px, min(50%, calc(100vw - 150px)));
+}
+
+/* Tooltip arrow */
+[data-tooltip]:hover::after {
+    content: '';
+    position: absolute;
+    bottom: calc(100% + 2px);
+    left: 50%;
+    transform: translateX(-50%);
+    border: 6px solid transparent;
+    border-top-color: #1f2937;
+    z-index: 10001;
+    pointer-events: none;
+    opacity: 0;
+    animation: tooltipFadeIn 0.3s ease forwards;
+    
+    /* Match tooltip positioning */
+    left: max(16px, min(50%, calc(100vw - 144px)));
+}
+
+/* Animacija za glatko pojavljuje */
+@keyframes tooltipFadeIn {
+    0% {
+        opacity: 0;
+        transform: translateX(-50%) translateY(5px);
+    }
+    100% {
+        opacity: 1;
+        transform: translateX(-50%) translateY(0);
+    }
+}
+
+/* Pametno pozicioniranje na levoj strani */
+[data-tooltip].tooltip-left:hover::before {
+    left: 0;
+    transform: translateX(0);
+}
+
+[data-tooltip].tooltip-left:hover::after {
+    left: 20px;
+    transform: translateX(0);
+}
+
+/* Pametno pozicioniranje na desnoj strani */
+[data-tooltip].tooltip-right:hover::before {
+    left: auto;
+    right: 0;
+    transform: translateX(0);
+}
+
+[data-tooltip].tooltip-right:hover::after {
+    left: auto;
+    right: 20px;
+    transform: translateX(0);
+}
+
+/* Enhanced Service i Tech tag styles - bez title atributa */
+.service-tag, .tech-tag {
+    transition: all 0.2s ease;
+    display: inline-block;
+    margin: 2px;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 12px;
+    font-weight: 500;
+}
+
+.service-tag:hover, .tech-tag:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+}
+
+/* Poboljšani tag dizajn */
+.service-tag {
+    background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
+    border: 1px solid #90caf9;
+    color: #1565c0;
+}
+
+.tech-tag {
+    background: linear-gradient(135deg, #e8f5e8 0%, #c8e6c9 100%);
+    border: 1px solid #81c784;
+    color: #2e7d32;
+}
+
+/* Kategorija specifični stilovi */
+.service-tag.mobile {
+    background: linear-gradient(135deg, #fff3e0 0%, #ffcc02 100%);
+    border: 1px solid #ffb300;
+    color: #e65100;
+}
+
+.service-tag.internet {
+    background: linear-gradient(135deg, #e1f5fe 0%, #b3e5fc 100%);
+    border: 1px solid #4fc3f7;
+    color: #0277bd;
+}
+
+.service-tag.tv {
+    background: linear-gradient(135deg, #f3e5f5 0%, #e1bee7 100%);
+    border: 1px solid #ce93d8;
+    color: #7b1fa2;
+}
+
+.service-tag.cloud {
+    background: linear-gradient(135deg, #e8eaf6 0%, #c5cae9 100%);
+    border: 1px solid #9fa8da;
+    color: #3f51b5;
+}
+
+/* Responsive tooltip - mobilni uređaji */
+@media (max-width: 768px) {
+    [data-tooltip]:hover::before {
+        position: fixed;
+        bottom: 60px;
+        left: 50%;
+        right: auto;
+        transform: translateX(-50%);
+        max-width: calc(100vw - 40px);
+        width: auto;
+        margin: 0 20px;
+        z-index: 10000;
+    }
+    
+    [data-tooltip]:hover::after {
+        position: fixed;
+        bottom: 54px;
+        left: 50%;
+        transform: translateX(-50%);
+        z-index: 10000;
+    }
+}
+
+/* Prevenisanje overflow-a u kontejnerima */
+.details-section {
+    overflow: visible;
+    position: relative;
+}
+
+.service-category, .tech-category {
+    overflow: visible;
+    position: relative;
+}
+
+.service-tags, .tech-tags {
+    overflow: visible;
+    position: relative;
 }

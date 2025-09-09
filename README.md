@@ -6,7 +6,7 @@ Napredna web aplikacija za upravljanje bazom podataka telekomunikacionih operate
 
 ## 🚀 Karakteristike
 
-- ✅ **45 telekom operatera** sa kompletnim podacima
+- ✅ **28 telekom operatera** sa kompletnim podacima
 - ✅ **Expandable details** sa kategorisanim uslugama i tehnologijama  
 - ✅ **Napredna pretraga** sa highlighting i keyboard shortcuts
 - ✅ **Responsive design** optimizovan za desktop i mobile
