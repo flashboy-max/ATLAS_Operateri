@@ -1090,6 +1090,90 @@ class ATLASApp {
         return Math.round(requiredPercentage + optionalPercentage);
     }
     
+    // Update tip options based on selected category
+    updateTipOptions() {
+        const kategorijaField = document.getElementById('kategorija');
+        const tipField = document.getElementById('tip');
+        
+        if (!kategorijaField || !tipField) return;
+        
+        const selectedKategorija = kategorijaField.value;
+        const currentTipValue = tipField.value;
+        
+        // Clear existing options
+        tipField.innerHTML = '<option value="">Izaberite tip operatera</option>';
+        
+        // Add filtered options based on category
+        if (selectedKategorija && categoryTypeMap[selectedKategorija]) {
+            categoryTypeMap[selectedKategorija].forEach(tip => {
+                const option = document.createElement('option');
+                option.value = tip;
+                option.textContent = tip;
+                
+                // Restore previously selected value if it's valid for new category
+                if (tip === currentTipValue) {
+                    option.selected = true;
+                }
+                
+                tipField.appendChild(option);
+            });
+        }
+    }
+    
+    // Validate individual field and show/hide error
+    validateField(field, validator, errorMessage) {
+        const fieldName = field.id;
+        const fieldValue = field.value.trim();
+        
+        // Remove existing error message
+        this.clearFieldError(field);
+        
+        // Skip validation if field is empty (optional fields)
+        if (!fieldValue) return true;
+        
+        // Validate using provided validator function
+        if (!validator(fieldValue)) {
+            this.showFieldError(field, errorMessage);
+            return false;
+        }
+        
+        return true;
+    }
+    
+    // Show error message for a field
+    showFieldError(field, message) {
+        // Remove existing error
+        this.clearFieldError(field);
+        
+        // Create error message element
+        const errorDiv = document.createElement('div');
+        errorDiv.className = 'error-message';
+        errorDiv.textContent = message;
+        errorDiv.style.color = '#dc2626';
+        errorDiv.style.fontSize = '12px';
+        errorDiv.style.marginTop = '4px';
+        
+        // Insert after the field
+        field.parentNode.insertBefore(errorDiv, field.nextSibling);
+        
+        // Add error styling to field
+        field.style.borderColor = '#dc2626';
+        field.style.boxShadow = '0 0 0 1px #dc2626';
+    }
+    
+    // Clear error message for a field
+    clearFieldError(field) {
+        // Remove error message element
+        const errorMessage = field.parentNode.querySelector('.error-message');
+        if (errorMessage) {
+            errorMessage.remove();
+        }
+        
+        // Reset field styling
+        field.style.borderColor = '';
+        field.style.boxShadow = '';
+    }
+    
     addOperator(operatorData) {
         const newId = Math.max(...this.operators.map(op => op.id), 0) + 1;
         const newOperator = {
