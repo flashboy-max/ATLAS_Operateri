@@ -1,8 +1,8 @@
 # APP.JS REFACTORING ANALIZA
 
-**Trenutno stanje:** 3840 linija koda u jednom fajlu (smanjeno sa 4071)  
+**Trenutno stanje:** 3340 linija koda u jednom fajlu (smanjeno sa 4071)  
 **Datum analize:** 2025-09-09  
-**Poslednja ekstrakcija:** NotificationManager (50 linija uklonjeno)
+**Poslednja ekstrakcija:** StorageService (500 linija uklonjeno)
 
 ---
 
@@ -23,9 +23,17 @@
 - **Commit:** `feature/notification-manager`
 - **Zamenjeno poziva:** 15+ metoda poziva sa `this.notificationManager.*`
 
+### **3. StorageService ekstrakcija - COMPLETED ✅**
+- **Fajl:** `src/services/StorageService.js` (250+ linije)
+- **Metode izdvojene:** `loadData()`, `saveToLocalStorage()`, `exportData()`, `importDataFromFile()`, `forceReloadFromJSON()`
+- **Uklonjeno iz app.js:** ~500 linija storage koda
+- **Status:** ✅ Testirano i funkcioniše
+- **Commit:** `feature/storage-service`
+- **Zamenjeno poziva:** 20+ metoda poziva sa `this.storageService.*`
+
 ---
 
-## 📊 **STRUKTURA APP.JS (3840 linija)**
+## 📊 **STRUKTURA APP.JS (3340 linija)**
 
 ### **Trenutna organizacija:**
 
@@ -272,24 +280,41 @@ import {
 
 ---
 
-## 🚀 **SLEDEĆI KORAK - StorageService ekstrakcija**
+## 🚀 **SLEDEĆI KORAK - SearchFilter ekstrakcija**
 
-### **FAZA 3: Ekstraktovanje StorageService (Dan 3) - NEXT ✅**
+### **FAZA 4: Ekstraktovanje SearchFilter komponente (Dan 4) - NEXT ✅**
 
-#### **3.1 Analiza storage metoda u app.js:**
-- `loadData()` - ~150 linija (linije ~227-380)
-- `saveToLocalStorage()` - ~50 linija (linije ~381-430)  
-- `exportUpdatedData()` - ~100 linija (linije ~431-530)
-- `importDataFromFile()` - ~150 linija (linije ~531-680)
-- `forceReloadFromJSON()` - ~80 linija (linije ~681-760)
+#### **4.1 Analiza search & filter metoda u app.js:**
+- `handleSearch()` - ~50 linija (pretraga po nazivu, email-u, tipu)
+- `applyFilters()` - ~80 linija (filtriranje po statusu, tipu, kategoriji)
+- `handleQuickFilter()` - ~60 linija (brzo filtriranje po kategoriji)
+- `clearSearch()` - ~30 linija (čišćenje pretrage)
+- `resetQuickFilters()` - ~20 linija (reset filtera)
 
-#### **3.2 Kreirati src/services/StorageService.js:**
+#### **4.2 Kreirati src/components/SearchFilter.js:**
 ```javascript
 /**
- * Storage service for ATLAS operators data persistence
+ * Search and filtering component for ATLAS operators
  */
-export class StorageService {
-    constructor() {
+export class SearchFilter {
+    constructor(app, notificationManager) {
+        this.app = app;
+        this.notificationManager = notificationManager;
+        this.currentFilters = {
+            search: '',
+            status: '',
+            type: '',
+            category: ''
+        };
+    }
+    
+    handleSearch(query) { /* Pretraga implementacija */ }
+    applyFilters() { /* Filtriranje implementacija */ }
+    handleQuickFilter(category) { /* Brzo filtriranje */ }
+    clearSearch() { /* Čišćenje pretrage */ }
+    resetFilters() { /* Reset svih filtera */ }
+}
+```
         this.storageKey = 'atlas_operators_v2.1';
     }
     
@@ -324,21 +349,21 @@ this.storageService.saveToLocalStorage(data) // umesto this.saveToLocalStorage(d
 |------|--------|------------------|------------------|
 | Formatters | ✅ Completed | 194 | `src/utils/formatters.js`, `src/utils/constants.js` |
 | NotificationManager | ✅ Completed | 50 | `src/components/NotificationManager.js` |
-| StorageService | 🔄 Next | ~500 | `src/services/StorageService.js` |
-| SearchFilter | ⏳ Pending | ~300 | `src/components/SearchFilter.js` |
+| StorageService | ✅ Completed | ~500 | `src/services/StorageService.js` |
+| SearchFilter | 🔄 Next | ~300 | `src/components/SearchFilter.js` |
 | OperatorCard | ⏳ Pending | ~600 | `src/components/OperatorCard.js` |
 
-**Ukupno uklonjeno:** 244 linije (6% od originalnih 4071)
-**Preostalo:** ~3600 linija u app.js
+**Ukupno uklonjeno:** 744 linije (18% od originalnih 4071)
+**Preostalo:** ~3330 linija u app.js
 
 ---
 
 ## 🎯 **SPREMAN ZA SLEDEĆI KORAK?**
 
-**StorageService ekstrakcija** je sledeći logičan korak jer:
-- ✅ Nezavisan od UI komponenata
+**SearchFilter ekstrakcija** je sledeći logičan korak jer:
+- ✅ Nezavisan od UI rendering-a
 - ✅ Lako za testiranje
-- ✅ Veliki uticaj na čitljivost koda
+- ✅ Poboljšava čitljivost koda
 - ✅ Priprema teren za dalje ekstrakcije
 
-**Da počnemo sa StorageService?** 💪
+**Da počnemo sa SearchFilter ekstrakcijom?** �

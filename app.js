@@ -14,6 +14,8 @@ import {
 } from './src/utils/formatters.js';
 import { CATEGORY_TYPE_MAP } from './src/utils/constants.js';
 import { NotificationManager } from './src/components/NotificationManager.js';
+import { StorageService } from './src/services/StorageService.js';
+import { SearchFilter } from './src/components/SearchFilter.js';
 
 // Catalog loaded successfully
 console.log('✅ Standard catalog loaded:', standardCatalog?.services?.length || 0, 'services,', standardCatalog?.technologies?.length || 0, 'technologies');
@@ -52,6 +54,12 @@ class ATLASApp {
         
         // Initialize NotificationManager
         this.notificationManager = new NotificationManager();
+        
+        // Initialize StorageService
+        this.storageService = new StorageService(this.notificationManager);
+        
+        // Initialize SearchFilter
+        this.searchFilter = new SearchFilter(this, this.notificationManager);
         
         // DOM Elements
         this.elements = {
@@ -116,7 +124,7 @@ class ATLASApp {
     async init() {
         try {
             this.showLoading(true);
-            await this.loadData();
+            this.operators = await this.storageService.loadData();
             
             // Dodaj test podatke za usluge i tehnologije
             this.addTestServicesAndTechnologies();
@@ -204,7 +212,7 @@ class ATLASApp {
             console.log('   - Broj operatera:', jsonOperatorCount);
             
             this.operators = jsonData.operateri || [];
-            this.saveToLocalStorage(jsonData); // Sačuvaj u LocalStorage za budućnost
+            this.storageService.saveToLocalStorage(this.operators, jsonData); // Sačuvaj u LocalStorage za budućnost
             console.log('📄 Podaci učitani IZ JSON FAJLA (fallback):', this.operators.length, 'operatera');
             console.log('   - Verzija:', jsonVersion);
             console.log('   - Sačuvano u LocalStorage za sljedeći put');
@@ -238,7 +246,7 @@ class ATLASApp {
             // FALLBACK 2: Demo podaci
             console.log('🚨 KRAJNJ FALLBACK: Koriste se demo podaci');
             this.operators = this.getDemoData();
-            this.saveToLocalStorage();
+            this.storageService.saveToLocalStorage(this.operators, );
         }
         
         console.log('=== loadData() završen ===');
@@ -267,7 +275,7 @@ class ATLASApp {
             
             if (Array.isArray(data)) {
                 this.operators = data;
-                this.saveToLocalStorage();
+                this.storageService.saveToLocalStorage(this.operators, );
                 this.renderOperators();
                 this.updateStatistics();
                 console.log(`✅ Reload uspješan! Učitano ${data.length} operatera`);
@@ -409,7 +417,7 @@ class ATLASApp {
                     this.operators = importedData.operateri;
                     
                     // Sačuvaj u LocalStorage
-                    this.saveToLocalStorage(importedData);
+                    this.storageService.saveToLocalStorage(this.operators, importedData);
                     
                     // Refresh display
                     this.renderOperators();
@@ -440,23 +448,23 @@ class ATLASApp {
     setupEventListeners() {
         // Search and Filter
         this.elements.searchInput.addEventListener('input', (e) => {
-            this.handleSearch(e.target.value);
+            this.searchFilter.handleSearch(e.target.value);
         });
         
         this.elements.clearSearchBtn.addEventListener('click', () => {
-            this.clearSearch();
+            this.searchFilter.clearSearch();
         });
         
         this.elements.statusFilter.addEventListener('change', () => {
-            this.applyFilters();
+            this.searchFilter.applyFilters();
         });
         
         this.elements.typeFilter.addEventListener('change', () => {
-            this.applyFilters();
+            this.searchFilter.applyFilters();
         });
         
         this.elements.categoryFilter.addEventListener('change', () => {
-            this.applyFilters();
+            this.searchFilter.applyFilters();
         });
         
         // Quick Category Filters
@@ -470,7 +478,7 @@ class ATLASApp {
             
             btn.addEventListener('click', (e) => {
                 console.log('🖱️ KLIK na filter dugme:', e.target.dataset.category);
-                this.handleQuickFilter(e.target.dataset.category);
+                this.searchFilter.handleQuickFilter(e.target.dataset.category);
             });
         });
         console.log('🔧 === FILTER SETUP ZAVRŠEN ===');
@@ -509,7 +517,7 @@ class ATLASApp {
         
         window.testFilter = (category) => {
             console.log(`🧪 Test filter: ${category}`);
-            this.handleQuickFilter(category);
+            this.searchFilter.handleQuickFilter(category);
         };
         
         // Modal Controls
@@ -518,8 +526,17 @@ class ATLASApp {
         });
         
         // Reload Data Button
-        this.elements.reloadDataBtn.addEventListener('click', () => {
-            this.forceReloadFromJSON();
+        this.elements.reloadDataBtn.addEventListener('click', async () => {
+            this.showLoading(true);
+            try {
+                this.operators = await this.storageService.forceReloadFromJSON();
+                this.renderOperators();
+                this.updateStatistics();
+            } catch (error) {
+                console.error('Reload failed:', error);
+            } finally {
+                this.showLoading(false);
+            }
         });
         
         this.elements.closeModal.addEventListener('click', () => {
@@ -599,16 +616,16 @@ class ATLASApp {
         
         // Export Data
         this.elements.exportDataBtn.addEventListener('click', () => {
-            this.exportData();
+            this.storageService.exportData(this.operators);
         });
         
         // Import Data
         this.elements.importDataBtn.addEventListener('click', () => {
-            this.elements.fileImportInput.click();
-        });
-        
-        this.elements.fileImportInput.addEventListener('change', (e) => {
-            this.handleFileImport(e);
+            this.storageService.importDataFromFile((operators, importData) => {
+                this.operators = operators;
+                this.renderOperators();
+                this.updateStatistics();
+            });
         });
         
         // Help Modal
@@ -629,7 +646,7 @@ class ATLASApp {
             if (e.key === 'Escape') {
                 // If search is active, clear it first, then close modal
                 if (this.elements.searchInput.value) {
-                    this.clearSearch();
+                    this.searchFilter.clearSearch();
                     this.elements.searchInput.blur();
                 } else {
                     this.closeModal();
@@ -642,7 +659,7 @@ class ATLASApp {
             }
             // Enter to search when input is focused
             if (e.key === 'Enter' && document.activeElement === this.elements.searchInput) {
-                this.handleSearch();
+                this.searchFilter.handleSearch();
             }
         });
     }
@@ -650,118 +667,6 @@ class ATLASApp {
     showLoading(show) {
         this.elements.loadingIndicator.style.display = show ? 'block' : 'none';
         this.elements.operatorsTableBody.style.display = show ? 'none' : '';
-    }
-    
-    handleSearch(searchTerm) {
-        const term = searchTerm.toLowerCase().trim();
-        
-        // Clear any existing highlights
-        this.clearSearchHighlights();
-        
-        if (term === '') {
-            this.filteredOperators = [...this.operators];
-            // Reset search filter buttons
-            this.resetQuickFilters();
-            // Hide clear button and results info
-            this.elements.clearSearchBtn.style.display = 'none';
-            this.elements.searchResults.style.display = 'none';
-        } else {
-            this.filteredOperators = this.operators.filter(operator => {
-                return (
-                    operator.naziv.toLowerCase().includes(term) ||
-                    (operator.komercijalni_naziv && operator.komercijalni_naziv.toLowerCase().includes(term)) ||
-                    operator.tip.toLowerCase().includes(term) ||
-                    operator.adresa.toLowerCase().includes(term) ||
-                    operator.email.toLowerCase().includes(term) ||
-                    operator.kontakt_osoba.toLowerCase().includes(term)
-                );
-            });
-            
-            // Highlight search term in results
-            this.highlightSearchTerm = term;
-            
-            // Show clear button and results info
-            this.elements.clearSearchBtn.style.display = 'block';
-            this.elements.searchResults.style.display = 'flex';
-            
-            // Update results info
-            const resultsCount = this.filteredOperators.length;
-            const totalCount = this.operators.length;
-            this.elements.searchResultsText.textContent = 
-                `${resultsCount} od ${totalCount} operatera • "${term}"`;
-        }
-        
-        this.applyFilters();
-    }
-    
-    clearSearchHighlights() {
-        this.highlightSearchTerm = null;
-        // Remove existing highlights
-        document.querySelectorAll('.search-highlight').forEach(el => {
-            el.outerHTML = el.innerHTML;
-        });
-    }
-    
-    highlightText(text, searchTerm) {
-        if (!searchTerm || !text) return text;
-        
-        const regex = new RegExp(`(${searchTerm})`, 'gi');
-        return text.replace(regex, '<span class="search-highlight">$1</span>');
-    }
-    
-    clearSearch() {
-        this.elements.searchInput.value = '';
-        this.clearSearchHighlights();
-        this.resetQuickFilters();
-        this.elements.clearSearchBtn.style.display = 'none';
-        this.elements.searchResults.style.display = 'none';
-        this.filteredOperators = [...this.operators];
-        this.applyFilters();
-    }
-
-    resetQuickFilters() {
-        document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
-        document.querySelector('[data-category="all"]').classList.add('active');
-    }
-    
-    applyFilters() {
-        console.log('🔍 === APPLY FILTERS DEBUG START ===');
-        let filtered = this.filteredOperators.length > 0 ? [...this.filteredOperators] : [...this.operators];
-        console.log('📊 Početni broj operatera za filtriranje:', filtered.length);
-        
-        // Status filter
-        const statusFilter = this.elements.statusFilter.value;
-        console.log('📋 Status filter vrednost:', statusFilter);
-        if (statusFilter) {
-            const beforeCount = filtered.length;
-            filtered = filtered.filter(op => op.status === statusFilter);
-            console.log(`   Status filter: ${beforeCount} → ${filtered.length} operatera`);
-        }
-        
-        // Category filter
-        const categoryFilter = this.elements.categoryFilter.value;
-        console.log('📋 Category filter vrednost:', categoryFilter);
-        if (categoryFilter) {
-            const beforeCount = filtered.length;
-            filtered = filtered.filter(op => this.getCategoryClass(op) === categoryFilter);
-            console.log(`   Category filter: ${beforeCount} → ${filtered.length} operatera`);
-        }
-        
-        // Type filter
-        const typeFilter = this.elements.typeFilter.value;
-        console.log('📋 Type filter vrednost:', typeFilter);
-        if (typeFilter) {
-            const beforeCount = filtered.length;
-            
-            // Koristimo direktno tip operatera
-            filtered = filtered.filter(op => op.tip.includes(typeFilter));
-            console.log(`   Type filter: ${beforeCount} → ${filtered.length} operatera`);
-            console.log('   Filtrirani operateri:', filtered.map(op => `${op.naziv} (${op.tip})`));
-        }
-        
-        console.log('📊 Finalni broj operatera:', filtered.length);
-        console.log('🔍 === APPLY FILTERS DEBUG END ===');
-        this.renderOperators(filtered);
     }
     
     renderOperators(operatorsToRender = null) {
@@ -779,11 +684,11 @@ class ATLASApp {
         tbody.innerHTML = operators.map(operator => {
             // Apply highlighting if search term exists
             const naziv = this.highlightSearchTerm ? 
-                this.highlightText(operator.naziv, this.highlightSearchTerm) : operator.naziv;
+                this.searchFilter.highlightText(operator.naziv, this.highlightSearchTerm) : operator.naziv;
             const komercijalni = this.highlightSearchTerm && operator.komercijalni_naziv ? 
-                this.highlightText(operator.komercijalni_naziv, this.highlightSearchTerm) : operator.komercijalni_naziv;
+                this.searchFilter.highlightText(operator.komercijalni_naziv, this.highlightSearchTerm) : operator.komercijalni_naziv;
             const tip = this.highlightSearchTerm ? 
-                this.highlightText(operator.tip, this.highlightSearchTerm) : operator.tip;
+                this.searchFilter.highlightText(operator.tip, this.highlightSearchTerm) : operator.tip;
             
             return `
             <tr class="fade-in operator-row" data-id="${operator.id}" onclick="app.toggleOperatorDetails(${operator.id})">
@@ -893,51 +798,6 @@ class ATLASApp {
                 countElement.textContent = count;
             }
         });
-    }
-    
-    handleQuickFilter(category) {
-        console.log('🔍 === QUICK FILTER DEBUG START ===');
-        console.log('📥 Primljena kategorija:', category);
-        console.log('📊 Ukupno operatera u aplikaciji:', this.operators.length);
-        console.log('📋 Trenutno filtrirani operateri (search):', this.filteredOperators.length);
-        
-        // Reset search filters when using quick filter
-        this.filteredOperators = [...this.operators];
-        this.elements.searchInput.value = '';
-        this.highlightSearchTerm = '';
-        console.log('🔄 Search resetovan - sada koristimo sve operatere');
-        
-        // Update active filter button
-        document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
-        const filterBtn = document.querySelector(`[data-category="${category}"]`);
-        if (filterBtn) {
-            filterBtn.classList.add('active');
-            console.log('✅ Filter dugme aktivirano za kategoriju:', category);
-        } else {
-            console.warn('❌ Filter dugme za kategoriju "' + category + '" nije pronađeno');
-            return;
-        }
-        
-        // Filter operators
-        if (category === 'all') {
-            this.renderOperators();
-            console.log('📋 Prikazani svi operateri (', this.operators.length, ')');
-        } else {
-            console.log('🔎 Filtriranje operatera po kategoriji "' + category + '"...');
-            
-            // Debug: prikaz kategorizacije za sve operatere
-            this.operators.forEach(op => {
-                const opCategory = this.getCategoryClass(op);
-                console.log(`   - ${op.naziv}: kategorija="${opCategory}", tip="${op.tip}"`);
-            });
-            
-            const filtered = this.operators.filter(op => this.getCategoryClass(op) === category);
-            console.log('📊 Filtrirano operatera:', filtered.length);
-            console.log('📋 Filtrirani operateri:', filtered.map(op => op.naziv));
-            
-            this.renderOperators(filtered);
-        }
-        console.log('🔍 === QUICK FILTER DEBUG END ===');
     }
     
     openModal(mode, operatorId = null) {
@@ -1452,7 +1312,7 @@ class ATLASApp {
         };
         
         this.operators.push(newOperator);
-        this.saveToLocalStorage();
+        this.storageService.saveToLocalStorage(this.operators, );
         this.renderOperators();
         this.updateStatistics();
         this.closeModal();
@@ -1466,7 +1326,7 @@ class ATLASApp {
                 ...this.operators[index],
                 ...operatorData
             };
-            this.saveToLocalStorage();
+            this.storageService.saveToLocalStorage(this.operators, );
             this.renderOperators();
             this.updateStatistics();
             this.closeModal();
@@ -1961,7 +1821,7 @@ class ATLASApp {
             const postCount = this.operators.length;
             console.log('Operateri prije brisanja:', preCount, 'nakon brisanja:', postCount);
             
-            this.saveToLocalStorage();
+            this.storageService.saveToLocalStorage(this.operators, );
             this.renderOperators();
             this.updateStatistics();
             this.notificationManager.showNotification('Operater je uspešno obrisan!', 'success');
@@ -2127,7 +1987,7 @@ class ATLASApp {
                 }
             }
             
-            this.saveToLocalStorage();
+            this.storageService.saveToLocalStorage(this.operators, );
             this.renderOperators();
             this.updateStatistics();
             
