@@ -69,42 +69,69 @@ UI je čist i bez preklapanja, sa dobrom responsivnošću. Koristi moderne CSS t
 
 ## 🚀 **3. Predlozi za Unapređenje**
 
-Tvoja prethodna analiza je tačna i pokriva ključne tačke – slažem se sa svim predlozima (dinamičko filtriranje tipa, poboljšanje kompletnosti, bolji feedback u edit modu). Evo integrisane analize sa tvojim zapažanjima, plus dodatnih predloga za jednostavnost i bolju UX. Predlozi su prioritetizovani: fokus na logici, zatim UI, i konačno performanse.
+Evo detaljnih zadataka za implementaciju unapređenja na osnovu analize i korisničkog feedback-a. Predlozi su prioritetizovani i sadrže specifične korake za implementaciju.
 
-### **Predlog 1: Dinamičko Filtriranje "Tipa Operatera" (Najvažniji, iz tvoje analize)**
-**Problem:** Trenutno su kategorija i tip nezavisni dropdown-ovi, što dozvoljava nekompatibilne kombinacije (npr. "Mobilni/MVNO" + "Kablovski operater"). Greška se javlja tek na submitu.
+### **Zadatak 1: Dinamičko Filtriranje "Tipa Operatera" (Logika i UX)**
+**Problem:** Korisnik može izabrati logički nekompatibilnu kategoriju i tip operatera (npr. Kategorija: "Mobilni/MVNO", a Tip: "Kablovski operater"). Greška se prikazuje tek nakon pokušaja čuvanja.
 
-**Rešenje:** Dodaj JavaScript logiku u `populateForm()` i event listener na kategoriju dropdown. Kreiraj mapu (objekat) sa dozvoljenim tipovima po kategoriji, npr.:
+**Rešenje:** Unaprediti formu tako da, nakon izbora Kategorije, dropdown meni za Tip operatera automatski ponudi samo relevantne opcije.
+
+**Koraci za Implementaciju:**
+
+- **Definisati Mapu Zavisnosti u app.js:** Kreirati JavaScript objekat koji povezuje kategorije sa dozvoljenim tipovima.
+
 ```javascript
-const tipMap = {
-  'Mobilni/MVNO': ['Mobilni operater', 'MVNO operater'],
-  'Dominantni operateri': ['Dominantni operater'],
-  // Dodaj za sve kategorije
+const categoryTypeMap = {
+  'dominantni': ['Dominantni operater'],
+  'mobilni_mvno': ['Mobilni operater', 'MVNO operater'],
+  'regionalni_isp': ['Internet servis provajder', 'Kablovski operater'],
+  'enterprise_b2b': ['B2B provajder', 'IT provajder']
 };
 ```
-- Na promenu kategorije: Filtriraj i ažuriraj tip dropdown opcije.
-- **Prednost:** Sprečava greške u realnom vremenu, čini formu intuitivnijom. Implementacija je jednostavna (~20 linija JS u `app.js`).
 
-### **Predlog 2: Poboljšanje Polja "Kompletnost" (Iz tvoje analize, preporučujem Opciju A)**
-**Problem:** Ručni unos može konfliktovati sa automatskim izračunom, zbunjujući korisnika.
+- **Dodati Event Listener na Kategoriju:** Postaviti change event listener na #kategorija dropdown.
 
-**Rešenje:** Učini polje read-only (`readonly` atribut u HTML) i ažuriraj vrednost u realnom vremenu na `input` event-ovima ostalih polja (funkcija `calculateCompleteness()`). Izračunaj na osnovu popunjenih obaveznih polja (npr. 100% ako su naziv, kategorija, tip popunjeni).
-- **Prednost:** Automatski i konzistentan, smanjuje greške. Dodaj tooltip: "Automatski izračunato na osnovu popunjenih polja."
+- **Implementirati Funkciju za Ažuriranje Tipova:** Na promenu kategorije, funkcija treba da:
+  - Isprazni postojeće opcije iz #tip dropdown-a.
+  - Dinamički popuni #tip dropdown sa filtriranim opcijama iz categoryTypeMap.
+  - Osigurati da se pri editovanju postojeća vrednost tipa automatski selektuje ako je validna.
 
-### **Predlog 3: Bolji Vizuelni Feedback u Edit Modu (Iz tvoje analize)**
-**Problem:** Nema jasnog razlikovanja između add i edit moda osim naslova.
+### **Zadatak 2: Automatizacija Polja "Kompletnost" (Integritet Podataka)**
+**Problem:** Polje "Kompletnost (%)" se može unositi ručno, što može biti nekonzistentno sa automatskim izračunavanjem i zbunjujuće za korisnika.
 
-**Rešenje:**
-- Promeni submit dugme tekst: "Sačuvaj" → "Ažuriraj" u edit modu (u `openModal()`).
-- Dodaj ime operatera u modal naslov: `modalTitle.textContent = \`Uređivanje: ${operator.naziv}\`;`.
-- Dodaj ikonu (npr. edit pen emoji) pored naslova za vizuelni hint.
-- **Prednost:** Bolji UX, korisnik uvek zna kontekst.
+**Rešenje:** Onemogućiti ručni unos i uvesti automatsko izračunavanje u realnom vremenu na osnovu popunjenosti forme.
 
-### **Dodatni Predlog 4: Jednostavnija Validacija i Error Handling**
-**Problem:** Validacija je osnovna (samo obavezna polja i formati), ali nema debounce ili vizuelnog clearing grešaka.
+**Koraci za Implementaciju:**
 
-**Rešenje:** Dodaj real-time validaciju na `blur` event (npr. za email/telefon) i clear greške na fokus. Koristi jednu funkciju `validateField(field)` za sve.
-- **Prednost:** Brži feedback, manje frustracije. Ovo čini formu robustnijom bez kompleksnosti.
+- **Izmeniti HTML u index.html:**
+  - Na `<input type="number" id="kompletnost">` dodati `readonly` atribut.
+  - Dodati `title` atribut sa porukom: `title="Vrednost se automatski izračunava na osnovu popunjenih polja."`.
+
+- **Implementirati Real-Time Ažuriranje u app.js:**
+  - Postaviti `input` event listenere na sva polja u formi.
+  - Prilikom svake promene, pozvati funkciju `calculateCompleteness()` i ažurirati vrednost u readonly polju `#kompletnost`.
+
+### **Zadatak 3: Bolji Vizuelni Feedback u Edit Modu (UI Poboljšanje)**
+**Problem:** Korisnik nema dovoljno jasan vizuelni signal da li dodaje novog operatera ili uređuje postojećeg.
+
+**Rešenje:** Dodati jasne vizuelne indikatore u modalni prozor kada je u "edit" modu.
+
+**Koraci za Implementaciju (u openModal() funkciji u app.js):**
+
+- **Dinamički Naslov Modala:**
+  - Kada je mod 'edit', promeniti naslov: `modalTitle.textContent = \`Uređivanje operatera: ${operator.naziv}\`;`
+
+- **Dinamički Tekst na Dugmetu:**
+  - Kada je mod 'edit', promeniti tekst na dugmetu za čuvanje: `saveBtn.textContent = 'Ažuriraj Izmene';`
+  - Vratiti tekst na "Sačuvaj" pri zatvaranju modala ili otvaranju u 'add' modu.
+
+### **Zadatak 4: Unapređenje Validacije (Niži Prioritet)**
+**Ideja:** Implementirati real-time validaciju na `blur` događaj (kada korisnik napusti polje), posebno za email, telefon i web adrese. Greške bi se prikazivale i ispravljale trenutno, bez čekanja na klik "Sačuvaj".
+
+**Koraci za Implementaciju:**
+- Dodati `blur` event listenere na relevantna polja (email, telefon, web).
+- Kreirati funkciju `validateField(field)` koja proverava format i prikazuje/cleari greške.
+- Osigurati da se greške brišu na `focus` event.
 
 ### **Dodatni Predlog 5: Optimizacija za Performanse i Jednostavnost**
 **Problem:** Čitanje/pisanje u `localStorage` i JSON se dešava na svaki submit, što može usporiti za velike liste operatera (>1000).
@@ -116,15 +143,15 @@ const tipMap = {
 
 ## 📝 **Zaključak i Sledeći Koraci**
 
-Ovi predlozi ne zahtevaju velike promene – mogu se implementirati u `app.js` i `styles.css` za bolju jednostavnost.
+Ovi predlozi ne zahtevaju velike promene – mogu se implementirati u `app.js`, `index.html` i `styles.css` za bolju jednostavnost.
 
 **Prioritet za implementaciju:**
-1. **Predlog 1** - Dinamičko filtriranje tipa (najveći UX poboljšaj)
-2. **Predlog 2** - Automatska kompletnost (smanjuje greške)
-3. **Predlog 3** - Bolji vizuelni feedback (poboljšava UX)
-4. **Predlog 4** - Real-time validacija (dodatni UX poboljšaj)
-5. **Predlog 5** - Performanse (za skalabilnost)
+1. **Zadatak 1** - Dinamičko filtriranje tipa (najveći UX poboljšaj)
+2. **Zadatak 2** - Automatska kompletnost (smanjuje greške)
+3. **Zadatak 3** - Bolji vizuelni feedback (poboljšava UX)
+4. **Zadatak 4** - Real-time validacija (dodatni UX poboljšaj)
+5. **Zadatak 5** - Performanse (za skalabilnost)
 
 **Datumi kreiranja:** September 9, 2025
-**Verzija:** 1.0
+**Verzija:** 1.1 (Updated with detailed implementation steps)
 **Autor:** ATLAS Development Team

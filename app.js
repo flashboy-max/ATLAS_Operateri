@@ -190,6 +190,14 @@ function getServiceTooltip(serviceKey) {
     return tooltips[serviceKey] || 'Telekomunikaciona usluga za krajnje korisnike';
 }
 
+// Category-Type mapping for dynamic filtering
+const categoryTypeMap = {
+  'dominantni': ['Dominantni operater'],
+  'mobilni_mvno': ['Mobilni operater', 'MVNO operater'],
+  'regionalni_isp': ['Internet servis provajder', 'Kablovski operater'],
+  'enterprise_b2b': ['B2B provajder', 'IT provajder']
+};
+
 class ATLASApp {
     constructor() {
         this.operators = [];
@@ -487,6 +495,46 @@ class ATLASApp {
         this.elements.operatorForm.addEventListener('submit', (e) => {
             e.preventDefault();
             this.handleFormSubmit();
+        });
+
+        // Real-time completeness calculation
+        const formFields = ['naziv', 'komercijalni_naziv', 'kategorija', 'tip', 'status', 'prioritet', 'opis', 'adresa', 'telefon', 'email', 'web', 'atlas_status', 'kontakt_osoba'];
+        formFields.forEach(fieldName => {
+            const field = document.getElementById(fieldName);
+            if (field) {
+                field.addEventListener('input', () => {
+                    const formData = new FormData(this.elements.operatorForm);
+                    const completeness = this.calculateCompleteness(formData);
+                    document.getElementById('kompletnost').value = completeness;
+                });
+            }
+        });
+
+        // Dynamic tip filtering based on category
+        const kategorijaField = document.getElementById('kategorija');
+        if (kategorijaField) {
+            kategorijaField.addEventListener('change', () => {
+                this.updateTipOptions();
+            });
+        }
+
+        // Real-time validation for specific fields
+        const validationFields = [
+            { id: 'email', validator: this.isValidEmail.bind(this), message: 'Email adresa nije ispravna' },
+            { id: 'telefon', validator: this.isValidPhone.bind(this), message: 'Broj telefona nije ispravan' },
+            { id: 'web', validator: this.isValidUrl.bind(this), message: 'Web adresa nije ispravna' }
+        ];
+
+        validationFields.forEach(fieldInfo => {
+            const field = document.getElementById(fieldInfo.id);
+            if (field) {
+                field.addEventListener('blur', () => {
+                    this.validateField(field, fieldInfo.validator, fieldInfo.message);
+                });
+                field.addEventListener('focus', () => {
+                    this.clearFieldError(field);
+                });
+            }
         });
         
         // Export Data
@@ -808,12 +856,16 @@ class ATLASApp {
         
         if (mode === 'add') {
             this.elements.modalTitle.textContent = 'Dodaj Novog Operatera';
+            this.elements.saveBtn.textContent = 'Sačuvaj';
             this.elements.operatorForm.reset();
         } else if (mode === 'edit' && operatorId) {
-            this.elements.modalTitle.textContent = 'Uredi Operatera';
             const operator = this.operators.find(op => op.id === operatorId);
             if (operator) {
+                this.elements.modalTitle.textContent = `Uređivanje operatera: ${operator.naziv}`;
+                this.elements.saveBtn.textContent = 'Ažuriraj Izmene';
                 this.populateForm(operator);
+            } else {
+                this.elements.modalTitle.textContent = 'Uredi Operatera';
             }
         }
         
@@ -828,6 +880,7 @@ class ATLASApp {
         document.body.style.overflow = '';
         this.currentEditId = null;
         this.elements.operatorForm.reset();
+        this.elements.saveBtn.textContent = 'Sačuvaj';
     }
     
     populateForm(operator) {
@@ -846,6 +899,11 @@ class ATLASApp {
         form.elements.prioritet.value = operator.prioritet || '';
         form.elements.kompletnost.value = operator.kompletnost || 0;
         form.elements.kontakt_osoba.value = operator.kontakt_osoba || '';
+
+        // Update tip options based on category for edit mode
+        setTimeout(() => {
+            this.updateTipOptions();
+        }, 100);
     }
     
     handleFormSubmit() {
