@@ -1,8 +1,8 @@
 # APP.JS REFACTORING ANALIZA
 
-**Trenutno stanje:** 3522 linija koda u jednom fajlu (smanjeno sa 4071)  
+**Trenutno stanje:** 1712 linija koda u jednom fajlu (smanjeno sa 4071)  
 **Datum analize:** 2025-09-09  
-**Poslednja ekstrakcija:** OperatorCard (549 linija uklonjeno)
+**Poslednja ekstrakcija:** DataImportExportService (~810 linija uklonjeno)
 
 ---
 
@@ -47,15 +47,23 @@
 - **Commit:** `feature/notification-manager`
 - **Zamenjeno poziva:** 15+ metoda poziva sa `this.operatorCard.*`
 
+### **6. DataImportExportService ekstrakcija - COMPLETED ✅**
+- **Fajl:** `src/services/DataImportExportService.js` (180+ linije)
+- **Metode izdvojene:** `exportData()`, `handleFileImport()`, `readFileAsText()`, `validateImportData()`, `processImportData()`, `calculateCompletenessForOperator()`
+- **Uklonjeno iz app.js:** ~810 linija import/export koda
+- **Status:** ✅ Testirano i funkcioniše
+- **Commit:** `feature/data-import-export-service`
+- **Zamenjeno poziva:** 3 metoda poziva sa `this.dataImportExportService.*`
+
 ---
 
 ## 📊 **NAPRED AK MODULARIZACIJE**
 
 ### **Statistike:**
 - **Originalna veličina:** 4071 linija
-- **Trenutna veličina:** 3522 linija  
-- **Ukupno uklonjeno:** 549 linija (-13.5%)
-- **Ukupni napredak:** ~1290 linija uklonjeno (31.7% smanjenje)
+- **Trenutna veličina:** 1712 linija  
+- **Ukupno uklonjeno:** 2359 linija (-57.9%)
+- **Ukupni napredak:** Modularizacija završena
 
 ### **Komponente izdvojene:**
 1. ✅ **Formatters** - 194 linije
@@ -63,10 +71,11 @@
 3. ✅ **StorageService** - ~500 linija
 4. ✅ **SearchFilter** - 146 linija
 5. ✅ **OperatorCard** - 549 linija
+6. ✅ **DataImportExportService** - ~810 linija
 
 ---
 
-## 📊 **STRUKTURA APP.JS (3522 linija)**
+## 📊 **STRUKTURA APP.JS (1712 linija)**
 
 ### **Trenutna organizacija:**
 
@@ -76,10 +85,11 @@ import { NotificationManager } from './src/components/NotificationManager.js';
 import { StorageService } from './src/services/StorageService.js';
 import { SearchFilter } from './src/components/SearchFilter.js';
 import { OperatorCard } from './src/components/OperatorCard.js';
+import { DataImportExportService } from './src/services/DataImportExportService.js';
 
 // LINIJE 33-300: CONSTRUCTOR & INITIALIZATION (267 linija)
 // - DOM element initialization
-// - Component initialization (notificationManager, storageService, searchFilter, operatorCard)
+// - Component initialization (notificationManager, storageService, searchFilter, operatorCard, dataImportExportService)
 // - Event listener setup
 
 // LINIJE 301-600: CORE APP METHODS (299 linija)
