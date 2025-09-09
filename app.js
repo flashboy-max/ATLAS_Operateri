@@ -13,6 +13,7 @@ import {
     getServiceTooltip
 } from './src/utils/formatters.js';
 import { CATEGORY_TYPE_MAP } from './src/utils/constants.js';
+import { NotificationManager } from './src/components/NotificationManager.js';
 
 // Catalog loaded successfully
 console.log('✅ Standard catalog loaded:', standardCatalog?.services?.length || 0, 'services,', standardCatalog?.technologies?.length || 0, 'technologies');
@@ -48,6 +49,9 @@ class ATLASApp {
         this.filteredOperators = [];
         this.currentEditId = null;
         this.storageKey = 'atlas_operators_data';
+        
+        // Initialize NotificationManager
+        this.notificationManager = new NotificationManager();
         
         // DOM Elements
         this.elements = {
@@ -142,7 +146,7 @@ class ATLASApp {
         } catch (error) {
             console.error('Greška pri pokretanju aplikacije:', error);
             this.showLoading(false);
-            this.showNotification('Greška pri učitavanju podataka', 'error');
+            this.notificationManager.showNotification('Greška pri učitavanju podataka', 'error');
         }
     }
     
@@ -322,33 +326,11 @@ class ATLASApp {
             }
             
             // Prikažemo sync status bar kada se čuvaju lokalni podaci
-            this.showSyncStatus();
+            this.notificationManager.showSyncStatus();
             
         } catch (error) {
             console.error('Greška pri čuvanju u LocalStorage:', error);
-            this.showNotification('Greška pri čuvanju podataka', 'error');
-        }
-    }
-    
-    // Sync Status Bar funkcije
-    showSyncStatus() {
-        const statusBar = document.getElementById('sync-status-bar');
-        if (statusBar) {
-            statusBar.style.display = 'block';
-            
-            // Sakrij posle 10 sekundi ako nema interakcije
-            setTimeout(() => {
-                if (statusBar.style.display === 'block') {
-                    this.hideSyncStatus();
-                }
-            }, 10000);
-        }
-    }
-    
-    hideSyncStatus() {
-        const statusBar = document.getElementById('sync-status-bar');
-        if (statusBar) {
-            statusBar.style.display = 'none';
+            this.notificationManager.showNotification('Greška pri čuvanju podataka', 'error');
         }
     }
     
@@ -394,11 +376,11 @@ class ATLASApp {
                 timestamp: exportData.metadata.exportedAt
             });
             
-            this.showNotification(`📥 Izvoženo ${exportData.operateri.length} operatera u fajl: ${a.download}`, 'success', 5000);
+            this.notificationManager.showNotification(`📥 Izvoženo ${exportData.operateri.length} operatera u fajl: ${a.download}`, 'success', 5000);
             
         } catch (error) {
             console.error('❌ Greška pri exportu:', error);
-            this.showNotification('Greška pri exportu podataka', 'error');
+            this.notificationManager.showNotification('Greška pri exportu podataka', 'error');
         }
     }
     
@@ -439,11 +421,11 @@ class ATLASApp {
                         version: importedData.version
                     });
                     
-                    this.showNotification(`📤 Učitano ${importedData.operateri.length} operatera iz fajla: ${file.name}`, 'success', 5000);
+                    this.notificationManager.showNotification(`📤 Učitano ${importedData.operateri.length} operatera iz fajla: ${file.name}`, 'success', 5000);
                     
                 } catch (error) {
                     console.error('❌ Greška pri importu:', error);
-                    this.showNotification('Greška pri čitanju fajla - proverite format', 'error');
+                    this.notificationManager.showNotification('Greška pri čitanju fajla - proverite format', 'error');
                 }
             };
             
@@ -1347,7 +1329,7 @@ class ATLASApp {
             }
         });
         
-        this.showNotification('Molimo ispravite greške u formi', 'error');
+        this.notificationManager.showNotification('Molimo ispravite greške u formi', 'error');
     }
     
     calculateCompleteness(formData) {
@@ -1474,7 +1456,7 @@ class ATLASApp {
         this.renderOperators();
         this.updateStatistics();
         this.closeModal();
-        this.showNotification('Operater je uspešno dodat!', 'success');
+        this.notificationManager.showNotification('Operater je uspešno dodat!', 'success');
     }
     
     updateOperator(id, operatorData) {
@@ -1488,7 +1470,7 @@ class ATLASApp {
             this.renderOperators();
             this.updateStatistics();
             this.closeModal();
-            this.showNotification('Operater je uspešno ažuriran!', 'success');
+            this.notificationManager.showNotification('Operater je uspešno ažuriran!', 'success');
         }
     }
     
@@ -1982,7 +1964,7 @@ class ATLASApp {
             this.saveToLocalStorage();
             this.renderOperators();
             this.updateStatistics();
-            this.showNotification('Operater je uspešno obrisan!', 'success');
+            this.notificationManager.showNotification('Operater je uspešno obrisan!', 'success');
         }
     }
     
@@ -2028,19 +2010,19 @@ class ATLASApp {
                 timestamp: exportData.metadata.exportedAt
             });
             
-            this.showNotification(`📥 Izvoženo ${exportData.operateri.length} operatera u fajl: ${link.download}`, 'success', 5000);
+            this.notificationManager.showNotification(`📥 Izvoženo ${exportData.operateri.length} operatera u fajl: ${link.download}`, 'success', 5000);
             
             // Sakrij sync status bar jer su podaci izvezeni
-            this.hideSyncStatus();
+            this.notificationManager.hideSyncStatus();
             
             // Dodaj visual feedback sa instrukcijama
             setTimeout(() => {
-                this.showNotification('💡 Tip: Zamenite stari operateri.json sa novo izvoženim fajlom da sačuvate promene', 'info', 8000);
+                this.notificationManager.showNotification('💡 Tip: Zamenite stari operateri.json sa novo izvoženim fajlom da sačuvate promene', 'info', 8000);
             }, 2000);
             
         } catch (error) {
             console.error('❌ Greška pri exportu:', error);
-            this.showNotification('Greška pri exportu podataka', 'error');
+            this.notificationManager.showNotification('Greška pri exportu podataka', 'error');
         }
     }
     
@@ -2049,7 +2031,7 @@ class ATLASApp {
         if (!file) return;
         
         if (!file.name.endsWith('.json')) {
-            this.showNotification('Molimo izaberite JSON fajl', 'error');
+            this.notificationManager.showNotification('Molimo izaberite JSON fajl', 'error');
             return;
         }
         
@@ -2058,7 +2040,7 @@ class ATLASApp {
             const importData = JSON.parse(fileContent);
             
             if (!this.validateImportData(importData)) {
-                this.showNotification('Neispravni format JSON fajla', 'error');
+                this.notificationManager.showNotification('Neispravni format JSON fajla', 'error');
                 return;
             }
             
@@ -2066,7 +2048,7 @@ class ATLASApp {
             
         } catch (error) {
             console.error('Import error:', error);
-            this.showNotification('Greška pri učitavanju fajla: ' + error.message, 'error');
+            this.notificationManager.showNotification('Greška pri učitavanju fajla: ' + error.message, 'error');
         } finally {
             // Clear file input
             event.target.value = '';
@@ -2149,14 +2131,14 @@ class ATLASApp {
             this.renderOperators();
             this.updateStatistics();
             
-            this.showNotification(
+            this.notificationManager.showNotification(
                 `Uspešno uvezeno: ${importedCount} novih, ${updatedCount} ažuriranih operatera`,
                 'success'
             );
             
         } catch (error) {
             console.error('Processing error:', error);
-            this.showNotification('Greška pri obradi podataka: ' + error.message, 'error');
+            this.notificationManager.showNotification('Greška pri obradi podataka: ' + error.message, 'error');
         } finally {
             this.showLoading(false);
         }
@@ -2186,36 +2168,6 @@ class ATLASApp {
         const optionalPercentage = (filledOptional / optionalFields.length) * 40;
         
         return Math.round(requiredPercentage + optionalPercentage);
-    }
-    
-    showNotification(message, type = 'info') {
-        // Simple notification system
-        const notification = document.createElement('div');
-        notification.className = `notification notification-${type}`;
-        notification.style.cssText = `
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            padding: 16px 24px;
-            background: ${type === 'success' ? '#22c55e' : type === 'error' ? '#ef4444' : '#3b82f6'};
-            color: white;
-            border-radius: 8px;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
-            z-index: 10000;
-            animation: slideIn 0.3s ease-out;
-        `;
-        notification.textContent = message;
-        
-        document.body.appendChild(notification);
-        
-        setTimeout(() => {
-            notification.style.animation = 'fadeOut 0.3s ease-out';
-            setTimeout(() => {
-                if (notification.parentNode) {
-                    notification.parentNode.removeChild(notification);
-                }
-            }, 300);
-        }, 3000);
     }
     
     // Utility functions
