@@ -1,0 +1,197 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "ATLAS Standard Catalog Schema",
+  "description": "Schema for validating ATLAS standard telecommunications catalog",
+  "type": "object",
+  "required": ["metadata", "services", "technologies"],
+  "properties": {
+    "metadata": {
+      "type": "object",
+      "required": ["version", "last_updated"],
+      "properties": {
+        "version": {
+          "type": "string",
+          "pattern": "^\\d+\\.\\d+$",
+          "description": "Catalog version (e.g., '1.5')"
+        },
+        "last_updated": {
+          "type": "string",
+          "format": "date",
+          "description": "Last update date in YYYY-MM-DD format"
+        },
+        "language": {
+          "type": "string",
+          "enum": ["bs", "en"],
+          "description": "Primary language code"
+        },
+        "canonical_status_values": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "enum": ["active", "planned", "deprecated"]
+          },
+          "description": "Valid status values"
+        },
+        "canonical_domains": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "enum": ["mobile", "fixed", "internet", "tv", "cloud", "additional", "security"]
+          },
+          "description": "Valid domain values"
+        },
+        "sources": {
+          "type": "array",
+          "items": {"type": "string"},
+          "description": "Data sources"
+        },
+        "total_services": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Total number of services (auto-calculated)"
+        },
+        "total_technologies": {
+          "type": "integer", 
+          "minimum": 0,
+          "description": "Total number of technologies (auto-calculated)"
+        }
+      }
+    },
+    "services": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "domain", "naziv", "status"],
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^[a-z0-9_]+$",
+            "description": "Unique identifier (lowercase, underscores only)"
+          },
+          "domain": {
+            "type": "string",
+            "enum": ["mobile", "fixed", "internet", "tv", "cloud", "additional", "security"],
+            "description": "Service domain category"
+          },
+          "naziv": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Service name in Bosnian"
+          },
+          "naziv_en": {
+            "type": "string",
+            "description": "Service name in English"
+          },
+          "opis": {
+            "type": "string",
+            "description": "Service description"
+          },
+          "status": {
+            "type": "string",
+            "enum": ["active", "planned", "deprecated"],
+            "description": "Service status"
+          },
+          "aliases": {
+            "type": "array",
+            "items": {"type": "string"},
+            "description": "Alternative names for fuzzy matching"
+          },
+          "tags": {
+            "type": "array",
+            "items": {"type": "string"},
+            "description": "Tags for categorization and search"
+          },
+          "match_regex": {
+            "type": "string",
+            "description": "Regex pattern for advanced matching (must be valid regex)",
+            "format": "regex"
+          },
+          "deprecated_since": {
+            "type": "string",
+            "format": "date",
+            "description": "Date when service was deprecated (YYYY-MM-DD)"
+          },
+          "replacement_id": {
+            "type": "string",
+            "pattern": "^[a-z0-9_]+$",
+            "description": "ID of replacement service if deprecated"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "technologies": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "domain", "tip", "naziv", "status"],
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^[a-z0-9_]+$",
+            "description": "Unique identifier (lowercase, underscores only)"
+          },
+          "domain": {
+            "type": "string",
+            "enum": ["access", "core", "transport", "cloud", "security"],
+            "description": "Technology domain"
+          },
+          "tip": {
+            "type": "string",
+            "enum": ["wireless", "fixed", "optical", "voice", "database", "messaging", "platform", "copper", "cable", "protocol", "nat", "switching", "overlay", "delivery"],
+            "description": "Technology type"
+          },
+          "naziv": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Technology name in Bosnian"
+          },
+          "naziv_en": {
+            "type": "string",
+            "description": "Technology name in English"
+          },
+          "opis": {
+            "type": "string",
+            "description": "Technology description"
+          },
+          "status": {
+            "type": "string",
+            "enum": ["active", "planned", "deprecated"],
+            "description": "Technology status"
+          },
+          "aliases": {
+            "type": "array",
+            "items": {"type": "string"},
+            "description": "Alternative names for fuzzy matching"
+          },
+          "tags": {
+            "type": "array",
+            "items": {"type": "string"},
+            "description": "Tags for categorization and search"
+          },
+          "capacity": {
+            "type": "string",
+            "description": "Typical capacity or performance metric"
+          },
+          "match_regex": {
+            "type": "string",
+            "description": "Regex pattern for advanced matching (must be valid regex)",
+            "format": "regex"
+          },
+          "deprecated_since": {
+            "type": "string",
+            "format": "date",
+            "description": "Date when technology was deprecated (YYYY-MM-DD)"
+          },
+          "replacement_id": {
+            "type": "string",
+            "pattern": "^[a-z0-9_]+$",
+            "description": "ID of replacement technology if deprecated"
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  },
+  "additionalProperties": false
+}
