@@ -5,11 +5,23 @@
 // Import standard catalog
 import { standardCatalog, catalogUtils } from './generated/standard_catalog.js';
 
+// Import utilities
+import {
+    getReadableTechName,
+    getReadableServiceName,
+    getTechTooltip,
+    getServiceTooltip
+} from './src/utils/formatters.js';
+import { CATEGORY_TYPE_MAP } from './src/utils/constants.js';
+
 // Import components
 import { OperatorCard } from './src/components/OperatorCard.js';
+import { NotificationManager } from './src/components/NotificationManager.js';
+import { SearchFilter } from './src/components/SearchFilter.js';
 
 // Import services
 import { DataImportExportService } from './src/services/DataImportExportService.js';
+import { StorageService } from './src/services/StorageService.js';
 
 // Catalog loaded successfully
 console.log('✅ Standard catalog loaded:', standardCatalog?.services?.length || 0, 'services,', standardCatalog?.technologies?.length || 0, 'technologies');
@@ -34,201 +46,6 @@ window.testCatalog = function() {
     console.log('🧪 === END CATALOG TEST ===');
 };
 
-// Mapping funkcije za čitljive nazive
-function getReadableTechName(techKey) {
-    const techMap = {
-        // Mobilne tehnologije
-        'tech_2g': 'GSM 2G',
-        'tech_3g': 'UMTS 3G', 
-        'tech_4g': 'LTE 4G',
-        'tech_4g_lte': 'LTE 4G',
-        'tech_5g_ready': '5G Ready',
-        'tech_5g': '5G',
-        'tech_volte': 'VoLTE',
-        'tech_vowifi': 'VoWiFi',
-        'tech_ims_mobile': 'IMS Mobile',
-        'tech_hlr_hss': 'HLR/HSS',
-        'tech_eir': 'EIR',
-        'tech_smsc_mmsc': 'SMSC/MMSC',
-        'tech_mvno': 'MVNO Platform',
-        'tech_esim': 'eSIM',
-        'tech_mnp': 'MNP',
-        
-        // Fiksne tehnologije
-        'tech_pstn': 'PSTN',
-        'tech_isdn': 'ISDN',
-        'tech_voip_fixed': 'VoIP Fixed',
-        'tech_ims_fixed': 'IMS Fixed',
-        'tech_softswitch_fixed': 'Softswitch',
-        
-        // Mrežne tehnologije
-        'tech_ftth_fttb': 'FTTH/FTTB',
-        'tech_xdsl': 'xDSL',
-        'tech_docsis': 'DOCSIS',
-        'tech_ipv4': 'IPv4',
-        'tech_ipv6': 'IPv6',
-        'tech_cgnat': 'CG-NAT',
-        'tech_mpls': 'MPLS',
-        'tech_sdwan': 'SD-WAN',
-        'tech_cdn': 'CDN',
-        'tech_fixed_wireless': 'Fixed Wireless',
-        'tech_satellite': 'Satellite',
-        'tech_vsat': 'VSAT',
-        'tech_cable': 'Cable',
-        'tech_fiber': 'Fiber Optic',
-        'tech_data_center': 'Data Center',
-        'tech_cloud': 'Cloud',
-        'tech_cybersecurity': 'Cybersecurity',
-        'tech_sip': 'SIP',
-        'tech_vpn': 'VPN',
-        'iptv_platform': 'IPTV Platform',
-        'satellite_tv_infrastructure': 'Satellite TV',
-        'tech_multiplex_d': 'Multiplex D',
-        'tech_digital_terrestrial': 'Digital Terrestrial'
-    };
-    
-    return techMap[techKey] || techKey.replace('tech_', '').replace(/_/g, ' ').toUpperCase();
-}
-
-function getReadableServiceName(serviceKey) {
-    const serviceMap = {
-        // Mobilne usluge
-        'mobile_prepaid': 'Mobilni Prepaid',
-        'mobile_postpaid': 'Mobilni Postpaid',
-        'mobile_esim': 'eSIM',
-        'mobile_volte_vowifi': 'VoLTE/VoWiFi',
-        'mobile_roaming': 'Roaming',
-        'mobile_mnp': 'MNP',
-        'roaming_internet_options': 'Roaming Internet',
-        
-        // Fiksne usluge
-        'fixed_pstn': 'PSTN',
-        'fixed_isdn': 'ISDN',
-        'fixed_voip': 'VoIP',
-        'ip_centrex': 'IP Centrex',
-        'fixed_portability': 'Portabilnost Brojeva',
-        'glasovna_posta': 'Glasovna Pošta',
-        
-        // Internet usluge
-        'internet_ftth': 'FTTH Internet',
-        'internet_flat': 'Flat Internet',
-        'internet_flying': 'Flying Internet',
-        'internet_adsl_vdsl': 'ADSL/VDSL',
-        'internet_mobile': 'Mobilni Internet',
-        'internet_business': 'Poslovni Internet',
-        'internet_dedicated': 'Dedicated Internet',
-        'internet_vpn': 'VPN Internet',
-        'internet_fixed_wireless': 'Fixed Wireless',
-        'internet_satellite': 'Satelitski Internet',
-        'internet_cable': 'Kablovski Internet',
-        'netbiz_packages': 'NetBiz Paketi',
-        'business_internet_packages': 'Poslovni Paketi',
-        
-        // TV usluge
-        'sat_tv': 'Satelitska TV',
-        'iptv': 'IPTV',
-        'tv_streaming': 'TV Streaming',
-        'cable_tv': 'Kablovska TV',
-        'digital_tv': 'Digitalna TV',
-        'multiplex_d_tv': 'Multiplex D TV',
-        
-        // Cloud/Poslovne usluge
-        'data_center': 'Data Center',
-        'system_integration': 'Sistemska Integracija',
-        'smart_city': 'Smart City',
-        'smart_home': 'Smart Home',
-        'cloud_hosting': 'Cloud Hosting',
-        'cloud_backup': 'Cloud Backup',
-        'cloud_infra': 'Cloud Infrastruktura',
-        'cybersecurity': 'Cyber Security',
-        'it_consulting': 'IT Konsalting',
-        'colocation': 'Colocation',
-        'wholesale_services': 'Veleprodajne Usluge',
-        'sms_gateway': 'SMS Gateway',
-        'telemach_app': 'Telemach App',
-        
-        // Dodatne usluge
-        'device_sales': 'Prodaja Uređaja',
-        'terminal_equipment': 'Terminalna Oprema',
-        'router_sales': 'Prodaja Rutera'
-    };
-    
-    return serviceMap[serviceKey] || serviceKey.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
-}
-
-function getTechTooltip(techKey) {
-    const tooltips = {
-        'tech_2g': 'Druga generacija mobilnih mreža (GSM 900/1800 MHz)',
-        'tech_3g': 'Treća generacija mobilnih mreža (UMTS 900/2100 MHz)',
-        'tech_4g': 'Četvrta generacija mobilnih mreža (LTE 800/1800/2600 MHz)',
-        'tech_4g_lte': 'Long Term Evolution - napredna 4G tehnologija',
-        'tech_5g_ready': '5G Ready infrastruktura spremna za nadogradnju',
-        'tech_volte': 'Voice over LTE - glasovni pozivi preko 4G mreže',
-        'tech_vowifi': 'Voice over WiFi - glasovni pozivi preko WiFi',
-        'tech_ims_mobile': 'IP Multimedia Subsystem za mobilne usluge',
-        'tech_hlr_hss': 'Home Location Register / Home Subscriber Server',
-        'tech_eir': 'Equipment Identity Register - registar uređaja',
-        'tech_smsc_mmsc': 'SMS/MMS Center - centri za tekstualne poruke',
-        'tech_ftth_fttb': 'Fiber to the Home/Building - optika do objekta',
-        'tech_xdsl': 'Digital Subscriber Line tehnologije',
-        'tech_docsis': 'Data Over Cable Service Interface - kablovski internet',
-        'tech_ipv4': 'Internet Protocol verzija 4',
-        'tech_ipv6': 'Internet Protocol verzija 6 - nova generacija',
-        'tech_cgnat': 'Carrier Grade Network Address Translation',
-        'tech_mpls': 'Multi-Protocol Label Switching',
-        'tech_sdwan': 'Software Defined Wide Area Network',
-        'tech_fixed_wireless': 'Bežični pristup fiksnoj lokaciji',
-        'tech_satellite': 'Satelitske komunikacije',
-        'tech_vsat': 'Very Small Aperture Terminal',
-        'tech_pstn': 'Public Switched Telephone Network',
-        'tech_isdn': 'Integrated Services Digital Network',
-        'tech_voip_fixed': 'Voice over IP za fiksne linije',
-        'iptv_platform': 'Internet Protocol Television platforma',
-        'tech_multiplex_d': 'Multiplex D - digitalna radiodifuzija',
-        'tech_digital_terrestrial': 'Digitalna zemaljska radiodifuzija',
-        'tech_esim': 'Embedded SIM - digitalna SIM kartica',
-        'tech_mnp': 'Mobile Number Portability - prenos brojeva'
-    };
-    
-    return tooltips[techKey] || 'Napredna telekomunikaciona tehnologija';
-}
-
-function getServiceTooltip(serviceKey) {
-    const tooltips = {
-        'mobile_prepaid': 'Mobilne usluge sa pretplatom - plaćanje unapred',
-        'mobile_postpaid': 'Mobilne usluge sa pretplatom - mesečno naplaćivanje',
-        'mobile_esim': 'Embedded SIM - digitalna SIM kartica',
-        'mobile_volte_vowifi': 'HD glasovni pozivi preko 4G/WiFi mreža',
-        'mobile_roaming': 'Korišćenje usluga van domaće mreže',
-        'mobile_mnp': 'Mobile Number Portability - prenos broja',
-        'internet_ftth': 'Optički internet direktno do objekta',
-        'internet_flat': 'Neograničeni internet bez FUP ograničenja',
-        'internet_adsl_vdsl': 'Internet preko bakarnih linija',
-        'internet_business': 'Poslovni internet sa SLA garantijama',
-        'internet_dedicated': 'Dedicirani internet sa garantovanom brzinom',
-        'sat_tv': 'Satelitska televizija sa HD/4K kvalitetom',
-        'iptv': 'Televizija preko internet protokola',
-        'data_center': 'Hosting i colocation usluge',
-        'cloud_hosting': 'Virtuelni serveri u oblaku',
-        'cybersecurity': 'Zaštita od cyber pretnji i napada',
-        'smart_city': 'IoT rešenja za pametne gradove',
-        'wholesale_services': 'B2B2C usluge za druge operatere',
-        'internet_cable': 'Internet preko kablovskih mreža',
-        'digital_tv': 'Digitalna televizija sa HD kvalitetom',
-        'cable_tv': 'Kablovska televizija',
-        'fixed_voip': 'VoIP telefonija za domaćinstva i preduzeća'
-    };
-    
-    return tooltips[serviceKey] || 'Telekomunikaciona usluga za krajnje korisnike';
-}
-
-// Category-Type mapping for dynamic filtering
-const categoryTypeMap = {
-  'dominantni': ['Dominantni operater'],
-  'mobilni_mvno': ['Mobilni operater', 'MVNO operater'],
-  'regionalni_isp': ['Internet servis provajder', 'Kablovski operater'],
-  'enterprise_b2b': ['B2B provajder', 'IT provajder']
-};
 
 class ATLASApp {
     constructor() {
@@ -757,6 +574,26 @@ class ATLASApp {
         if (this.elements.addTechContactBtn) {
             this.elements.addTechContactBtn.addEventListener('click', () => {
                 this.addTechContactField();
+            });
+        }
+
+        // Usluge dugme - dodaj event listener
+        if (this.elements.addServiceBtn) {
+            this.elements.addServiceBtn.addEventListener('click', () => {
+                console.log('🔵 Dodavanje nove usluge...');
+                const isEditMode = this.currentEditId !== null;
+                const existingServices = this.getExistingServicesFromForm();
+                this.addServiceField(null, isEditMode, existingServices);
+            });
+        }
+
+        // Tehnologije dugme - dodaj event listener
+        if (this.elements.addTechnologyBtn) {
+            this.elements.addTechnologyBtn.addEventListener('click', () => {
+                console.log('🔵 Dodavanje nove tehnologije...');
+                const isEditMode = this.currentEditId !== null;
+                const existingTechnologies = this.getExistingTechnologiesFromForm();
+                this.addTechnologyField(null, isEditMode, existingTechnologies);
             });
         }
 
@@ -1515,14 +1352,7 @@ class ATLASApp {
     }
     
     isCategoryTypeConsistent(kategorija, tip) {
-        const categoryTypeMap = {
-            'dominantni': ['Dominantni operater'],
-            'mobilni_mvno': ['Mobilni operater', 'MVNO operater'],
-            'regionalni_isp': ['Internet servis provajder', 'Kablovski operater'],
-            'enterprise_b2b': ['B2B provajder', 'IT provajder']
-        };
-        
-        return categoryTypeMap[kategorija] && categoryTypeMap[kategorija].includes(tip);
+        return CATEGORY_TYPE_MAP[kategorija] && CATEGORY_TYPE_MAP[kategorija].includes(tip);
     }
     
     showValidationErrors(errors) {
@@ -1589,17 +1419,17 @@ class ATLASApp {
         tipField.innerHTML = '<option value="">Izaberite tip operatera</option>';
         
         // Add filtered options based on category
-        if (selectedKategorija && categoryTypeMap[selectedKategorija]) {
-            categoryTypeMap[selectedKategorija].forEach(tip => {
+        if (selectedKategorija && CATEGORY_TYPE_MAP[selectedKategorija]) {
+            CATEGORY_TYPE_MAP[selectedKategorija].forEach(tip => {
                 const option = document.createElement('option');
                 option.value = tip;
                 option.textContent = tip;
-                
+
                 // Restore previously selected value if it's valid for new category
                 if (tip === currentTipValue) {
                     option.selected = true;
                 }
-                
+
                 tipField.appendChild(option);
             });
         }
@@ -1737,19 +1567,961 @@ class ATLASApp {
             this.cleanupDuplicateTooltips();
         }, 150);
     }
+
+    // Missing methods that need to be implemented
+    showNotification(message, type = 'info', duration = 3000) {
+        return this.notificationManager.showNotification(message, type, duration);
+    }
+
+    clearTechContacts() {
+        const container = this.elements.techContactsContainer;
+        if (container) container.innerHTML = '';
+    }
+
+    clearServices() {
+        const container = this.elements.servicesContainer;
+        if (container) container.innerHTML = '';
+    }
+
+    clearTechnologies() {
+        const container = this.elements.technologiesContainer;
+        if (container) container.innerHTML = '';
+    }
+
+    addTechContactField(kontakt = null) {
+        const container = this.elements.techContactsContainer;
+        const index = container.children.length;
+
+        const contactDiv = document.createElement('div');
+        contactDiv.className = 'tech-contact-form';
+        contactDiv.innerHTML = `
+            <div class="tech-contact-header">
+                <h5>Tehnički Kontakt ${index + 1}</h5>
+                <button type="button" class="btn btn-outline-danger btn-sm remove-tech-contact">
+                    <i class="fas fa-trash"></i>
+                </button>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Ime i prezime</label>
+                    <input type="text" name="tech_contact_${index}_ime" value="${kontakt ? kontakt.ime || '' : ''}" placeholder="Zoran Sopka">
+                </div>
+                <div class="form-group">
+                    <label>Pozicija</label>
+                    <input type="text" name="tech_contact_${index}_pozicija" value="${kontakt ? kontakt.pozicija || '' : ''}" placeholder="Šef Službe za bezbjednost">
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Email</label>
+                    <input type="email" name="tech_contact_${index}_email" value="${kontakt ? kontakt.email || '' : ''}" placeholder="zoran.sopka@mtel.ba">
+                </div>
+                <div class="form-group">
+                    <label>Telefon</label>
+                    <input type="text" name="tech_contact_${index}_telefon" value="${kontakt ? kontakt.telefon || '' : ''}" placeholder="+387 66 915 505">
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Tip kontakta</label>
+                    <select name="tech_contact_${index}_tip">
+                        <option value="bezbednost" ${kontakt && kontakt.tip_kontakta === 'bezbednost' ? 'selected' : ''}>Bezbednost</option>
+                        <option value="tehnicki" ${kontakt && kontakt.tip_kontakta === 'tehnicki' ? 'selected' : ''}>Tehnički</option>
+                        <option value="pravni" ${kontakt && kontakt.tip_kontakta === 'pravni' ? 'selected' : ''}>Pravni</option>
+                        <option value="poslovni" ${kontakt && kontakt.tip_kontakta === 'poslovni' ? 'selected' : ''}>Poslovni</option>
+                    </select>
+                </div>
+            </div>
+        `;
+
+        container.appendChild(contactDiv);
+
+        // Add event listener for removal
+        const removeBtn = contactDiv.querySelector('.remove-tech-contact');
+        removeBtn.addEventListener('click', () => {
+            contactDiv.remove();
+            this.reindexTechContacts();
+        });
+    }
+
+    // Fix extraction functions to properly handle the nested JSON structure
+    extractServicesFromDetailedStructure(operator) {
+        const services = [];
+
+        if (operator.detaljne_usluge) {
+            // Flatten the nested structure
+            Object.keys(operator.detaljne_usluge).forEach(category => {
+                const categoryServices = operator.detaljne_usluge[category];
+                if (Array.isArray(categoryServices)) {
+                    categoryServices.forEach(service => {
+                        if (typeof service === 'string') {
+                            // Service is just a string ID
+                            services.push({
+                                kategorija: category,
+                                naziv: service,
+                                opis: '',
+                                status: 'aktivna'
+                            });
+                        } else if (typeof service === 'object' && service.naziv) {
+                            // Service is an object with properties
+                            services.push({
+                                kategorija: category,
+                                naziv: service.naziv,
+                                opis: service.opis || '',
+                                status: service.status || 'aktivna'
+                            });
+                        }
+                    });
+                }
+            });
+        }
+
+        return services;
+    }
+
+    extractTechnologiesFromDetailedStructure(operator) {
+        const technologies = [];
+
+        if (operator.detaljne_tehnologije) {
+            // Flatten the nested structure
+            Object.keys(operator.detaljne_tehnologije).forEach(category => {
+                const categoryTechnologies = operator.detaljne_tehnologije[category];
+                if (Array.isArray(categoryTechnologies)) {
+                    categoryTechnologies.forEach(tech => {
+                        if (typeof tech === 'string') {
+                            // Technology is just a string ID
+                            technologies.push({
+                                tip: category,
+                                naziv: tech,
+                                opis: '',
+                                kapacitet: ''
+                            });
+                        } else if (typeof tech === 'object' && tech.naziv) {
+                            // Technology is an object with properties
+                            technologies.push({
+                                tip: category,
+                                naziv: tech.naziv,
+                                opis: tech.opis || '',
+                                kapacitet: tech.kapacitet || ''
+                            });
+                        }
+                    });
+                }
+            });
+        }
+
+        return technologies;
+    }
+
+    addServiceField(usluga = null, isEditMode = false, existingServices = []) {
+        const container = this.elements.servicesContainer;
+        const index = container.children.length;
+
+        const serviceDiv = document.createElement('div');
+        serviceDiv.className = 'service-form';
+
+        // Get standard services from catalog
+        let standardServices = [];
+        try {
+            const catalogData = this.getStandardServicesAndTechnologies();
+            standardServices = catalogData.standardServices || [];
+        } catch (error) {
+            console.error('Error loading services catalog:', error);
+            standardServices = this.getFallbackServices();
+        }
+
+        // Filter available services
+        const availableServices = standardServices.filter(service =>
+            !existingServices.some(existing =>
+                existing.naziv === service.naziv ||
+                existing.naziv === service.naziv_en
+            )
+        );
+
+        // Categories mapping
+        const categoriesMap = {
+            'mobile': 'Mobilni servisi',
+            'fixed': 'Fiksni telefon',
+            'internet': 'Internet usluge',
+            'tv': 'TV usluge',
+            'cloud': 'Cloud/Poslovni',
+            'additional': 'Dodatne usluge',
+            'security': 'Bezbednost'
+        };
+
+        // --- PATCH: Render tags with tooltips for existing services ---
+        function renderServiceTag(service) {
+            const tooltip = window.getServiceTooltip ? window.getServiceTooltip(service.naziv) : (service.opis || '');
+            return `<span class="service-tag" data-tooltip="${tooltip}">${service.naziv}</span>`;
+        }
+
+        serviceDiv.innerHTML = `
+            <div class="service-header">
+                <h5>Usluga ${index + 1}</h5>
+                <button type="button" class="btn btn-outline-danger btn-sm remove-service">
+                    <i class="fas fa-trash"></i>
+                </button>
+            </div>
+
+            ${isEditMode ? `
+            <!-- EDIT MODE: Dual Section Layout -->
+            <div class="edit-mode-layout">
+                <!-- EXISTING SERVICES SECTION -->
+                <div class="existing-services-section" style="margin-bottom: 20px; padding: 15px; background: #f0f9ff; border: 1px solid #0ea5e9; border-radius: 8px;">
+                    <h6 style="color: #0c4a6e; margin-bottom: 12px; font-weight: 600;">
+                        <i class="fas fa-check-circle" style="color: #10b981;"></i>
+                        📋 Trenutno dodane usluge (${existingServices.length})
+                    </h6>
+                    <div class="existing-services-list service-tags" style="display: flex; flex-wrap: wrap; gap: 8px;">
+                        ${existingServices.length > 0 ? existingServices.map((service, serviceIndex) => `
+                            <div class="existing-service-item" style="display: flex; align-items: center; gap: 6px; background: white; border: 1px solid #10b981; border-radius: 6px; margin-bottom: 6px; padding: 4px 8px;">
+                                ${renderServiceTag(service)}
+                                <button type="button" class="btn btn-outline-danger btn-sm remove-existing-service"
+                                        data-service-index="${serviceIndex}"
+                                        style="font-size: 11px; padding: 2px 6px;">
+                                    <i class="fas fa-times"></i>
+                                </button>
+                            </div>
+                        `).join('') : '<div style="color: #6b7280; font-style: italic; padding: 10px;">Nema dodanih usluga</div>'}
+                    </div>
+                </div>
+
+                <!-- AVAILABLE SERVICES SECTION -->
+                <div class="available-services-section" style="padding: 15px; background: #fefce8; border: 1px solid #f59e0b; border-radius: 8px;">
+                    <h6 style="color: #92400e; margin-bottom: 12px; font-weight: 600;">
+                        <i class="fas fa-plus-circle" style="color: #f59e0b;"></i>
+                        ➕ Dodaj nove usluge (${availableServices.length} dostupno)
+                    </h6>
+                    <div class="available-services-catalog" style="max-height: 250px; overflow-y: auto;">
+                        ${availableServices.length > 0 ? Object.keys(categoriesMap).map(domain => {
+                            const categoryServices = availableServices.filter(service => service.domain === domain);
+                            return categoryServices.length > 0 ? `
+                                <div class="service-category-group" style="margin-bottom: 16px;">
+                                    <h6 style="color: #374151; font-weight: 600; margin-bottom: 8px; padding: 4px 8px; background: #e5e7eb; border-radius: 4px; font-size: 12px;">${categoriesMap[domain]}</h6>
+                                    <div class="category-services-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 6px;">
+                                        ${categoryServices.map(service => `
+                                            <div class="available-service-item"
+                                                 data-domain="${service.domain}"
+                                                 data-naziv="${service.naziv}"
+                                                 data-opis="${service.opis}"
+                                                 data-status="${service.status}"
+                                                 data-tooltip="${service.opis || ''}"
+                                                 style="padding: 8px 10px; background: white; border: 1px solid #d97706; border-radius: 6px; cursor: pointer; font-size: 11px; transition: all 0.2s; box-shadow: 0 1px 2px rgba(0,0,0,0.05);">
+                                                <div style="font-weight: 600; color: #92400e; margin-bottom: 2px;">${service.naziv}</div>
+                                                <div style="color: #6b7280; font-size: 10px; line-height: 1.3;">${service.opis}</div>
+                                                <div style="text-align: right; margin-top: 4px;">
+                                                    <button type="button" class="add-service-btn" style="background: #f59e0b; color: white; border: none; padding: 2px 6px; border-radius: 3px; font-size: 9px; cursor: pointer;">
+                                                        + Dodaj
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        `).join('')}
+                                    </div>
+                                </div>
+                            ` : '';
+                        }).join('') : '<div style="color: #6b7280; font-style: italic; padding: 10px; text-align: center;">Sve dostupne usluge su već dodane</div>'}
+                    </div>
+                </div>
+            </div>
+            ` : `
+            <!-- ADD MODE: Single section -->
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Kategorija usluge</label>
+                    <select name="service_${index}_kategorija">
+                        <option value="mobile" ${usluga && usluga.kategorija === 'mobile' ? 'selected' : ''}>Mobilni servisi</option>
+                        <option value="fixed" ${usluga && usluga.kategorija === 'fixed' ? 'selected' : ''}>Fiksni telefon</option>
+                        <option value="internet" ${usluga && usluga.kategorija === 'internet' ? 'selected' : ''}>Internet usluge</option>
+                        <option value="tv" ${usluga && usluga.kategorija === 'tv' ? 'selected' : ''}>TV usluge</option>
+                        <option value="cloud" ${usluga && usluga.kategorija === 'cloud' ? 'selected' : ''}>Cloud/Poslovni</option>
+                        <option value="additional" ${usluga && usluga.kategorija === 'additional' ? 'selected' : ''}>Dodatne usluge</option>
+                        <option value="security" ${usluga && usluga.kategorija === 'security' ? 'selected' : ''}>Bezbednost</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Naziv usluge</label>
+                    <input type="text" name="service_${index}_naziv" value="${usluga ? usluga.naziv || '' : ''}" placeholder="Internet 100/20 Mbps">
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Opis usluge</label>
+                    <input type="text" name="service_${index}_opis" value="${usluga ? usluga.opis || '' : ''}" placeholder="Optički internet do 100 Mbps">
+                </div>
+                <div class="form-group">
+                    <label>Status</label>
+                    <select name="service_${index}_status">
+                        <option value="active" ${usluga && usluga.status === 'active' ? 'selected' : ''}>Aktivna</option>
+                        <option value="planned" ${usluga && usluga.status === 'planned' ? 'selected' : ''}>Planirana</option>
+                        <option value="deprecated" ${usluga && usluga.status === 'deprecated' ? 'selected' : ''}>Ukinuta</option>
+                    </select>
+                </div>
+            </div>
+            `}
+        `;
+
+        // PATCH: Attach tooltip logic to tags in modal
+        setTimeout(() => {
+            const tags = serviceDiv.querySelectorAll('.service-tag, .available-service-item');
+            tags.forEach(tag => {
+                tag.addEventListener('mouseenter', function(e) {
+                    const tooltipText = tag.getAttribute('data-tooltip');
+                    if (!tooltipText) return;
+                    let tooltip = document.createElement('div');
+                    tooltip.className = 'custom-tooltip';
+                    tooltip.textContent = tooltipText;
+                    document.body.appendChild(tooltip);
+                    const rect = tag.getBoundingClientRect();
+                    tooltip.style.left = rect.left + window.scrollX + 'px';
+                    tooltip.style.top = (rect.top + window.scrollY - tooltip.offsetHeight - 8) + 'px';
+                    setTimeout(() => tooltip.classList.add('active'), 10);
+                    tag._tooltip = tooltip;
+                });
+                tag.addEventListener('mouseleave', function(e) {
+                    if (tag._tooltip) {
+                        tag._tooltip.remove();
+                        tag._tooltip = null;
+                    }
+                });
+            });
+        }, 0);
+
+        container.appendChild(serviceDiv);
+
+        // Add event listeners
+        const removeBtn = serviceDiv.querySelector('.remove-service');
+        removeBtn.addEventListener('click', () => {
+            serviceDiv.remove();
+            this.reindexServices();
+        });
+
+        if (isEditMode) {
+            // Edit mode event listeners
+            const removeButtons = serviceDiv.querySelectorAll('.remove-existing-service');
+            removeButtons.forEach(button => {
+                button.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    const serviceIndex = parseInt(button.getAttribute('data-service-index'));
+                    existingServices.splice(serviceIndex, 1);
+                    this.refreshServiceField(container, index, isEditMode, existingServices);
+                });
+            });
+
+            const addButtons = serviceDiv.querySelectorAll('.add-service-btn');
+            addButtons.forEach(button => {
+                button.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    const item = button.closest('.available-service-item');
+                    const naziv = item.getAttribute('data-naziv');
+                    const opis = item.getAttribute('data-opis');
+                    const domain = item.getAttribute('data-domain');
+                    const status = item.getAttribute('data-status');
+
+                    existingServices.push({
+                        kategorija: domain,
+                        naziv: naziv,
+                        opis: opis,
+                        status: status
+                    });
+
+                    this.refreshServiceField(container, index, isEditMode, existingServices);
+                });
+            });
+        }
+    }
+
+    addTechnologyField(tehnologija = null, isEditMode = false, existingTechnologies = []) {
+        const container = this.elements.technologiesContainer;
+        const index = container.children.length;
+
+        const technologyDiv = document.createElement('div');
+        technologyDiv.className = 'technology-form';
+
+        // Get standard technologies from catalog
+        let standardTechnologies = [];
+        try {
+            const catalogData = this.getStandardServicesAndTechnologies();
+            standardTechnologies = catalogData.standardTechnologies || [];
+        } catch (error) {
+            console.error('Error loading technologies catalog:', error);
+            standardTechnologies = this.getFallbackTechnologies();
+        }
+
+        // Filter available technologies
+        const availableTechnologies = standardTechnologies.filter(tech =>
+            !existingTechnologies.some(existing =>
+                existing.naziv === tech.naziv ||
+                existing.naziv === tech.naziv_en
+            )
+        );
+
+        // Categories mapping
+        const categoriesMap = {
+            'access': 'Pristupna mreža',
+            'core': 'Core mreža',
+            'wireless': 'Bežične tehnologije',
+            'optical': 'Optičke tehnologije',
+            'transport': 'Transport tehnologije'
+        };
+
+        // --- PATCH: Render tags with tooltips for existing technologies ---
+        function renderTechnologyTag(tech) {
+            const tooltip = tech.opis || '';
+            return `<span class="technology-tag" data-tooltip="${tooltip}">${tech.naziv}</span>`;
+        }
+
+        technologyDiv.innerHTML = `
+            <div class="technology-header">
+                <h5>Tehnologija ${index + 1}</h5>
+                <button type="button" class="btn btn-outline-danger btn-sm remove-technology">
+                    <i class="fas fa-trash"></i>
+                </button>
+            </div>
+
+            ${isEditMode ? `
+            <!-- EDIT MODE: Dual Section Layout -->
+            <div class="edit-mode-layout">
+                <!-- EXISTING TECHNOLOGIES SECTION -->
+                <div class="existing-technologies-section" style="margin-bottom: 20px; padding: 15px; background: #f0fdf4; border: 1px solid #10b981; border-radius: 8px;">
+                    <h6 style="color: #065f46; margin-bottom: 12px; font-weight: 600;">
+                        <i class="fas fa-check-circle" style="color: #10b981;"></i>
+                        📋 Trenutno dodane tehnologije (${existingTechnologies.length})
+                    </h6>
+                    <div class="existing-technologies-list technology-tags" style="display: flex; flex-wrap: wrap; gap: 8px;">
+                        ${existingTechnologies.length > 0 ? existingTechnologies.map((tech, techIndex) => `
+                            <div class="existing-technology-item" style="display: flex; align-items: center; gap: 6px; background: white; border: 1px solid #10b981; border-radius: 6px; margin-bottom: 6px; padding: 4px 8px;">
+                                ${renderTechnologyTag(tech)}
+                                <button type="button" class="btn btn-outline-danger btn-sm remove-existing-technology"
+                                        data-technology-index="${techIndex}"
+                                        style="font-size: 11px; padding: 2px 6px;">
+                                    <i class="fas fa-times"></i>
+                                </button>
+                            </div>
+                        `).join('') : '<div style="color: #6b7280; font-style: italic; padding: 10px;">Nema dodanih tehnologija</div>'}
+                    </div>
+                </div>
+
+                <!-- AVAILABLE TECHNOLOGIES SECTION -->
+                <div class="available-technologies-section" style="padding: 15px; background: #fef3c7; border: 1px solid #f59e0b; border-radius: 8px;">
+                    <h6 style="color: #78350f; margin-bottom: 12px; font-weight: 600;">
+                        <i class="fas fa-plus-circle" style="color: #f59e0b;"></i>
+                        ➕ Dodaj nove tehnologije (${availableTechnologies.length} dostupno)
+                    </h6>
+                    <div class="available-technologies-catalog" style="max-height: 250px; overflow-y: auto;">
+                        ${availableTechnologies.length > 0 ? Object.keys(categoriesMap).map(domain => {
+                            const categoryTechnologies = availableTechnologies.filter(tech => tech.domain === domain);
+                            return categoryTechnologies.length > 0 ? `
+                                <div class="technology-category-group" style="margin-bottom: 16px;">
+                                    <h6 style="color: #374151; font-weight: 600; margin-bottom: 8px; padding: 4px 8px; background: #e5e7eb; border-radius: 4px; font-size: 12px;">${categoriesMap[domain]}</h6>
+                                    <div class="category-technologies-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 6px;">
+                                        ${categoryTechnologies.map(tech => `
+                                            <div class="available-technology-item"
+                                                 data-domain="${tech.domain}"
+                                                 data-naziv="${tech.naziv}"
+                                                 data-opis="${tech.opis}"
+                                                 data-tip="${tech.domain}"
+                                                 data-kapacitet="${tech.kapacitet || ''}"
+                                                 data-tooltip="${tech.opis || ''}"
+                                                 style="padding: 8px 10px; background: white; border: 1px solid #d97706; border-radius: 6px; cursor: pointer; font-size: 11px; transition: all 0.2s; box-shadow: 0 1px 2px rgba(0,0,0,0.05);">
+                                                <div style="font-weight: 600; color: #78350f; margin-bottom: 2px;">${tech.naziv}</div>
+                                                <div style="color: #6b7280; font-size: 10px; line-height: 1.3;">${tech.opis}</div>
+                                                ${tech.kapacitet ? `<div style="color: #0ea5e9; font-size: 9px; margin-top: 2px;">⚡ ${tech.kapacitet}</div>` : ''}
+                                                <div style="text-align: right; margin-top: 4px;">
+                                                    <button type="button" class="add-technology-btn" style="background: #f59e0b; color: white; border: none; padding: 2px 6px; border-radius: 3px; font-size: 9px; cursor: pointer;">
+                                                        + Dodaj
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        `).join('')}
+                                    </div>
+                                </div>
+                            ` : '';
+                        }).join('') : '<div style="color: #6b7280; font-style: italic; padding: 10px; text-align: center;">Sve dostupne tehnologije su već dodane</div>'}
+                    </div>
+                </div>
+            </div>
+            ` : `
+            <!-- ADD MODE: Single section -->
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Tip tehnologije</label>
+                    <select name="technology_${index}_tip">
+                        <option value="access" ${tehnologija && tehnologija.tip === 'access' ? 'selected' : ''}>Pristupna mreža</option>
+                        <option value="core" ${tehnologija && tehnologija.tip === 'core' ? 'selected' : ''}>Core mreža</option>
+                        <option value="wireless" ${tehnologija && tehnologija.tip === 'wireless' ? 'selected' : ''}>Bežične tehnologije</option>
+                        <option value="optical" ${tehnologija && tehnologija.tip === 'optical' ? 'selected' : ''}>Optičke tehnologije</option>
+                        <option value="transport" ${tehnologija && tehnologija.tip === 'transport' ? 'selected' : ''}>Transport tehnologije</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Naziv tehnologije</label>
+                    <input type="text" name="technology_${index}_naziv" value="${tehnologija ? tehnologija.naziv || '' : ''}" placeholder="FTTH, xDSL, LTE...">
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Opis tehnologije</label>
+                    <input type="text" name="technology_${index}_opis" value="${tehnologija ? tehnologija.opis || '' : ''}" placeholder="Optička pristupna mreža">
+                </div>
+                <div class="form-group">
+                    <label>Kapacitet</label>
+                    <input type="text" name="technology_${index}_kapacitet" value="${tehnologija ? tehnologija.kapacitet || '' : ''}" placeholder="Npr. 1 Gbps">
+                </div>
+            </div>
+            `}
+        `;
+
+        // PATCH: Attach tooltip logic to tags in modal
+        setTimeout(() => {
+            const tags = technologyDiv.querySelectorAll('.technology-tag, .available-technology-item');
+            tags.forEach(tag => {
+                tag.addEventListener('mouseenter', function(e) {
+                    const tooltipText = tag.getAttribute('data-tooltip');
+                    if (!tooltipText) return;
+                    let tooltip = document.createElement('div');
+                    tooltip.className = 'custom-tooltip';
+                    tooltip.textContent = tooltipText;
+                    document.body.appendChild(tooltip);
+                    const rect = tag.getBoundingClientRect();
+                    tooltip.style.left = rect.left + window.scrollX + 'px';
+                    tooltip.style.top = (rect.top + window.scrollY - tooltip.offsetHeight - 8) + 'px';
+                    setTimeout(() => tooltip.classList.add('active'), 10);
+                    tag._tooltip = tooltip;
+                });
+                tag.addEventListener('mouseleave', function(e) {
+                    if (tag._tooltip) {
+                        tag._tooltip.remove();
+                        tag._tooltip = null;
+                    }
+                });
+            });
+        }, 0);
+
+        container.appendChild(technologyDiv);
+
+        // Add event listeners
+        const removeBtn = technologyDiv.querySelector('.remove-technology');
+        removeBtn.addEventListener('click', () => {
+            technologyDiv.remove();
+            this.reindexTechnologies();
+        });
+
+        if (isEditMode) {
+            // Edit mode event listeners
+            const removeButtons = technologyDiv.querySelectorAll('.remove-existing-technology');
+            removeButtons.forEach(button => {
+                button.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    const technologyIndex = parseInt(button.getAttribute('data-technology-index'));
+                    existingTechnologies.splice(technologyIndex, 1);
+                    this.refreshTechnologyField(container, index, isEditMode, existingTechnologies);
+                });
+            });
+
+            const addButtons = technologyDiv.querySelectorAll('.add-technology-btn');
+            addButtons.forEach(button => {
+                button.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    const item = button.closest('.available-technology-item');
+                    const naziv = item.getAttribute('data-naziv');
+                    const opis = item.getAttribute('data-opis');
+                    const domain = item.getAttribute('data-domain');
+                    const tip = item.getAttribute('data-tip');
+                    const kapacitet = item.getAttribute('data-kapacitet');
+
+                    existingTechnologies.push({
+                        tip: tip,
+                        naziv: naziv,
+                        opis: opis,
+                        kapacitet: kapacitet
+                    });
+
+                    this.refreshTechnologyField(container, index, isEditMode, existingTechnologies);
+                });
+            });
+        }
+    }
+
+    cleanupDuplicateTooltips() {
+        // Remove duplicate tooltips
+        const tooltips = document.querySelectorAll('.tooltip');
+        const seen = new Set();
+
+        tooltips.forEach(tooltip => {
+            const text = tooltip.textContent.trim();
+            if (seen.has(text)) {
+                tooltip.remove();
+            } else {
+                seen.add(text);
+            }
+        });
+    }
+
+    // NOTE: Consolidated extractServicesFromDetailedStructure and extractTechnologiesFromDetailedStructure
+    // are defined earlier (around line 1628-1696) and handle both flat and nested structures
+    // These duplicate methods are removed to prevent conflicts
+
+    getTechContactsData() {
+        const contacts = [];
+        const contactForms = this.elements.techContactsContainer.querySelectorAll('.tech-contact-form');
+
+        contactForms.forEach((form, index) => {
+            const ime = form.querySelector(`[name="tech_contact_${index}_ime"]`).value.trim();
+            const pozicija = form.querySelector(`[name="tech_contact_${index}_pozicija"]`).value.trim();
+            const email = form.querySelector(`[name="tech_contact_${index}_email"]`).value.trim();
+            const telefon = form.querySelector(`[name="tech_contact_${index}_telefon"]`).value.trim();
+            const tip_kontakta = form.querySelector(`[name="tech_contact_${index}_tip"]`).value;
+
+            if (ime || pozicija || email || telefon) {
+                contacts.push({
+                    ime,
+                    pozicija,
+                    email,
+                    telefon,
+                    tip_kontakta
+                });
+            }
+        });
+
+        return contacts;
+    }
+
+    getServicesData() {
+        const services = [];
+        const serviceForms = this.elements.servicesContainer.querySelectorAll('.service-form');
+
+        serviceForms.forEach((form, index) => {
+            // Check if this is edit mode (has existing services section)
+            const existingServicesSection = form.querySelector('.existing-services-section');
+            if (existingServicesSection) {
+                // EDIT MODE: Get services from the existing services list
+                const existingItems = form.querySelectorAll('.existing-service-item');
+                existingItems.forEach(item => {
+                    const serviceName = item.querySelector('span[style*="font-weight: 600"]');
+                    const serviceDesc = item.querySelector('small');
+                    if (serviceName) {
+                        services.push({
+                            kategorija: 'unknown', // Will be updated when saving
+                            naziv: serviceName.textContent.trim(),
+                            opis: serviceDesc ? serviceDesc.textContent.trim() : '',
+                            status: 'aktivna'
+                        });
+                    }
+                });
+            } else {
+                // ADD MODE: Get services from form inputs
+                const kategorija = form.querySelector(`[name="service_${index}_kategorija"]`)?.value;
+                const naziv = form.querySelector(`[name="service_${index}_naziv"]`)?.value?.trim();
+                const opis = form.querySelector(`[name="service_${index}_opis"]`)?.value?.trim();
+                const status = form.querySelector(`[name="service_${index}_status"]`)?.value;
+
+                if (naziv || opis) {
+                    services.push({
+                        kategorija,
+                        naziv,
+                        opis,
+                        status
+                    });
+                }
+            }
+        });
+
+        return services;
+    }
+
+    getTechnologiesData() {
+        const technologies = [];
+        const technologyForms = this.elements.technologiesContainer.querySelectorAll('.technology-form');
+
+        technologyForms.forEach((form, index) => {
+            // Check if this is edit mode (has existing technologies section)
+            const existingTechnologiesSection = form.querySelector('.existing-technologies-section');
+            if (existingTechnologiesSection) {
+                // EDIT MODE: Get technologies from the existing technologies list
+                const existingItems = form.querySelectorAll('.existing-technology-item');
+                existingItems.forEach(item => {
+                    const techName = item.querySelector('span[style*="font-weight: 600"]');
+                    const techDesc = item.querySelector('small');
+                    if (techName) {
+                        technologies.push({
+                            tip: 'unknown', // Will be updated when saving
+                            naziv: techName.textContent.trim(),
+                            opis: techDesc ? techDesc.textContent.trim() : '',
+                            kapacitet: ''
+                        });
+                    }
+                });
+            } else {
+                // ADD MODE: Get technologies from form inputs
+                const tip = form.querySelector(`[name="technology_${index}_tip"]`)?.value;
+                const naziv = form.querySelector(`[name="technology_${index}_naziv"]`)?.value?.trim();
+                const opis = form.querySelector(`[name="technology_${index}_opis"]`)?.value?.trim();
+                const kapacitet = form.querySelector(`[name="technology_${index}_kapacitet"]`)?.value?.trim();
+
+                if (naziv || opis) {
+                    technologies.push({
+                        tip,
+                        naziv,
+                        opis,
+                        kapacitet
+                    });
+                }
+            }
+        });
+
+        return technologies;
+    }
+
+    reindexTechContacts() {
+        const contacts = this.elements.techContactsContainer.querySelectorAll('.tech-contact-form');
+        contacts.forEach((contact, index) => {
+            const inputs = contact.querySelectorAll('input, select');
+            inputs.forEach(input => {
+                const name = input.getAttribute('name');
+                if (name && name.startsWith('tech_contact_')) {
+                    const newName = name.replace(/tech_contact_\d+_/, 'tech_contact_' + index + '_');
+                    input.setAttribute('name', newName);
+                }
+            });
+
+            const header = contact.querySelector('h5');
+            if (header) {
+                header.textContent = 'Tehnički Kontakt ' + (index + 1);
+            }
+        });
+    }
+
+    reindexServices() {
+        const services = this.elements.servicesContainer.querySelectorAll('.service-form');
+        services.forEach((service, index) => {
+            const inputs = service.querySelectorAll('input, select');
+            inputs.forEach(input => {
+                const name = input.getAttribute('name');
+                if (name && name.startsWith('service_')) {
+                    const newName = name.replace(/service_\d+_/, 'service_' + index + '_');
+                    input.setAttribute('name', newName);
+                }
+            });
+
+            const header = service.querySelector('h5');
+            if (header) {
+                header.textContent = 'Usluga ' + (index + 1);
+            }
+        });
+    }
+
+    reindexTechnologies() {
+        const technologies = this.elements.technologiesContainer.querySelectorAll('.technology-form');
+        technologies.forEach((technology, index) => {
+            const inputs = technology.querySelectorAll('input, select');
+            inputs.forEach(input => {
+                const name = input.getAttribute('name');
+                if (name && name.startsWith('technology_')) {
+                    const newName = name.replace(/technology_\d+_/, 'technology_' + index + '_');
+                    input.setAttribute('name', newName);
+                }
+            });
+
+            const header = technology.querySelector('h5');
+            if (header) {
+                header.textContent = 'Tehnologija ' + (index + 1);
+            }
+        });
+    }
+
+    refreshServiceField(container, index, isEditMode, existingServices) {
+        // Remove the current service field
+        const currentField = container.children[index];
+        if (currentField) {
+            currentField.remove();
+        }
+
+        // Re-add the service field with updated data
+        this.addServiceField(null, isEditMode, existingServices);
+    }
+
+    refreshTechnologyField(container, index, isEditMode, existingTechnologies) {
+        // Remove the current technology field
+        const currentField = container.children[index];
+        if (currentField) {
+            currentField.remove();
+        }
+
+        // Re-add the technology field with updated data
+        this.addTechnologyField(null, isEditMode, existingTechnologies);
+    }
+
+    // Use the imported standard catalog with legacy compatibility
+    getStandardServicesAndTechnologies() {
+        return {
+            standardServices: standardCatalog.services,
+            standardTechnologies: standardCatalog.technologies
+        };
+    }
+
+    // Fallback functions for catalog
+    getFallbackTechnologies() {
+        return [
+            { tip: "bezicna", naziv: "2G GSM", opis: "Druga generacija mobilnih mreža", kapacitet: "64 kbps" },
+            { tip: "bezicna", naziv: "3G UMTS", opis: "Treća generacija mobilnih mreža", kapacitet: "2 Mbps" },
+            { tip: "bezicna", naziv: "4G LTE", opis: "Četvrta generacija mobilnih mreža", kapacitet: "150 Mbps" },
+            { tip: "bezicna", naziv: "5G", opis: "Peta generacija mobilnih mreža", kapacitet: "20 Gbps" },
+            { tip: "pristupna", naziv: "FTTH", opis: "Fiber to the Home", kapacitet: "1 Gbps" },
+            { tip: "pristupna", naziv: "xDSL", opis: "Digital Subscriber Line", kapacitet: "100 Mbps" },
+            { tip: "pristupna", naziv: "DOCSIS", opis: "Cable modem technology", kapacitet: "500 Mbps" },
+            { tip: "transportna", naziv: "MPLS", opis: "Multiprotocol Label Switching", kapacitet: "10 Gbps" },
+            { tip: "transportna", naziv: "Ethernet", opis: "Gigabit Ethernet", kapacitet: "1 Gbps" },
+            { tip: "core", naziv: "IPv6", opis: "Internet Protocol version 6", kapacitet: "Unlimited" },
+            { tip: "core", naziv: "CG-NAT", opis: "Carrier Grade NAT", kapacitet: "100 Gbps" },
+            { tip: "satelitska", naziv: "VSAT", opis: "Very Small Aperture Terminal", kapacitet: "50 Mbps" }
+        ];
+    }
+
+    getFallbackServices() {
+        return [
+            { kategorija: "mobilni", naziv: "Mobilni Prepaid", opis: "Mobilne usluge na prepaid osnovu", status: "aktivna" },
+            { kategorija: "mobilni", naziv: "Mobilni Postpaid", opis: "Mobilne usluge na postpaid osnovu", status: "aktivna" },
+            { kategorija: "mobilni", naziv: "eSIM", opis: "Elektronska SIM kartica", status: "aktivna" },
+            { kategorija: "internet", naziv: "FTTH Internet", opis: "Fiber to the Home internet", status: "aktivna" },
+            { kategorija: "internet", naziv: "ADSL/VDSL Internet", opis: "Internet preko bakarnih linija", status: "aktivna" },
+            { kategorija: "televizija", naziv: "IPTV", opis: "TV preko IP mreže", status: "aktivna" },
+            { kategorija: "televizija", naziv: "Satelitska TV", opis: "TV preko satelita", status: "aktivna" },
+            { kategorija: "cloud", naziv: "Cloud Hosting", opis: "Hosting usluge u oblaku", status: "aktivna" },
+            { kategorija: "cloud", naziv: "Data Center", opis: "Data center usluge", status: "aktivna" },
+            { kategorija: "ostalo", naziv: "Prodaja uređaja", opis: "Prodaja telekom opreme", status: "aktivna" }
+        ];
+    }
+
+    showCORSWarning() {
+        this.showNotification('CORS greška - pokrenite HTTP server: python -m http.server 8000', 'error', 10000);
+    }
+
+    truncateText(text, maxLength) {
+        if (!text || text.length <= maxLength) return text;
+        return text.substring(0, maxLength) + '...';
+    }
+
+    getCategoryClass(operator) {
+        const naziv = operator.naziv.toLowerCase();
+        const komercijalni = (operator.komercijalni_naziv || '').toLowerCase();
+        const tip = operator.tip.toLowerCase();
+
+        // Dominantni operateri
+        if (naziv.includes('bh telecom') || komercijalni.includes('bh telecom') ||
+            naziv.includes('ht eronet') || komercijalni.includes('eronet') ||
+            naziv.includes('telekom srpske') || komercijalni.includes('m:tel') || komercijalni.includes('mtel')) {
+            return 'dominantni';
+        }
+
+        // Mobilni/MVNO operateri
+        if (tip.includes('mvno') || tip.includes('mobilni') ||
+            komercijalni.includes('zona.ba') || komercijalni.includes('haloo') ||
+            komercijalni.includes('one') || komercijalni.includes('logosoft') ||
+            komercijalni.includes('novotel')) {
+            return 'mobilni';
+        }
+
+        // B2B/Enterprise operateri
+        if (tip.includes('b2b') || tip.includes('enterprise') || tip.includes('carrier') ||
+            tip.includes('veleprodajne') || tip.includes('konsalting') ||
+            naziv.includes('akton') || naziv.includes('lanaco') || naziv.includes('prointer')) {
+            return 'b2b';
+        }
+
+        // ISP operateri (default za sve ostale)
+        return 'isp';
+    }
+
+    getCategoryDisplay(operator) {
+        const categoryClass = this.getCategoryClass(operator);
+        const categoryMap = {
+            'dominantni': '🏢 Dominantni',
+            'mobilni': '📱 Mobilni/MVNO',
+            'isp': '🌐 Regionalni ISP',
+            'b2b': '💼 Enterprise/B2B'
+        };
+        return categoryMap[categoryClass] || '❓ Ostalo';
+    }
+
+    /**
+     * Get existing services from form (helper for button click)
+     */
+    getExistingServicesFromForm() {
+        const services = [];
+        const serviceForms = this.elements.servicesContainer.querySelectorAll('.service-form');
+        
+        serviceForms.forEach((form) => {
+            const existingSection = form.querySelector('.existing-services-section');
+            if (existingSection) {
+                const items = existingSection.querySelectorAll('.existing-service-item');
+                items.forEach(item => {
+                    const nameSpan = item.querySelector('span[style*="font-weight: 600"]');
+                    const descSpan = item.querySelector('small');
+                    if (nameSpan) {
+                        services.push({
+                            naziv: nameSpan.textContent.trim(),
+                            opis: descSpan ? descSpan.textContent.trim() : '',
+                            status: 'aktivna'
+                        });
+                    }
+                });
+            }
+        });
+        
+        return services;
+    }
+
+    /**
+     * Get existing technologies from form (helper for button click)
+     */
+    getExistingTechnologiesFromForm() {
+        const technologies = [];
+        const technologyForms = this.elements.technologiesContainer.querySelectorAll('.technology-form');
+        
+        technologyForms.forEach((form) => {
+            const existingSection = form.querySelector('.existing-technologies-section');
+            if (existingSection) {
+                const items = existingSection.querySelectorAll('.existing-technology-item');
+                items.forEach(item => {
+                    const nameSpan = item.querySelector('span[style*="font-weight: 600"]');
+                    const descSpan = item.querySelector('small');
+                    if (nameSpan) {
+                        technologies.push({
+                            naziv: nameSpan.textContent.trim(),
+                            opis: descSpan ? descSpan.textContent.trim() : '',
+                            tip: 'access'
+                        });
+                    }
+                });
+            }
+        });
+        
+        return technologies;
+    }
+
+    // Legacy method - no longer needed as we have real data
+    addTestServicesAndTechnologies() {
+        // This method was used to add test data during development
+        // Now we load real data from operateri.json and LocalStorage
+        // Keeping empty implementation to prevent errors
+    }
+
+    openHelpModal() {
+        this.elements.helpModal.classList.add('active');
+        this.elements.modalOverlay.classList.add('active');
+        document.body.style.overflow = 'hidden';
+    }
+
+    closeHelpModal() {
+        this.elements.helpModal.classList.remove('active');
+        this.elements.modalOverlay.classList.remove('active');
+        document.body.style.overflow = '';
+    }
 }
 
-document.head.appendChild(notificationStyles);
+// Initialize the application when DOM is loaded
+document.addEventListener('DOMContentLoaded', () => {
+    window.app = new ATLASApp();
+});
 
-
-
-
-
-
-
-
-
-
-
-
-
+// CSS styles are handled in styles.css file

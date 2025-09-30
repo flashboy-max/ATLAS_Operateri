@@ -2,6 +2,8 @@
  * OperatorCard component for ATLAS operators
  * Handles operator details display, contact info generation, and operator management
  */
+import { getServiceTooltip, getTechTooltip, getReadableServiceName, getReadableTechName } from '../utils/formatters.js';
+
 export class OperatorCard {
     constructor(app, notificationManager, storageService) {
         this.app = app;
@@ -465,7 +467,7 @@ export class OperatorCard {
             const postCount = this.app.operators.length;
             console.log('Operateri prije brisanja:', preCount, 'nakon brisanja:', postCount);
 
-            this.storageService.saveToLocalStorage(this.app.operators, );
+            this.storageService.saveToLocalStorage(this.app.operators);
             this.app.renderOperators();
             this.app.updateStatistics();
             this.notificationManager.showNotification('Operater je uspešno obrisan!', 'success');

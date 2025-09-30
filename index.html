@@ -192,117 +192,129 @@
             </div>
             <div class="modal-body">
                 <form id="operatorForm">
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label for="naziv">Naziv Operatera *</label>
-                            <input type="text" id="naziv" name="naziv" required>
+                    <!-- Osnovni Podaci -->
+                    <div class="form-section" style="margin-bottom: 24px;">
+                        <h4><i class="fas fa-id-card"></i> Osnovni Podaci</h4>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="naziv">Naziv Operatera *</label>
+                                <input type="text" id="naziv" name="naziv" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="komercijalni_naziv">Komercijalni Naziv</label>
+                                <input type="text" id="komercijalni_naziv" name="komercijalni_naziv">
+                            </div>
                         </div>
-                        <div class="form-group">
-                            <label for="komercijalni_naziv">Komercijalni Naziv</label>
-                            <input type="text" id="komercijalni_naziv" name="komercijalni_naziv">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="kategorija">Kategorija Operatera *</label>
+                                <select id="kategorija" name="kategorija" required>
+                                    <option value="">Izaberite kategoriju</option>
+                                    <option value="dominantni">🏢 Dominantni operateri</option>
+                                    <option value="mobilni_mvno">📱 Mobilni/MVNO</option>
+                                    <option value="regionalni_isp">🌐 Regionalni ISP</option>
+                                    <option value="enterprise_b2b">💼 Enterprise/B2B</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="tip">Tip Operatera *</label>
+                                <select id="tip" name="tip" required>
+                                    <option value="">Izaberite tip</option>
+                                    <option value="Dominantni operater">Dominantni operater</option>
+                                    <option value="Mobilni operater">Mobilni operater</option>
+                                    <option value="MVNO operater">MVNO operater</option>
+                                    <option value="Internet servis provajder">Internet servis provajder</option>
+                                    <option value="Kablovski operater">Kablovski operater</option>
+                                    <option value="B2B provajder">B2B provajder</option>
+                                    <option value="IT provajder">IT provajder</option>
+                                </select>
+                            </div>
                         </div>
-                    </div>
-                    
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label for="kategorija">Kategorija Operatera *</label>
-                            <select id="kategorija" name="kategorija" required>
-                                <option value="">Izaberite kategoriju</option>
-                                <option value="dominantni">🏢 Dominantni operateri</option>
-                                <option value="mobilni_mvno">📱 Mobilni/MVNO</option>
-                                <option value="regionalni_isp">🌐 Regionalni ISP</option>
-                                <option value="enterprise_b2b">💼 Enterprise/B2B</option>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label for="tip">Tip Operatera *</label>
-                            <select id="tip" name="tip" required>
-                                <option value="">Izaberite tip</option>
-                                <option value="Dominantni operater">Dominantni operater</option>
-                                <option value="Mobilni operater">Mobilni operater</option>
-                                <option value="MVNO operater">MVNO operater</option>
-                                <option value="Internet servis provajder">Internet servis provajder</option>
-                                <option value="Kablovski operater">Kablovski operater</option>
-                                <option value="B2B provajder">B2B provajder</option>
-                                <option value="IT provajder">IT provajder</option>
-                            </select>
-                        </div>
-                    </div>
-                    
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label for="status">Status *</label>
-                            <select id="status" name="status" required>
-                                <option value="">Izaberite status</option>
-                                <option value="aktivan">Aktivan</option>
-                                <option value="neaktivan">Neaktivan</option>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label for="prioritet">Prioritet</label>
-                            <select id="prioritet" name="prioritet">
-                                <option value="nizak">Nizak</option>
-                                <option value="srednji">Srednji</option>
-                                <option value="visok">Visok</option>
-                            </select>
-                        </div>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="opis">Opis</label>
-                        <textarea id="opis" name="opis" rows="3"></textarea>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="napomena">Napomena</label>
-                        <textarea id="napomena" name="napomena" rows="2" placeholder="Dodatne napomene, grupno povezivanje, podružnice..."></textarea>
-                    </div>
-
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label for="adresa">Adresa</label>
-                            <input type="text" id="adresa" name="adresa">
-                        </div>
-                        <div class="form-group">
-                            <label for="telefon">Telefon</label>
-                            <input type="text" id="telefon" name="telefon">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="status">Status *</label>
+                                <select id="status" name="status" required>
+                                    <option value="">Izaberite status</option>
+                                    <option value="aktivan">Aktivan</option>
+                                    <option value="neaktivan">Neaktivan</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="prioritet">Prioritet</label>
+                                <select id="prioritet" name="prioritet">
+                                    <option value="nizak">Nizak</option>
+                                    <option value="srednji">Srednji</option>
+                                    <option value="visok">Visok</option>
+                                </select>
+                            </div>
                         </div>
                     </div>
 
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label for="email">Email</label>
-                            <input type="email" id="email" name="email">
+                    <!-- Opis i Napomena -->
+                    <div class="form-section" style="margin-bottom: 24px;">
+                        <h4><i class="fas fa-align-left"></i> Opis i Napomena</h4>
+                        <div class="form-row">
+                            <div class="form-group full-width">
+                                <label for="opis">Opis</label>
+                                <textarea id="opis" name="opis" rows="3"></textarea>
+                            </div>
                         </div>
-                        <div class="form-group">
-                            <label for="web">Web stranica</label>
-                            <input type="url" id="web" name="web">
-                        </div>
-                    </div>
-
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label for="atlas_status">ATLAS Status</label>
-                            <select id="atlas_status" name="atlas_status">
-                                <option value="U pripremi za ATLAS">U pripremi za ATLAS</option>
-                                <option value="Spreman za ATLAS">Spreman za ATLAS</option>
-                                <option value="Prioritetan za ATLAS">Prioritetan za ATLAS</option>
-                                <option value="Arhiviran">Arhiviran</option>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label for="kompletnost">Kompletnost (%)</label>
-                            <input type="number" id="kompletnost" name="kompletnost" min="0" max="100" value="0" readonly title="Vrednost se automatski izračunava na osnovu popunjenih polja.">
+                        <div class="form-row">
+                            <div class="form-group full-width">
+                                <label for="napomena">Napomena</label>
+                                <textarea id="napomena" name="napomena" rows="2" placeholder="Dodatne napomene, grupno povezivanje, podružnice..."></textarea>
+                            </div>
                         </div>
                     </div>
 
-                    <div class="form-group">
-                        <label for="kontakt_osoba">Kontakt Osoba</label>
-                        <input type="text" id="kontakt_osoba" name="kontakt_osoba">
+                    <!-- Kontakt Podaci -->
+                    <div class="form-section" style="margin-bottom: 24px;">
+                        <h4><i class="fas fa-address-book"></i> Kontakt Podaci</h4>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="adresa">Adresa</label>
+                                <input type="text" id="adresa" name="adresa">
+                            </div>
+                            <div class="form-group">
+                                <label for="telefon">Telefon</label>
+                                <input type="text" id="telefon" name="telefon">
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="email">Email</label>
+                                <input type="email" id="email" name="email">
+                            </div>
+                            <div class="form-group">
+                                <label for="web">Web stranica</label>
+                                <input type="url" id="web" name="web">
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="kontakt_osoba">Kontakt Osoba</label>
+                                <input type="text" id="kontakt_osoba" name="kontakt_osoba">
+                            </div>
+                            <div class="form-group">
+                                <label for="atlas_status">ATLAS Status</label>
+                                <select id="atlas_status" name="atlas_status">
+                                    <option value="U pripremi za ATLAS">U pripremi za ATLAS</option>
+                                    <option value="Spreman za ATLAS">Spreman za ATLAS</option>
+                                    <option value="Prioritetan za ATLAS">Prioritetan za ATLAS</option>
+                                    <option value="Arhiviran">Arhiviran</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="kompletnost">Kompletnost (%)</label>
+                                <input type="number" id="kompletnost" name="kompletnost" min="0" max="100" value="0" readonly title="Vrednost se automatski izračunava na osnovu popunjenih polja.">
+                            </div>
+                        </div>
                     </div>
 
                     <!-- Customer Service Sekcija -->
-                    <div class="form-section">
+                    <div class="form-section" style="margin-bottom: 24px;">
                         <h4><i class="fas fa-phone"></i> Customer Service Brojevi</h4>
                         <div class="form-row">
                             <div class="form-group">
@@ -327,7 +339,7 @@
                     </div>
 
                     <!-- Društvene Mreže Sekcija -->
-                    <div class="form-section">
+                    <div class="form-section" style="margin-bottom: 24px;">
                         <h4><i class="fab fa-facebook"></i> Društvene Mreže</h4>
                         <div class="form-row">
                             <div class="form-group">
@@ -352,7 +364,7 @@
                     </div>
 
                     <!-- Tehnički Kontakti Sekcija -->
-                    <div class="form-section">
+                    <div class="form-section" style="margin-bottom: 24px;">
                         <h4><i class="fas fa-users-cog"></i> Tehnički Kontakti za Agencije</h4>
                         <div id="tech-contacts-container">
                             <!-- Tehnički kontakti će biti dodani dinamički -->
@@ -363,7 +375,7 @@
                     </div>
 
                     <!-- Usluge Sekcija -->
-                    <div class="form-section">
+                    <div class="form-section" style="margin-bottom: 24px;">
                         <h4><i class="fas fa-concierge-bell"></i> Usluge</h4>
                         <div id="services-container">
                             <!-- Dinamički se dodaju usluge -->
@@ -374,7 +386,7 @@
                     </div>
 
                     <!-- Tehnologije Sekcija -->
-                    <div class="form-section">
+                    <div class="form-section" style="margin-bottom: 24px;">
                         <h4><i class="fas fa-microchip"></i> Tehnologije</h4>
                         <div id="technologies-container">
                             <!-- Dinamički se dodaju tehnologije -->
@@ -420,7 +432,6 @@
                             </div>
                         </div>
                     </div>
-
                 </form>
             </div>
             <div class="modal-footer">
