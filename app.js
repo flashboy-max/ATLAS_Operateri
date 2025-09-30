@@ -1029,6 +1029,10 @@ class ATLASApp {
         this.elements.operatorModal.classList.add('active');
         this.elements.modalOverlay.classList.add('active');
         document.body.style.overflow = 'hidden';
+
+        // ✅ PRIORITET 2: Setup form monitoring for progress tracking
+        this.setupFormMonitoring();
+        this.updateFormProgress();
     }
     
     closeModal() {
@@ -1320,6 +1324,45 @@ class ATLASApp {
             errors.push({ field: 'kompletnost', message: 'Kompletnost mora biti između 0 i 100%' });
         }
         
+        // ✅ PRIORITET 2: Validacija usluga, tehnologija i kontakata
+        
+        // Validate services - at least one service is required
+        const services = this.getServicesData();
+        if (!services || services.length === 0) {
+            errors.push({ 
+                field: 'usluge', 
+                message: 'Morate dodati barem jednu uslugu' 
+            });
+        }
+        
+        // Validate technologies - at least one technology is required
+        const technologies = this.getTechnologiesData();
+        if (!technologies || technologies.length === 0) {
+            errors.push({ 
+                field: 'tehnologije', 
+                message: 'Morate dodati barem jednu tehnologiju' 
+            });
+        }
+        
+        // Validate technical contacts - check if all contacts have required fields
+        const techContacts = this.getTechContactsData();
+        if (techContacts && techContacts.length > 0) {
+            techContacts.forEach((contact, index) => {
+                if (!contact.ime || !contact.ime.trim()) {
+                    errors.push({ 
+                        field: 'tech_contacts', 
+                        message: `Tehnički kontakt #${index + 1}: Ime je obavezno` 
+                    });
+                }
+                if (contact.email && !this.isValidEmail(contact.email)) {
+                    errors.push({ 
+                        field: 'tech_contacts', 
+                        message: `Tehnički kontakt #${index + 1}: Email nije ispravan` 
+                    });
+                }
+            });
+        }
+        
         return {
             isValid: errors.length === 0,
             errors: errors
@@ -1376,7 +1419,17 @@ class ATLASApp {
             }
         });
         
-        this.showNotification('Molimo ispravite greške u formi', 'error');
+        // ✅ PRIORITET 2: Show toast notification with errors summary
+        const errorCount = errors.length;
+        const errorsList = errors.slice(0, 3).map(e => `• ${e.message}`).join('<br>');
+        const moreErrors = errorCount > 3 ? `<br>...i još ${errorCount - 3} greška` : '';
+        
+        this.showToast(
+            `Pronađeno ${errorCount} ${errorCount === 1 ? 'greška' : 'greške'}`,
+            `${errorsList}${moreErrors}`,
+            'error',
+            6000
+        );
     }
     
     calculateCompleteness(formData) {
@@ -1503,7 +1556,14 @@ class ATLASApp {
         this.renderOperators();
         this.updateStatistics();
         this.closeModal();
-        this.showNotification('Operater je uspešno dodat!', 'success');
+        
+        // ✅ PRIORITET 2: Enhanced toast notification
+        this.showToast(
+            'Operater uspešno dodat!',
+            `${operatorData.naziv} je sačuvan u bazi podataka`,
+            'success',
+            4000
+        );
     }
     
     updateOperator(id, operatorData) {
@@ -1517,7 +1577,14 @@ class ATLASApp {
             this.renderOperators();
             this.updateStatistics();
             this.closeModal();
-            this.showNotification('Operater je uspešno ažuriran!', 'success');
+            
+            // ✅ PRIORITET 2: Enhanced toast notification
+            this.showToast(
+                'Operater uspešno ažuriran!',
+                `Izmene za ${operatorData.naziv} su sačuvane`,
+                'success',
+                4000
+            );
         }
     }
     
@@ -2516,6 +2583,173 @@ class ATLASApp {
         this.elements.helpModal.classList.remove('active');
         this.elements.modalOverlay.classList.remove('active');
         document.body.style.overflow = '';
+    }
+
+    // ✅ PRIORITET 2: Progress Bar & Real-time Validation Methods
+
+    /**
+     * Update form progress bar based on filled fields
+     */
+    updateFormProgress() {
+        const progressFill = document.getElementById('formProgressFill');
+        const progressText = document.getElementById('formProgressText');
+        
+        if (!progressFill || !progressText) return;
+
+        // Calculate progress based on form completion
+        const formData = new FormData(this.elements.operatorForm);
+        
+        let totalFields = 0;
+        let filledFields = 0;
+
+        // Basic required fields (weight: 2 points each)
+        const requiredFields = ['naziv', 'kategorija', 'tip', 'status'];
+        requiredFields.forEach(field => {
+            totalFields += 2;
+            const value = formData.get(field);
+            if (value && value.trim()) filledFields += 2;
+        });
+
+        // Optional basic fields (weight: 1 point each)
+        const optionalFields = ['komercijalni_naziv', 'opis', 'napomena', 'adresa', 'telefon', 'email', 'web', 'kontakt_osoba', 'prioritet', 'atlas_status'];
+        optionalFields.forEach(field => {
+            totalFields += 1;
+            const value = formData.get(field);
+            if (value && value.trim()) filledFields += 1;
+        });
+
+        // Services (weight: 3 points)
+        totalFields += 3;
+        const services = this.getServicesData();
+        if (services && services.length > 0) filledFields += 3;
+
+        // Technologies (weight: 3 points)
+        totalFields += 3;
+        const technologies = this.getTechnologiesData();
+        if (technologies && technologies.length > 0) filledFields += 3;
+
+        // Technical contacts (weight: 2 points)
+        totalFields += 2;
+        const techContacts = this.getTechContactsData();
+        if (techContacts && techContacts.length > 0) filledFields += 2;
+
+        const percentage = Math.round((filledFields / totalFields) * 100);
+        
+        progressFill.style.width = `${percentage}%`;
+        progressText.textContent = `${percentage}% kompletno`;
+
+        // Update section statuses
+        this.updateSectionStatus('basic', this.isBasicSectionComplete(formData));
+        this.updateSectionStatus('contact', this.isContactSectionComplete(formData));
+        this.updateSectionStatus('services', services && services.length > 0);
+        this.updateSectionStatus('technologies', technologies && technologies.length > 0);
+        this.updateSectionStatus('tech-contacts', techContacts && techContacts.length > 0);
+    }
+
+    /**
+     * Check if basic section is complete
+     */
+    isBasicSectionComplete(formData) {
+        const requiredFields = ['naziv', 'kategorija', 'tip', 'status'];
+        return requiredFields.every(field => {
+            const value = formData.get(field);
+            return value && value.trim();
+        });
+    }
+
+    /**
+     * Check if contact section is complete
+     */
+    isContactSectionComplete(formData) {
+        const fields = ['telefon', 'email', 'web'];
+        return fields.some(field => {
+            const value = formData.get(field);
+            return value && value.trim();
+        });
+    }
+
+    /**
+     * Update section status indicator
+     */
+    updateSectionStatus(sectionName, isComplete) {
+        const sectionElement = document.querySelector(`.section-status[data-section="${sectionName}"]`);
+        if (!sectionElement) return;
+
+        sectionElement.classList.remove('complete', 'incomplete');
+        
+        if (isComplete) {
+            sectionElement.classList.add('complete');
+            sectionElement.querySelector('i').className = 'fas fa-check-circle';
+        } else {
+            sectionElement.classList.add('incomplete');
+            sectionElement.querySelector('i').className = 'fas fa-exclamation-circle';
+        }
+    }
+
+    /**
+     * Show toast notification
+     */
+    showToast(title, message, type = 'info', duration = 4000) {
+        const toast = document.createElement('div');
+        toast.className = `toast-notification ${type}`;
+        
+        const iconMap = {
+            success: '✓',
+            error: '✕',
+            warning: '⚠',
+            info: 'ℹ'
+        };
+
+        toast.innerHTML = `
+            <div class="toast-icon">${iconMap[type] || 'ℹ'}</div>
+            <div class="toast-content">
+                <div class="toast-title">${title}</div>
+                ${message ? `<div class="toast-message">${message}</div>` : ''}
+            </div>
+            <button class="toast-close" onclick="this.parentElement.remove()">&times;</button>
+        `;
+
+        document.body.appendChild(toast);
+
+        // Auto remove after duration
+        setTimeout(() => {
+            toast.classList.add('hiding');
+            setTimeout(() => toast.remove(), 300);
+        }, duration);
+    }
+
+    /**
+     * Setup real-time form monitoring
+     */
+    setupFormMonitoring() {
+        // Monitor all form inputs for progress updates
+        const form = this.elements.operatorForm;
+        if (!form) return;
+
+        const allInputs = form.querySelectorAll('input, select, textarea');
+        allInputs.forEach(input => {
+            input.addEventListener('input', () => {
+                this.updateFormProgress();
+            });
+            input.addEventListener('change', () => {
+                this.updateFormProgress();
+            });
+        });
+
+        // Also monitor when services/technologies are added/removed
+        const observer = new MutationObserver(() => {
+            this.updateFormProgress();
+        });
+
+        if (this.elements.servicesContainer) {
+            observer.observe(this.elements.servicesContainer, { childList: true, subtree: true });
+        }
+        if (this.elements.technologiesContainer) {
+            observer.observe(this.elements.technologiesContainer, { childList: true, subtree: true });
+        }
+        if (this.elements.techContactsContainer) {
+            observer.observe(this.elements.techContactsContainer, { childList: true, subtree: true });
+        }
     }
 }
 
