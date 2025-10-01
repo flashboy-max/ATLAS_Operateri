@@ -10,9 +10,7 @@
     "telefon": "+387 36 348 641",
     "email": "adrianet@adrianet.ba",
     "web": "https://adrianet.ba",
-    "customer_service": {
-      "podrska": "+387 36 348 641"
-    },
+    "customer_service": {},
     "drustvene_mreze": {}
   },
   "tehnicki_kontakti": [
@@ -51,109 +49,43 @@
     "kontakt_osoba": "Marko Džeba",
     "email_kontakt": "adrianet@adrianet.ba",
     "telefon_kontakt": "+387 36 348 641",
-    "posleduje_misljenje_zuo": "Da",
+    "posjeduje_misljenje_zuo": "Da",
     "napomene": "ISP operater sa obavezama za zakonito presretanje i pristup obračunskim podacima."
   },
-  "datum_azuriranja": "2025-09-08",
+  "datum_azuriranja": "2025-10-01",
   "kontakt_osoba": "Marko Džeba - Direktor",
   "usluge": [
     {
-      "kategorija": "mobile",
-      "naziv": "mobile_prepaid",
-      "opis": "Mobilne usluge na prepaid osnovu",
-      "status": "active"
+      "kategorija": "unknown",
+      "naziv": "Fixed Wireless Internet",
+      "opis": "Bežični internet sa fiksnom instalacijom",
+      "status": "aktivna"
     },
     {
-      "kategorija": "mobile",
-      "naziv": "mobile_postpaid",
-      "opis": "Mobilne usluge na postpaid osnovu",
-      "status": "active"
-    },
-    {
-      "kategorija": "mobile",
-      "naziv": "mobile_esim",
-      "opis": "Elektronska SIM kartica",
-      "status": "active"
-    },
-    {
-      "kategorija": "mobile",
-      "naziv": "mobile_volte_vowifi",
-      "opis": "Voice over LTE i WiFi pozivi",
-      "status": "active"
-    },
-    {
-      "kategorija": "mobile",
-      "naziv": "mobile_roaming",
-      "opis": "Usluge u roaming-u",
-      "status": "active"
-    },
-    {
-      "kategorija": "mobile",
-      "naziv": "mobile_mnp",
-      "opis": "Mobile Number Portability",
-      "status": "active"
-    },
-    {
-      "kategorija": "internet",
-      "naziv": "internet_ftth",
-      "opis": "Fiber to the Home internet",
-      "status": "active"
-    },
-    {
-      "kategorija": "internet",
-      "naziv": "internet_adsl_vdsl",
-      "opis": "Internet preko bakarnih linija",
-      "status": "active"
-    },
-    {
-      "kategorija": "tv",
-      "naziv": "iptv",
-      "opis": "Internet Protocol Television",
-      "status": "active"
+      "kategorija": "unknown",
+      "naziv": "Poslovni Internet",
+      "opis": "Poslovni internet sa SLA garantijama",
+      "status": "aktivna"
     }
   ],
   "tehnologije": [
     {
-      "tip": "wireless",
-      "naziv": "tech_2g",
-      "opis": "Global System for Mobile",
-      "kapacitet": "64 kbps"
+      "tip": "unknown",
+      "naziv": "Fixed Wireless",
+      "opis": "Bežična pristupna tehnologija",
+      "kapacitet": ""
     },
     {
-      "tip": "wireless",
-      "naziv": "tech_3g",
-      "opis": "Universal Mobile Telecommunications System",
-      "kapacitet": "2 Mbps"
+      "tip": "unknown",
+      "naziv": "IPv4",
+      "opis": "Internet Protocol version 4",
+      "kapacitet": ""
     },
     {
-      "tip": "wireless",
-      "naziv": "tech_4g",
-      "opis": "Long Term Evolution",
-      "kapacitet": "150 Mbps"
-    },
-    {
-      "tip": "wireless",
-      "naziv": "tech_5g_ready",
-      "opis": "5G Ready Infrastructure",
-      "kapacitet": "1 Gbps"
-    },
-    {
-      "tip": "voice",
-      "naziv": "tech_volte",
-      "opis": "Voice over LTE",
-      "kapacitet": "HD Voice"
-    },
-    {
-      "tip": "optical",
-      "naziv": "tech_ftth_fttb",
-      "opis": "Fiber to the Home/Building",
-      "kapacitet": "1 Gbps"
-    },
-    {
-      "tip": "copper",
-      "naziv": "tech_xdsl",
-      "opis": "Digital Subscriber Line family",
-      "kapacitet": "100 Mbps"
+      "tip": "unknown",
+      "naziv": "IPv6",
+      "opis": "Internet Protocol version 6",
+      "kapacitet": ""
     }
   ],
   "kategorija": "alternativni",

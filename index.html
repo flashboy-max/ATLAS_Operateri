@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ATLAS - Telekomunikacioni Operateri BiH</title>
+    <title>ATLAS - Telekomunikacioni operateri BiH</title>
     <link rel="icon" href="favicon.ico" type="image/x-icon">
     <link rel="stylesheet" href="styles.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -18,16 +18,16 @@
                     <i class="fas fa-satellite-dish"></i>
                     <div class="title-group">
                         <h1>ATLAS</h1>
-                        <span class="subtitle">Telekomunikacioni Operateri BiH</span>
+                        <span class="subtitle">Telekomunikacioni operateri BiH</span>
                     </div>
                 </div>
+                <button class="btn btn-help" id="helpBtn" title="Pomoć i uputstvo">
+                    <i class="fas fa-question-circle"></i>
+                </button>
             </div>
             <div class="header-actions-bar">
-                <button class="btn btn-info" id="helpBtn" title="Uputstvo za korišćenje">
-                    <i class="fas fa-question-circle"></i> Help
-                </button>
                 <button class="btn btn-primary" id="addOperatorBtn">
-                    <i class="fas fa-plus"></i> Dodaj Operatera
+                    <i class="fas fa-plus"></i> Dodaj operatera
                 </button>
                 <button class="btn btn-success" id="importDataBtn">
                     <i class="fas fa-upload"></i> Uvoz JSON
@@ -61,66 +61,60 @@
             </div>
             <div id="searchResults" class="search-results-info" style="display: none;">
                 <span id="searchResultsText"></span>
-                <small class="search-hint">Esc za brisanje • Ctrl+F za fokus</small>
+                <small class="search-hint">  Esc za brisanje • Ctrl+F za fokus</small>
             </div>
 
         </div>
 
-        <!-- Filter and Stats Combined -->
-        <div class="filters-stats-combined">
-            <!-- Quick Category Filters with Type Dropdown -->
-            <div class="quick-filters-enhanced">
-                <button class="filter-btn active" data-category="all" id="filterAll">
-                    🔷 Svi Operateri (<span id="countAll">0</span>)
-                </button>
-                <button class="filter-btn" data-category="dominantni" id="filterDominantni">
-                    🏢 Dominantni (<span id="countDominantni">0</span>)
-                </button>
-                <button class="filter-btn" data-category="alternativni" id="filterAlternativni">
-                    🔷 Alternativni (<span id="countAlternativni">0</span>)
-                </button>
-                <div class="type-filter-dropdown">
-                    <select id="typeFilter" class="filter-select-enhanced">
-                        <option value="">📋 Svi tipovi</option>
-                        <option value="mobilni">📱 Mobilni operater</option>
-                        <option value="mvno">📡 MVNO</option>
-                        <option value="isp">🌐 ISP</option>
-                        <option value="kablovski">📺 Kablovski</option>
-                        <option value="enterprise">💼 Enterprise/B2B</option>
-                        <option value="ostali">⚙️ Ostali</option>
-                    </select>
+        <!-- Statistics Cards (Clickable) -->
+        <div class="stats-dashboard-main">
+            <button class="stat-card-btn" data-status="all" id="statTotal">
+                <div class="stat-icon">
+                    <i class="fas fa-building"></i>
                 </div>
-            </div>
+                <div class="stat-info">
+                    <h3 id="totalOperators">0</h3>
+                    <p>Ukupno operatera</p>
+                </div>
+            </button>
+            <button class="stat-card-btn active" data-status="aktivan" id="statActive">
+                <div class="stat-icon active">
+                    <i class="fas fa-check-circle"></i>
+                </div>
+                <div class="stat-info">
+                    <h3 id="activeOperators">0</h3>
+                    <p>Aktivni operateri</p>
+                </div>
+            </button>
+            <button class="stat-card-btn" data-status="neaktivan" id="statInactive">
+                <div class="stat-icon inactive">
+                    <i class="fas fa-times-circle"></i>
+                </div>
+                <div class="stat-info">
+                    <h3 id="inactiveOperators">0</h3>
+                    <p>Neaktivni operateri</p>
+                </div>
+            </button>
+        </div>
 
-            <!-- Statistics Cards (Clickable) -->
-            <div class="stats-dashboard-enhanced">
-                <button class="stat-card-btn" data-status="all" id="statTotal">
-                    <div class="stat-icon">
-                        <i class="fas fa-building"></i>
-                    </div>
-                    <div class="stat-info">
-                        <h3 id="totalOperators">0</h3>
-                        <p>Ukupno Operatera</p>
-                    </div>
-                </button>
-                <button class="stat-card-btn" data-status="aktivan" id="statActive">
-                    <div class="stat-icon active">
-                        <i class="fas fa-check-circle"></i>
-                    </div>
-                    <div class="stat-info">
-                        <h3 id="activeOperators">0</h3>
-                        <p>Aktivni Operateri</p>
-                    </div>
-                </button>
-                <button class="stat-card-btn" data-status="neaktivan" id="statInactive">
-                    <div class="stat-icon inactive">
-                        <i class="fas fa-times-circle"></i>
-                    </div>
-                    <div class="stat-info">
-                        <h3 id="inactiveOperators">0</h3>
-                        <p>Neaktivni Operateri</p>
-                    </div>
-                </button>
+        <!-- Category and Type Filters (Below Stats) -->
+        <div class="category-type-filters">
+            <button class="filter-btn" data-category="dominantni" id="filterDominantni">
+                🏢 Dominantni (<span id="countDominantni">0</span>)
+            </button>
+            <button class="filter-btn" data-category="alternativni" id="filterAlternativni">
+                🔷 Alternativni (<span id="countAlternativni">0</span>)
+            </button>
+            <div class="type-filter-dropdown">
+                <select id="typeFilter" class="filter-select-enhanced">
+                    <option value="">📋 Svi tipovi</option>
+                    <option value="mobilni">📱 Mobilni operater</option>
+                    <option value="mvno">📡 MVNO</option>
+                    <option value="isp">🌐 ISP</option>
+                    <option value="kablovski">📺 Kablovski</option>
+                    <option value="enterprise">💼 Enterprise/B2B</option>
+                    <option value="ostali">⚙️ Ostali</option>
+                </select>
             </div>
         </div>
 
@@ -161,7 +155,7 @@
     <div class="modal" id="operatorModal">
         <div class="modal-content">
             <div class="modal-header">
-                <h2 id="modalTitle">Dodaj Novog Operatera</h2>
+                <h2 id="modalTitle">Dodaj novog operatera</h2>
                 <button class="close-btn" id="closeModal">
                     <i class="fas fa-times"></i>
                 </button>
@@ -170,11 +164,11 @@
                 <form id="operatorForm">
                     <div class="form-row">
                         <div class="form-group">
-                            <label for="naziv">Naziv Operatera *</label>
+                            <label for="naziv">Naziv operatera *</label>
                             <input type="text" id="naziv" name="naziv" required>
                         </div>
                         <div class="form-group">
-                            <label for="komercijalni_naziv">Komercijalni Naziv</label>
+                            <label for="komercijalni_naziv">Komercijalni naziv</label>
                             <input type="text" id="komercijalni_naziv" name="komercijalni_naziv">
                         </div>
                     </div>
@@ -182,7 +176,7 @@
                     <!-- NOVA STRUKTURA: Kategorija -->
                     <div class="form-row full-width">
                         <div class="form-group">
-                            <label>Kategorija Operatera *</label>
+                            <label>Kategorija operatera *</label>
                             <div class="radio-group">
                                 <label class="radio-label">
                                     <input type="radio" name="kategorija" value="dominantni" id="kategorijaDominantni" required>
@@ -207,7 +201,7 @@
                     <!-- NOVA STRUKTURA: Tipovi -->
                     <div class="form-row full-width">
                         <div class="form-group">
-                            <label>Tipovi Operatera * <small>(označite sve što se primenjuje)</small></label>
+                            <label>Tipovi operatera * <small>(označite sve što se primenjuje)</small></label>
                             <div class="checkbox-group">
                                 <label class="checkbox-label">
                                     <input type="checkbox" name="tipovi" value="mobilni" class="tip-checkbox">
@@ -290,13 +284,13 @@
                     </div>
 
                     <div class="form-group">
-                        <label for="kontakt_osoba">Kontakt Osoba</label>
+                        <label for="kontakt_osoba">Kontakt osoba</label>
                         <input type="text" id="kontakt_osoba" name="kontakt_osoba">
                     </div>
 
                     <!-- Customer Service Sekcija -->
                     <div class="form-section">
-                        <h4><i class="fas fa-phone"></i> Customer Service Brojevi</h4>
+                        <h4><i class="fas fa-phone"></i> Customer Service brojevi</h4>
                         <div class="form-row">
                             <div class="form-group">
                                 <label for="customer_service_privatni">Privatni</label>
@@ -321,7 +315,7 @@
 
                     <!-- Društvene Mreže Sekcija -->
                     <div class="form-section">
-                        <h4><i class="fab fa-facebook"></i> Društvene Mreže</h4>
+                        <h4><i class="fab fa-facebook"></i> Društvene mreže</h4>
                         <div class="form-row">
                             <div class="form-group">
                                 <label for="facebook">Facebook</label>
@@ -346,12 +340,12 @@
 
                     <!-- Tehnički Kontakti Sekcija -->
                     <div class="form-section">
-                        <h4><i class="fas fa-users-cog"></i> Tehnički Kontakti za Agencije</h4>
+                        <h4><i class="fas fa-users-cog"></i> Tehnički kontakti za agencije</h4>
                         <div id="tech-contacts-container">
                             <!-- Tehnički kontakti će biti dodani dinamički -->
                         </div>
                         <button type="button" id="add-tech-contact" class="btn btn-outline-primary btn-sm">
-                            <i class="fas fa-plus"></i> Dodaj Tehnički Kontakt
+                            <i class="fas fa-plus"></i> Dodaj tehnički kontakt
                         </button>
                     </div>
 
@@ -362,7 +356,7 @@
                             <!-- Dinamički se dodaju usluge -->
                         </div>
                         <button type="button" id="add-service" class="btn btn-outline-primary btn-sm">
-                            <i class="fas fa-plus"></i> Dodaj Uslugu
+                            <i class="fas fa-plus"></i> Dodaj uslugu
                         </button>
                     </div>
 
@@ -373,13 +367,13 @@
                             <!-- Dinamički se dodaju tehnologije -->
                         </div>
                         <button type="button" id="add-technology" class="btn btn-outline-primary btn-sm">
-                            <i class="fas fa-plus"></i> Dodaj Tehnologiju
+                            <i class="fas fa-plus"></i> Dodaj tehnologiju
                         </button>
                     </div>
 
                     <!-- Zakonske Obaveze Sekcija -->
                     <div class="form-section">
-                        <h4><i class="fas fa-gavel"></i> Zakonske Obaveze</h4>
+                        <h4><i class="fas fa-gavel"></i> Zakonske obaveze</h4>
                         
                         <!-- Zakonito presretanje komunikacija -->
                         <div class="form-row">
@@ -431,8 +425,8 @@
                                 <input type="text" id="zo_telefon_kontakt" name="zo_telefon_kontakt" placeholder="+387 XX XXX XXX">
                             </div>
                             <div class="form-group">
-                                <label>Poslovođuje mišljenje ZUO</label>
-                                <select id="posleduje_misljenje_zuo" name="posleduje_misljenje_zuo">
+                                <label>Posjeduje mišljenje ZUO</label>
+                                <select id="posjeduje_misljenje_zuo" name="posjeduje_misljenje_zuo">
                                     <option value="">Izaberi</option>
                                     <option value="Da">Da</option>
                                     <option value="Ne">Ne</option>
@@ -493,67 +487,94 @@
     <div class="modal" id="helpModal">
         <div class="modal-content help-modal-content">
             <div class="modal-header">
-                <h2>📖 ATLAS - Uputstvo za korišćenje</h2>
+                <h2>� Pomoć i uputstvo</h2>
                 <button class="close-btn" id="closeHelpModal">
                     <i class="fas fa-times"></i>
                 </button>
             </div>
             <div class="modal-body help-content">
-                <div class="help-section">
-                    <h3>🚀 Dobrodošli u ATLAS aplikaciju!</h3>
-                    <p><strong>ATLAS</strong> je akronim za: <em>Advanced Telecom Listing And Search</em> (Napredna telekomunikaciona lista i pretraga)</p>
-                    <p>ATLAS je aplikacija za upravljanje bazom podataka telekomunikacionih operatera u Bosni i Hercegovini.</p>
+                <!-- Intro sekcija -->
+                <div class="help-intro">
+                    <div class="help-logo">
+                        <i class="fas fa-satellite-dish"></i>
+                    </div>
+                    <h3>ATLAS</h3>
+                    <p class="help-subtitle">Advanced Telecom Listing And Search</p>
+                    <p>Sistem za upravljanje bazom telekomunikacionih operatera u BiH</p>
                 </div>
                 
+                <!-- Osnovne funkcije -->
                 <div class="help-section">
-                    <h3>🏢 Osnovne funkcionalnosti</h3>
-                    <div class="help-feature">
-                        <h4><i class="fas fa-plus text-primary"></i> Dodaj Operatera</h4>
-                        <p>Kliknite na dugme "Dodaj Operatera" da dodate novog operatera. Unesite osnovne informacije kao što su naziv, kategorija, tip i kontakt podatke.</p>
-                    </div>
-                    
-                    <div class="help-feature admin-only-notice">
-                        <h4><i class="fas fa-shield-alt text-warning"></i> Administratorske funkcije</h4>
-                        <p>Sledeće funkcije su dostupne <strong>samo administratorima</strong>:</p>
-                        <ul>
-                            <li><strong><i class="fas fa-upload"></i> Uvoz JSON:</strong> Uvoz većeg broja operatera odjednom putem JSON fajla.</li>
-                            <li><strong><i class="fas fa-download"></i> Izvoz:</strong> Izvoz kompletne baze podataka u JSON formatu za backup ili deljenje.</li>
-                            <li><strong><i class="fas fa-plus"></i> Dodaj Operatera:</strong> Dodavanje novih operatera u bazu.</li>
-                        </ul>
-                        <p class="admin-note">⚠️ Obični korisnici imaju pristup samo pregledu i pretragii operatera.</p>
+                    <h3><i class="fas fa-tools"></i> Osnovne funkcije</h3>
+                    <div class="help-cards">
+                        <div class="help-card">
+                            <div class="help-card-icon" style="background: #3b82f6;">
+                                <i class="fas fa-eye"></i>
+                            </div>
+                            <h4>Pregled operatera</h4>
+                            <p>Kliknite na bilo kojeg operatera u tabeli da vidite detaljne informacije, kontakte, usluge i zakonske obaveze.</p>
+                        </div>
+                        <div class="help-card">
+                            <div class="help-card-icon" style="background: #10b981;">
+                                <i class="fas fa-plus"></i>
+                            </div>
+                            <h4>Dodavanje novog</h4>
+                            <p>Kliknite dugme "Dodaj operatera" i popunite formu sa osnovnim podacima, kontaktima i zakonskim obavezama.</p>
+                        </div>
+                        <div class="help-card">
+                            <div class="help-card-icon" style="background: #f59e0b;">
+                                <i class="fas fa-edit"></i>
+                            </div>
+                            <h4>Izmjena podataka</h4>
+                            <p>Kliknite ikonu olovke pored operatera da uredite postojeće podatke. Sve promjene se automatski čuvaju.</p>
+                        </div>
+                        <div class="help-card">
+                            <div class="help-card-icon" style="background: #ef4444;">
+                                <i class="fas fa-trash"></i>
+                            </div>
+                            <h4>Brisanje</h4>
+                            <p>Kliknite ikonu kantice da obrišete operatera iz baze. Moraćete potvrditi akciju prije brisanja.</p>
+                        </div>
                     </div>
                 </div>
                 
+                <!-- Pretraga i filtriranje -->
                 <div class="help-section">
-                    <h3>🔄 Nova Backend/Frontend Arhitektura</h3>
-                    <div style="background: #e8f5e8; padding: 15px; border-radius: 8px; margin-bottom: 15px;">
-                        <h4 style="color: #2d5016; margin-bottom: 10px;">✅ Ažurirana arhitektura</h4>
-                        <ul style="color: #2d5016; margin: 0;">
-                            <li><strong>Server:</strong> Node.js/Express backend na portu 3001</li>
-                            <li><strong>API:</strong> REST endpoints za CRUD operacije</li>
-                            <li><strong>Podaci:</strong> Svaki operator u svom JSON fajlu (/operators/)</li>
-                            <li><strong>Sinhronizacija:</strong> Real-time sync između frontend-a i backend-a</li>
-                            <li><strong>Fallback:</strong> LocalStorage kao offline backup</li>
-                        </ul>
+                    <h3><i class="fas fa-search"></i> Pretraga i filtriranje</h3>
+                    <div class="help-filter-guide">
+                        <div class="filter-step">
+                            <span class="step-number">1</span>
+                            <div class="step-content">
+                                <h4>Pretraga po tekstu</h4>
+                                <p>Unesite naziv, tip ili bilo koju drugu informaciju u search bar. Sistem pretražuje naziv, opis, kontakte i sve druge podatke.</p>
+                            </div>
+                        </div>
+                        <div class="filter-step">
+                            <span class="step-number">2</span>
+                            <div class="step-content">
+                                <h4>Filtriranje po statusu</h4>
+                                <p>Kliknite na <strong>Ukupno</strong>, <strong>Aktivni</strong> ili <strong>Neaktivni</strong> da filtrirate operatere prema njihovom statusu.</p>
+                            </div>
+                        </div>
+                        <div class="filter-step">
+                            <span class="step-number">3</span>
+                            <div class="step-content">
+                                <h4>Filtriranje po kategoriji</h4>
+                                <p>Kliknite <strong>🏢 Dominantni</strong> ili <strong>🔷 Alternativni</strong> da vidite samo operatere iz te kategorije.</p>
+                            </div>
+                        </div>
+                        <div class="filter-step">
+                            <span class="step-number">4</span>
+                            <div class="step-content">
+                                <h4>Filtriranje po tipu</h4>
+                                <p>Koristite dropdown meni da izaberete specifičan tip: mobilni, MVNO, ISP, kablovski, enterprise ili ostali.</p>
+                            </div>
+                        </div>
                     </div>
-                    
-                    <h4>🔧 API Endpoints:</h4>
-                    <ul>
-                        <li><code>GET /api/operators</code> - lista svih operatera</li>
-                        <li><code>GET /api/operator/:id</code> - pojedinačni operator</li>
-                        <li><code>POST /api/save-operator</code> - čuvanje operatera</li>
-                        <li><code>DELETE /api/operator/:id</code> - brisanje operatera</li>
-                    </ul>
-                </div>
-                
-                <div class="help-section">
-                    <h3>🔍 Pretraga i filtriranje</h3>
-                    <ul>
-                        <li><strong>Pretraga:</strong> Koristite search bar za pretragu po nazivu operatera</li>
-                        <li><strong>Kategorije:</strong> Filtrirajte po kategorijama (Dominantni, Alternativni)</li>
-                        <li><strong>Status:</strong> Filtrirajte aktivne ili neaktivne operatere</li>
-                        <li><strong>Tip:</strong> Filtrirajte po tipu operatera</li>
-                    </ul>
+                    <div class="help-tip">
+                        <i class="fas fa-lightbulb"></i>
+                        <p><strong>Savjet:</strong> Možete kombinovati sve filtere! Na primjer, kliknite "Aktivni" + "Dominantni" + "ISP" da vidite samo aktivne dominantne ISP operatere.</p>
+                    </div>
                 </div>
                 
                 <div class="help-section">

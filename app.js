@@ -234,6 +234,12 @@ class ATLASApp {
         this.currentEditId = null;
         this.storageKey = 'atlas_operators_data';
         
+        // Filter state
+        this.currentStatusFilter = 'all';
+        this.currentCategoryFilter = null;
+        this.currentTypeFilter = '';
+        this.currentSearchTerm = '';
+        
         // DOM Elements
         this.elements = {
             // Statistics
@@ -710,7 +716,8 @@ class ATLASApp {
         });
         
         this.elements.typeFilter.addEventListener('change', () => {
-            this.applyFilters();
+            this.currentTypeFilter = this.elements.typeFilter.value;
+            this.applyCombinedFilters();
         });
         
         // Stat Cards Click Handlers
@@ -726,15 +733,13 @@ class ATLASApp {
             this.filterByStatus('neaktivan');
         });
         
-        // Quick Category Filters
-        const filterButtons = document.querySelectorAll('.filter-btn');
+        // Category Filters
+        document.getElementById('filterDominantni').addEventListener('click', () => {
+            this.filterByCategory('dominantni');
+        });
         
-        filterButtons.forEach((btn, index) => {
-            const category = btn.dataset.category;
-            
-            btn.addEventListener('click', (e) => {
-                this.handleQuickFilter(e.target.dataset.category);
-            });
+        document.getElementById('filterAlternativni').addEventListener('click', () => {
+            this.filterByCategory('alternativni');
         });
         
         // Modal Controls
@@ -860,52 +865,29 @@ class ATLASApp {
     }
     
     handleSearch(searchTerm) {
-        const term = searchTerm.toLowerCase().trim();
+        const term = searchTerm ? searchTerm.toLowerCase().trim() : '';
         
         // Clear any existing highlights
         this.clearSearchHighlights();
         
+        // Update current search term
+        this.currentSearchTerm = term;
+        
         if (term === '') {
-            this.filteredOperators = [...this.operators];
-            // Reset search filter buttons
-            this.resetQuickFilters();
             // Hide clear button and results info
             this.elements.clearSearchBtn.style.display = 'none';
             this.elements.searchResults.style.display = 'none';
         } else {
-            this.filteredOperators = this.operators.filter(operator => {
-                const adresa = operator.kontakt?.adresa || '';
-                const email = operator.kontakt?.email || '';
-                const telefon = operator.kontakt?.telefon || '';
-                const web = operator.kontakt?.web || '';
-                
-                return (
-                    operator.naziv.toLowerCase().includes(term) ||
-                    (operator.komercijalni_naziv && operator.komercijalni_naziv.toLowerCase().includes(term)) ||
-                    operator.tip.toLowerCase().includes(term) ||
-                    (operator.opis && operator.opis.toLowerCase().includes(term)) ||
-                    adresa.toLowerCase().includes(term) ||
-                    email.toLowerCase().includes(term) ||
-                    telefon.toLowerCase().includes(term) ||
-                    web.toLowerCase().includes(term)
-                );
-            });
-            
             // Highlight search term in results
             this.highlightSearchTerm = term;
             
             // Show clear button and results info
             this.elements.clearSearchBtn.style.display = 'block';
             this.elements.searchResults.style.display = 'flex';
-            
-            // Update results info
-            const resultsCount = this.filteredOperators.length;
-            const totalCount = this.operators.length;
-            this.elements.searchResultsText.textContent = 
-                `${resultsCount} od ${totalCount} operatera • "${term}"`;
         }
         
-        this.applyFilters();
+        // Apply all filters including search
+        this.applyCombinedFilters();
     }
     
     clearSearchHighlights() {
@@ -925,35 +907,110 @@ class ATLASApp {
     
     clearSearch() {
         this.elements.searchInput.value = '';
+        this.currentSearchTerm = '';
         this.clearSearchHighlights();
-        this.resetQuickFilters();
         this.elements.clearSearchBtn.style.display = 'none';
         this.elements.searchResults.style.display = 'none';
-        this.filteredOperators = [...this.operators];
-        this.applyFilters();
-    }
-
-    resetQuickFilters() {
-        document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
-        document.querySelector('[data-category="all"]').classList.add('active');
+        this.applyCombinedFilters();
     }
     
-    applyFilters() {
-        let filtered = this.filteredOperators.length > 0 ? [...this.filteredOperators] : [...this.operators];
+
+    
+    filterByStatus(status) {
+        // Update status filter state
+        this.currentStatusFilter = status;
         
-        // Status filter
-        const statusFilter = this.elements.statusFilter.value;
-        if (statusFilter) {
-            filtered = filtered.filter(op => op.status === statusFilter);
+        // If "all" is selected, reset all other filters too
+        if (status === 'all') {
+            this.currentCategoryFilter = null;
+            this.currentTypeFilter = '';
+            this.elements.typeFilter.value = '';
+            
+            // Remove active class from category buttons
+            document.querySelectorAll('.filter-btn[data-category]').forEach(btn => {
+                btn.classList.remove('active');
+            });
         }
         
-        // NOVA STRUKTURA: Kategorija filter (dominantni/alternativni)
-        const categoryFilter = this.elements.categoryFilter.value;
-        if (categoryFilter) {
-            filtered = filtered.filter(op => op.kategorija === categoryFilter);
+        // Update active state on stat cards
+        document.querySelectorAll('.stat-card-btn').forEach(btn => {
+            if (btn.dataset.status === status) {
+                btn.classList.add('active');
+            } else {
+                btn.classList.remove('active');
+            }
+        });
+        
+        // Apply all filters combined
+        this.applyCombinedFilters();
+        
+        // Scroll to table if not showing all
+        if (status !== 'all') {
+            document.getElementById('operatorsTable').scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+    }
+    
+    filterByCategory(category) {
+        // Update category filter state
+        this.currentCategoryFilter = category;
+        
+        // Update active state on category buttons
+        document.querySelectorAll('.filter-btn[data-category]').forEach(btn => {
+            if (btn.dataset.category === category) {
+                btn.classList.add('active');
+            } else {
+                btn.classList.remove('active');
+            }
+        });
+        
+        // Apply all filters combined
+        this.applyCombinedFilters();
+        
+        // Scroll to table
+        document.getElementById('operatorsTable').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+    
+    applyCombinedFilters() {
+        let filtered = [...this.operators];
+        
+        // Apply search filter first
+        if (this.currentSearchTerm) {
+            const term = this.currentSearchTerm;
+            filtered = filtered.filter(operator => {
+                const adresa = operator.kontakt?.adresa || '';
+                const email = operator.kontakt?.email || '';
+                const telefon = operator.kontakt?.telefon || '';
+                const web = operator.kontakt?.web || '';
+                
+                return (
+                    operator.naziv.toLowerCase().includes(term) ||
+                    (operator.komercijalni_naziv && operator.komercijalni_naziv.toLowerCase().includes(term)) ||
+                    operator.tip.toLowerCase().includes(term) ||
+                    (operator.opis && operator.opis.toLowerCase().includes(term)) ||
+                    adresa.toLowerCase().includes(term) ||
+                    email.toLowerCase().includes(term) ||
+                    telefon.toLowerCase().includes(term) ||
+                    web.toLowerCase().includes(term)
+                );
+            });
+            
+            // Update results info
+            const totalCount = this.operators.length;
+            this.elements.searchResultsText.textContent = 
+                `${filtered.length} od ${totalCount} operatera • "${this.currentSearchTerm}"`;
         }
         
-        // NOVA STRUKTURA: Tip filter - pretraživanje kroz tipovi niz
+        // Apply status filter
+        if (this.currentStatusFilter !== 'all') {
+            filtered = filtered.filter(op => op.status === this.currentStatusFilter);
+        }
+        
+        // Apply category filter
+        if (this.currentCategoryFilter) {
+            filtered = filtered.filter(op => op.kategorija === this.currentCategoryFilter);
+        }
+        
+        // Apply type filter
         const typeFilter = this.elements.typeFilter.value;
         if (typeFilter) {
             filtered = filtered.filter(op => 
@@ -961,36 +1018,16 @@ class ATLASApp {
             );
         }
         
+        // Render filtered results
         this.renderOperators(filtered);
-    }
-    
-    filterByStatus(status) {
-        // Reset current filters
-        this.currentCategoryFilter = 'all';
-        this.currentTypeFilter = '';
-        this.elements.typeFilter.value = '';
         
-        // Reset category buttons
-        const filterButtons = document.querySelectorAll('.filter-btn');
-        filterButtons.forEach(btn => {
-            if (btn.dataset.category === 'all') {
-                btn.classList.add('active');
-            } else {
-                btn.classList.remove('active');
+        // Smooth scroll to table if any filter is active
+        if (this.currentStatusFilter !== 'all' || this.currentCategoryFilter || typeFilter || this.currentSearchTerm) {
+            const tableSection = document.querySelector('.operators-table-section');
+            if (tableSection) {
+                tableSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
             }
-        });
-        
-        // Apply status filter
-        let filtered = [...this.operators];
-        
-        if (status !== 'all') {
-            filtered = filtered.filter(op => op.status === status);
         }
-        
-        this.renderOperators(filtered);
-        
-        // Scroll to table
-        document.getElementById('operatorsTable').scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
     
     renderOperators(operatorsToRender = null) {
@@ -1120,9 +1157,8 @@ class ATLASApp {
     }
     
     updateQuickFilterCounts() {
-        // NOVA STRUKTURA: Samo 2 kategorije + svi
+        // NOVA STRUKTURA: Samo 2 kategorije (bez "Svi")
         const counts = {
-            all: this.operators.length,
             dominantni: this.operators.filter(op => op.kategorija === 'dominantni').length,
             alternativni: this.operators.filter(op => op.kategorija === 'alternativni').length
         };
@@ -1135,29 +1171,7 @@ class ATLASApp {
         });
     }
     
-    handleQuickFilter(category) {
-        // Reset search filters when using quick filter
-        this.filteredOperators = [...this.operators];
-        this.elements.searchInput.value = '';
-        this.highlightSearchTerm = '';
-        
-        // Update active filter button
-        document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
-        const filterBtn = document.querySelector(`[data-category="${category}"]`);
-        if (filterBtn) {
-            filterBtn.classList.add('active');
-        } else {
-            return;
-        }
-        
-        // Filter operators
-        if (category === 'all') {
-            this.renderOperators();
-        } else {
-            const filtered = this.operators.filter(op => this.getCategoryClass(op) === category);
-            this.renderOperators(filtered);
-        }
-    }
+
     
     openModal(mode, operatorId = null) {
         this.currentEditId = operatorId;
@@ -1358,8 +1372,8 @@ class ATLASApp {
             if (form.elements.zo_telefon_kontakt) {
                 form.elements.zo_telefon_kontakt.value = zo.telefon_kontakt || '';
             }
-            if (form.elements.posleduje_misljenje_zuo) {
-                form.elements.posleduje_misljenje_zuo.value = zo.posleduje_misljenje_zuo || '';
+            if (form.elements.posjeduje_misljenje_zuo) {
+                form.elements.posjeduje_misljenje_zuo.value = zo.posjeduje_misljenje_zuo || '';
             }
             if (form.elements.zo_napomene) {
                 form.elements.zo_napomene.value = zo.napomene || '';
@@ -1438,7 +1452,7 @@ class ATLASApp {
                 kontakt_osoba: formData.get('zo_kontakt_osoba') ? formData.get('zo_kontakt_osoba').trim() : '',
                 email_kontakt: formData.get('zo_email_kontakt') ? formData.get('zo_email_kontakt').trim() : '',
                 telefon_kontakt: formData.get('zo_telefon_kontakt') ? formData.get('zo_telefon_kontakt').trim() : '',
-                posleduje_misljenje_zuo: formData.get('posleduje_misljenje_zuo') || '',
+                posjeduje_misljenje_zuo: formData.get('posjeduje_misljenje_zuo') || '',
                 napomene: formData.get('zo_napomene') ? formData.get('zo_napomene').trim() : '',
                 // Stara polja za dozvolu (opciono)
                 dozvola_za_rad: formData.get('dozvola_za_rad') ? formData.get('dozvola_za_rad').trim() : '',
@@ -1564,10 +1578,12 @@ class ATLASApp {
         // Validacija je sada jednostavnija - samo proveravamo da li su polja popunjena
         
         // Completeness validation
-        const kompletnost = parseInt(formData.get('kompletnost'));
-        if (kompletnost && (kompletnost < 0 || kompletnost > 100)) {
-            errors.push({ field: 'kompletnost', message: 'Kompletnost mora biti između 0 i 100%' });
-        }
+        // OVAJ DIO JE VIŠE NEPOTREBAN - polje "kompletnost" se sada računa automatski i nije deo forme
+        // Ako se polje vrati u formu, može se vratiti i validacija ispod:
+        // const kompletnost = parseInt(formData.get('kompletnost'));
+        // if (kompletnost && (kompletnost < 0 || kompletnost > 100)) {
+        //     errors.push({ field: 'kompletnost', message: 'Kompletnost mora biti između 0 i 100%' });
+        // }
         
         return {
             isValid: errors.length === 0,
@@ -1852,7 +1868,21 @@ class ATLASApp {
                     ` : ''}
                     <div class="detail-item">
                         <span class="detail-label">TIP OPERATERA:</span>
-                        <span class="detail-value" style="text-align: center;">${operator.tip}</span>
+                        <span class="detail-value" style="text-align: center;">
+                            ${operator.tipovi && operator.tipovi.length > 0 
+                                ? operator.tipovi.map(tip => {
+                                    const tipLabels = {
+                                        'mobilni': '📱 Mobilni operater',
+                                        'mvno': '📡 MVNO',
+                                        'isp': '🌐 ISP',
+                                        'kablovski': '📺 Kablovski',
+                                        'enterprise': '💼 Enterprise/B2B',
+                                        'ostali': '⚙️ Ostali'
+                                    };
+                                    return tipLabels[tip] || tip;
+                                }).join(', ')
+                                : 'Nije definisan'}
+                        </span>
                     </div>
                     <div class="detail-item">
                         <span class="detail-label">STATUS:</span>
@@ -1872,29 +1902,18 @@ class ATLASApp {
                         <span class="detail-value note" style="text-align: center;">${operator.napomena}</span>
                     </div>
                     ` : ''}
-                    <div class="detail-item">
-                        <span class="detail-label">KOMPLETNOST PODATAKA:</span>
-                        <span class="detail-value" style="text-align: center;">
-                            <div class="progress-container">
-                                <div class="progress-bar">
-                                    <div class="progress-fill" style="width: ${operator.kompletnost || 0}%"></div>
-                                </div>
-                                <span class="progress-text">${operator.kompletnost || 0}%</span>
-                            </div>
-                        </span>
-                    </div>
                 </div>
 
-                <!-- 📞 Kontakt Informacije -->
+                <!-- 📞 Kontakt informacije -->
                 <div class="details-section">
-                    <h4>📞 Kontakt Informacije</h4>
+                    <h4>📞 Kontakt informacije</h4>
                     ${this.generateContactInfo(operator)}
                 </div>
 
-                <!-- 👥 Tehnički Kontakti -->
+                <!-- 👥 Tehnički kontakti -->
                 ${operator.tehnicki_kontakti && operator.tehnicki_kontakti.length > 0 ? `
                 <div class="details-section tech-contacts-section" style="grid-column: 1 / -1;">
-                    <h4>👥 Tehnički Kontakti za Agencije</h4>
+                    <h4>👥 Tehnički kontakti za Agencije</h4>
                     <div class="tech-contacts-grid">
                         ${operator.tehnicki_kontakti.map(kontakt => `
                             <div class="tech-contact-card">
@@ -1923,28 +1942,35 @@ class ATLASApp {
                 </div>
                 ` : ''}
 
-                <!-- 🔧 Detaljne Usluge -->
+                <!-- 🔧 Detaljne usluge -->
                 <div class="details-section services-detailed">
-                    <h4>🔧 Detaljne Usluge</h4>
+                    <h4>🔧 Detaljne usluge</h4>
                     ${this.generateDetailedServices(operator)}
                 </div>
 
-                <!-- ⚙️ Detaljne Tehnologije -->
+                <!-- ⚙️ Detaljne tehnologije -->
                 <div class="details-section technologies-detailed">
-                    <h4>⚙️ Detaljne Tehnologije</h4>
+                    <h4>⚙️ Detaljne tehnologije</h4>
                     ${this.generateDetailedTechnologies(operator)}
                 </div>
 
-                <!-- ⚖️ Zakonske Obaveze -->
+                <!-- ⚖️ Zakonske obaveze -->
                 ${operator.zakonske_obaveze ? `
                 <div class="details-section legal-obligations" style="grid-column: 1 / -1;">
-                    <h4>⚖️ Zakonske Obaveze</h4>
+                    <h4>⚖️ Zakonske obaveze</h4>
                     <div class="legal-grid">
                         <div class="legal-item">
                             <span class="legal-label">Zakonito presretanje:</span>
                             <span class="legal-value ${operator.zakonske_obaveze.zakonito_presretanje ? 'positive' : 'negative'}">
                                 ${operator.zakonske_obaveze.zakonito_presretanje === true ? '✅ Implementirano' : 
                                   operator.zakonske_obaveze.zakonito_presretanje === false ? '❌ Nije implementirano' : '⚠️ Nepoznato'}
+                            </span>
+                        </div>
+                        <div class="legal-item">
+                            <span class="legal-label">Pristup obračunskim podacima:</span>
+                            <span class="legal-value ${operator.zakonske_obaveze.pristup_obracunskim_podacima ? 'positive' : 'negative'}">
+                                ${operator.zakonske_obaveze.pristup_obracunskim_podacima === true ? '✅ Dostupno' : 
+                                  operator.zakonske_obaveze.pristup_obracunskim_podacima === false ? '❌ Nije dostupno' : '⚠️ Nepoznato'}
                             </span>
                         </div>
                         ${operator.zakonske_obaveze.implementacija ? `
@@ -1959,15 +1985,54 @@ class ATLASApp {
                             <span class="legal-value">${operator.zakonske_obaveze.kontakt_osoba}</span>
                         </div>
                         ` : ''}
+                        ${operator.zakonske_obaveze.email_kontakt ? `
                         <div class="legal-item">
-                            <span class="legal-label">Pristup obračunskim podacima:</span>
-                            <span class="legal-value ${operator.zakonske_obaveze.pristup_obracunskim_podacima ? 'positive' : 'negative'}">
-                                ${operator.zakonske_obaveze.pristup_obracunskim_podacima === true ? '✅ Dostupno' : 
-                                  operator.zakonske_obaveze.pristup_obracunskim_podacima === false ? '❌ Nije dostupno' : '⚠️ Nepoznato'}
+                            <span class="legal-label">Email kontakt:</span>
+                            <span class="legal-value">${operator.zakonske_obaveze.email_kontakt}</span>
+                        </div>
+                        ` : ''}
+                        ${operator.zakonske_obaveze.telefon_kontakt ? `
+                        <div class="legal-item">
+                            <span class="legal-label">Telefon kontakt:</span>
+                            <span class="legal-value">${operator.zakonske_obaveze.telefon_kontakt}</span>
+                        </div>
+                        ` : ''}
+                        ${operator.zakonske_obaveze.posjeduje_misljenje_zuo ? `
+                        <div class="legal-item">
+                            <span class="legal-label">Posjeduje mišljenje ZUO:</span>
+                            <span class="legal-value ${operator.zakonske_obaveze.posjeduje_misljenje_zuo === 'Da' ? 'positive' : 'negative'}">
+                                ${operator.zakonske_obaveze.posjeduje_misljenje_zuo}
                             </span>
                         </div>
+                        ` : ''}
+                        ${operator.zakonske_obaveze.dozvola_za_rad ? `
+                        <div class="legal-item">
+                            <span class="legal-label">Dozvola za rad:</span>
+                            <span class="legal-value">${operator.zakonske_obaveze.dozvola_za_rad}</span>
+                        </div>
+                        ` : ''}
+                        ${operator.zakonske_obaveze.datum_izdavanja ? `
+                        <div class="legal-item">
+                            <span class="legal-label">Datum izdavanja:</span>
+                            <span class="legal-value">${operator.zakonske_obaveze.datum_izdavanja}</span>
+                        </div>
+                        ` : ''}
+                        ${operator.zakonske_obaveze.vazenje_dozvole ? `
+                        <div class="legal-item">
+                            <span class="legal-label">Važenje dozvole:</span>
+                            <span class="legal-value">${operator.zakonske_obaveze.vazenje_dozvole}</span>
+                        </div>
+                        ` : ''}
+                        ${operator.zakonske_obaveze.status_dozvole ? `
+                        <div class="legal-item">
+                            <span class="legal-label">Status dozvole:</span>
+                            <span class="legal-value ${operator.zakonske_obaveze.status_dozvole === 'aktivna' ? 'positive' : 'negative'}">
+                                ${operator.zakonske_obaveze.status_dozvole}
+                            </span>
+                        </div>
+                        ` : ''}
                         ${operator.zakonske_obaveze.napomene ? `
-                        <div class="legal-item legal-notes">
+                        <div class="legal-item legal-notes" style="grid-column: 1 / -1;">
                             <span class="legal-label">Napomene:</span>
                             <span class="legal-value">${operator.zakonske_obaveze.napomene}</span>
                         </div>
