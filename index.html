@@ -387,6 +387,67 @@
                     <!-- Zakonske Obaveze Sekcija -->
                     <div class="form-section">
                         <h4><i class="fas fa-gavel"></i> Zakonske Obaveze</h4>
+                        
+                        <!-- Zakonito presretanje komunikacija -->
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>Zakonito presretanje komunikacija (spoj na Interfejs centar)</label>
+                                <select id="zakonito_presretanje" name="zakonito_presretanje">
+                                    <option value="">Izaberi status</option>
+                                    <option value="true">✅ Implementirano - Spojen na Interfejs centar</option>
+                                    <option value="false">❌ Nije implementirano</option>
+                                </select>
+                            </div>
+                        </div>
+                        
+                        <!-- Pristup obračunskim podacima -->
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>Pristup obračunskim podacima (pristup aplikaciji)</label>
+                                <select id="pristup_obracunskim_podacima" name="pristup_obracunskim_podacima">
+                                    <option value="">Izaberi status</option>
+                                    <option value="true">✅ Omogućen pristup</option>
+                                    <option value="false">❌ Nije omogućen pristup</option>
+                                </select>
+                            </div>
+                        </div>
+                        
+                        <!-- Detalji implementacije -->
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>Implementacija</label>
+                                <input type="text" id="implementacija" name="implementacija" placeholder="Npr: Implementirano i dostupno - Vlastita medijacija">
+                            </div>
+                        </div>
+                        
+                        <!-- Kontakt detalji za zakonske obaveze -->
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>Kontakt osoba (ZUO)</label>
+                                <input type="text" id="zo_kontakt_osoba" name="zo_kontakt_osoba" placeholder="Ime i prezime">
+                            </div>
+                            <div class="form-group">
+                                <label>Email kontakt (ZUO)</label>
+                                <input type="email" id="zo_email_kontakt" name="zo_email_kontakt" placeholder="email@operator.ba">
+                            </div>
+                        </div>
+                        
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>Telefon kontakt (ZUO)</label>
+                                <input type="text" id="zo_telefon_kontakt" name="zo_telefon_kontakt" placeholder="+387 XX XXX XXX">
+                            </div>
+                            <div class="form-group">
+                                <label>Poslovođuje mišljenje ZUO</label>
+                                <select id="posleduje_misljenje_zuo" name="posleduje_misljenje_zuo">
+                                    <option value="">Izaberi</option>
+                                    <option value="Da">Da</option>
+                                    <option value="Ne">Ne</option>
+                                </select>
+                            </div>
+                        </div>
+                        
+                        <!-- Dozvola za rad (opciono) -->
                         <div class="form-row">
                             <div class="form-group">
                                 <label>Dozvola za rad</label>
@@ -413,10 +474,12 @@
                                 </select>
                             </div>
                         </div>
+                        
+                        <!-- Napomene -->
                         <div class="form-row">
                             <div class="form-group full-width">
-                                <label>Napomene o dozvolama</label>
-                                <textarea id="napomene_dozvole" name="napomene_dozvole" rows="3" placeholder="Dodatne napomene o dozvoli i obavezama..."></textarea>
+                                <label>Napomene o zakonskim obavezama</label>
+                                <textarea id="zo_napomene" name="zo_napomene" rows="3" placeholder="Dodatne napomene o zakonskim obavezama, implementaciji, pristupima..."></textarea>
                             </div>
                         </div>
                     </div>

@@ -1291,6 +1291,50 @@ class ATLASApp {
         // Zakonske obaveze
         if (operator.zakonske_obaveze) {
             const zo = operator.zakonske_obaveze;
+            
+            // Zakonito presretanje
+            if (form.elements.zakonito_presretanje) {
+                if (zo.zakonito_presretanje === true) {
+                    form.elements.zakonito_presretanje.value = 'true';
+                } else if (zo.zakonito_presretanje === false) {
+                    form.elements.zakonito_presretanje.value = 'false';
+                } else {
+                    form.elements.zakonito_presretanje.value = '';
+                }
+            }
+            
+            // Pristup obračunskim podacima
+            if (form.elements.pristup_obracunskim_podacima) {
+                if (zo.pristup_obracunskim_podacima === true) {
+                    form.elements.pristup_obracunskim_podacima.value = 'true';
+                } else if (zo.pristup_obracunskim_podacima === false) {
+                    form.elements.pristup_obracunskim_podacima.value = 'false';
+                } else {
+                    form.elements.pristup_obracunskim_podacima.value = '';
+                }
+            }
+            
+            // Ostali detalji
+            if (form.elements.implementacija) {
+                form.elements.implementacija.value = zo.implementacija || '';
+            }
+            if (form.elements.zo_kontakt_osoba) {
+                form.elements.zo_kontakt_osoba.value = zo.kontakt_osoba || '';
+            }
+            if (form.elements.zo_email_kontakt) {
+                form.elements.zo_email_kontakt.value = zo.email_kontakt || '';
+            }
+            if (form.elements.zo_telefon_kontakt) {
+                form.elements.zo_telefon_kontakt.value = zo.telefon_kontakt || '';
+            }
+            if (form.elements.posleduje_misljenje_zuo) {
+                form.elements.posleduje_misljenje_zuo.value = zo.posleduje_misljenje_zuo || '';
+            }
+            if (form.elements.zo_napomene) {
+                form.elements.zo_napomene.value = zo.napomene || '';
+            }
+            
+            // Dozvola za rad (stara polja)
             if (form.elements.dozvola_za_rad) {
                 form.elements.dozvola_za_rad.value = zo.dozvola_za_rad || '';
             }
@@ -1302,9 +1346,6 @@ class ATLASApp {
             }
             if (form.elements.status_dozvole) {
                 form.elements.status_dozvole.value = zo.status_dozvole || '';
-            }
-            if (form.elements.napomene_dozvole) {
-                form.elements.napomene_dozvole.value = zo.napomene_dozvole || '';
             }
         }
 
@@ -1357,11 +1398,22 @@ class ATLASApp {
             
             // Zakonske obaveze
             zakonske_obaveze: {
+                // Konvertuj string 'true'/'false' u boolean
+                zakonito_presretanje: formData.get('zakonito_presretanje') === 'true' ? true : 
+                                      formData.get('zakonito_presretanje') === 'false' ? false : undefined,
+                pristup_obracunskim_podacima: formData.get('pristup_obracunskim_podacima') === 'true' ? true : 
+                                               formData.get('pristup_obracunskim_podacima') === 'false' ? false : undefined,
+                implementacija: formData.get('implementacija') ? formData.get('implementacija').trim() : '',
+                kontakt_osoba: formData.get('zo_kontakt_osoba') ? formData.get('zo_kontakt_osoba').trim() : '',
+                email_kontakt: formData.get('zo_email_kontakt') ? formData.get('zo_email_kontakt').trim() : '',
+                telefon_kontakt: formData.get('zo_telefon_kontakt') ? formData.get('zo_telefon_kontakt').trim() : '',
+                posleduje_misljenje_zuo: formData.get('posleduje_misljenje_zuo') || '',
+                napomene: formData.get('zo_napomene') ? formData.get('zo_napomene').trim() : '',
+                // Stara polja za dozvolu (opciono)
                 dozvola_za_rad: formData.get('dozvola_za_rad') ? formData.get('dozvola_za_rad').trim() : '',
                 datum_izdavanja: formData.get('datum_izdavanja') || '',
                 vazenje_dozvole: formData.get('vazenje_dozvole') || '',
-                status_dozvole: formData.get('status_dozvole') || '',
-                napomene_dozvole: formData.get('napomene_dozvole') ? formData.get('napomene_dozvole').trim() : ''
+                status_dozvole: formData.get('status_dozvole') || ''
             },
             
             // Kontakt struktura sa customer service i društvenim mrežama
@@ -1400,8 +1452,11 @@ class ATLASApp {
         });
 
         // Ukloni prazne vrednosti iz zakonske_obaveze
+        // NAPOMENA: Čuvaj boolean false vrednosti!
         Object.keys(operatorData.zakonske_obaveze).forEach(key => {
-            if (!operatorData.zakonske_obaveze[key]) {
+            const value = operatorData.zakonske_obaveze[key];
+            // Ukloni samo ako je prazan string ili undefined (NE false boolean!)
+            if (value === '' || value === undefined) {
                 delete operatorData.zakonske_obaveze[key];
             }
         });
