@@ -309,6 +309,9 @@ class ATLASApp {
             // Dodaj test podatke za usluge i tehnologije
             this.addTestServicesAndTechnologies();
             
+            // Provjeri da li su svi potrebni elementi prisutni
+            this.validateElements();
+            
             this.setupEventListeners();
             this.renderOperators();
             this.updateStatistics();
@@ -407,9 +410,10 @@ class ATLASApp {
                 const jsonData = await response.json();
                 
                 this.operators = jsonData.operateri || [];
+                const version = jsonData.version || '2.1';
                 this.saveToLocalStorage(jsonData); // Sačuvaj u LocalStorage za budućnost
                 console.log('Podaci učitani IZ JSON FAJLA (fallback):', this.operators.length, 'operatera');
-                console.log('   - Verzija:', jsonVersion);
+                console.log('   - Verzija:', version);
                 console.log('   - Sačuvano u LocalStorage za sljedeći put');
             }
             
@@ -703,6 +707,33 @@ class ATLASApp {
         document.body.appendChild(input);
         input.click();
         document.body.removeChild(input);
+    }
+    
+    validateElements() {
+        // Provjeri kritične elemente
+        const requiredElements = [
+            'searchInput',
+            'operatorsTableBody',
+            'addOperatorBtn',
+            'operatorModal',
+            'operatorForm'
+        ];
+        
+        const missingElements = [];
+        
+        for (const elementName of requiredElements) {
+            if (!this.elements[elementName]) {
+                missingElements.push(elementName);
+                console.error(`❌ Element nije pronađen: ${elementName}`);
+            }
+        }
+        
+        if (missingElements.length > 0) {
+            console.error('Nedostaju elementi:', missingElements);
+            throw new Error(`Nedostaju potrebni elementi: ${missingElements.join(', ')}`);
+        }
+        
+        console.log('✅ Svi potrebni elementi su pronađeni');
     }
     
     setupEventListeners() {
