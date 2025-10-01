@@ -251,9 +251,7 @@ class ATLASApp {
             clearSearchBtn: document.getElementById('clearSearchBtn'),
             searchResults: document.getElementById('searchResults'),
             searchResultsText: document.getElementById('searchResultsText'),
-            statusFilter: document.getElementById('statusFilter'),
             typeFilter: document.getElementById('typeFilter'),
-            categoryFilter: document.getElementById('categoryFilter'),
             
             // Modal
             operatorModal: document.getElementById('operatorModal'),
@@ -263,13 +261,17 @@ class ATLASApp {
             
             // Buttons
             addOperatorBtn: document.getElementById('addOperatorBtn'),
-            reloadDataBtn: document.getElementById('reloadDataBtn'),
             closeModal: document.getElementById('closeModal'),
             cancelBtn: document.getElementById('cancelBtn'),
             saveBtn: document.getElementById('saveBtn'),
             exportDataBtn: document.getElementById('exportDataBtn'),
             importDataBtn: document.getElementById('importDataBtn'),
             fileImportInput: document.getElementById('fileImportInput'),
+            
+            // Stat Cards (Clickable)
+            statTotal: document.getElementById('statTotal'),
+            statActive: document.getElementById('statActive'),
+            statInactive: document.getElementById('statInactive'),
             
             // Tehnički kontakti
             techContactsContainer: document.getElementById('tech-contacts-container'),
@@ -707,16 +709,21 @@ class ATLASApp {
             this.clearSearch();
         });
         
-        this.elements.statusFilter.addEventListener('change', () => {
-            this.applyFilters();
-        });
-        
         this.elements.typeFilter.addEventListener('change', () => {
             this.applyFilters();
         });
         
-        this.elements.categoryFilter.addEventListener('change', () => {
-            this.applyFilters();
+        // Stat Cards Click Handlers
+        this.elements.statTotal.addEventListener('click', () => {
+            this.filterByStatus('all');
+        });
+        
+        this.elements.statActive.addEventListener('click', () => {
+            this.filterByStatus('aktivan');
+        });
+        
+        this.elements.statInactive.addEventListener('click', () => {
+            this.filterByStatus('neaktivan');
         });
         
         // Quick Category Filters
@@ -733,11 +740,6 @@ class ATLASApp {
         // Modal Controls
         this.elements.addOperatorBtn.addEventListener('click', () => {
             this.openModal('add');
-        });
-        
-        // Reload Data Button
-        this.elements.reloadDataBtn.addEventListener('click', () => {
-            this.forceReloadFromJSON();
         });
         
         this.elements.closeModal.addEventListener('click', () => {
@@ -960,6 +962,35 @@ class ATLASApp {
         }
         
         this.renderOperators(filtered);
+    }
+    
+    filterByStatus(status) {
+        // Reset current filters
+        this.currentCategoryFilter = 'all';
+        this.currentTypeFilter = '';
+        this.elements.typeFilter.value = '';
+        
+        // Reset category buttons
+        const filterButtons = document.querySelectorAll('.filter-btn');
+        filterButtons.forEach(btn => {
+            if (btn.dataset.category === 'all') {
+                btn.classList.add('active');
+            } else {
+                btn.classList.remove('active');
+            }
+        });
+        
+        // Apply status filter
+        let filtered = [...this.operators];
+        
+        if (status !== 'all') {
+            filtered = filtered.filter(op => op.status === status);
+        }
+        
+        this.renderOperators(filtered);
+        
+        // Scroll to table
+        document.getElementById('operatorsTable').scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
     
     renderOperators(operatorsToRender = null) {

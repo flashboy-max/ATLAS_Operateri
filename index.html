@@ -13,29 +13,28 @@
     <div class="container">
         <!-- Header -->
         <header class="header">
-            <div class="header-content">
-                <div class="logo">
+            <div class="header-title-bar">
+                <div class="logo-full">
                     <i class="fas fa-satellite-dish"></i>
-                    <h1>ATLAS</h1>
-                    <span class="subtitle">Telekomunikacioni Operateri BiH</span>
+                    <div class="title-group">
+                        <h1>ATLAS</h1>
+                        <span class="subtitle">Telekomunikacioni Operateri BiH</span>
+                    </div>
                 </div>
-                <div class="header-actions">
-                    <button class="btn btn-info" id="helpBtn" title="Uputstvo za korišćenje">
-                        <i class="fas fa-question-circle"></i> Help
-                    </button>
-                    <button class="btn btn-warning" id="reloadDataBtn" title="Forsiraj učitavanje iz JSON fajla">
-                        <i class="fas fa-sync"></i> Reload
-                    </button>
-                    <button class="btn btn-primary" id="addOperatorBtn">
-                        <i class="fas fa-plus"></i> Dodaj Operatera
-                    </button>
-                    <button class="btn btn-success" id="importDataBtn">
-                        <i class="fas fa-upload"></i> Uvoz JSON
-                    </button>
-                    <button class="btn btn-secondary" id="exportDataBtn">
-                        <i class="fas fa-download"></i> Izvoz
-                    </button>
-                </div>
+            </div>
+            <div class="header-actions-bar">
+                <button class="btn btn-info" id="helpBtn" title="Uputstvo za korišćenje">
+                    <i class="fas fa-question-circle"></i> Help
+                </button>
+                <button class="btn btn-primary" id="addOperatorBtn">
+                    <i class="fas fa-plus"></i> Dodaj Operatera
+                </button>
+                <button class="btn btn-success" id="importDataBtn">
+                    <i class="fas fa-upload"></i> Uvoz JSON
+                </button>
+                <button class="btn btn-secondary" id="exportDataBtn">
+                    <i class="fas fa-download"></i> Izvoz
+                </button>
             </div>
         </header>
 
@@ -53,7 +52,7 @@
 
         <!-- Search and Filter Bar -->
         <div class="search-filter-bar">
-            <div class="search-box">
+            <div class="search-box search-box-full">
                 <i class="fas fa-search"></i>
                 <input type="text" id="searchInput" placeholder="Pretraži operatere...">
                 <button id="clearSearchBtn" class="clear-search-btn" title="Obriši pretragu" style="display: none;">
@@ -64,70 +63,64 @@
                 <span id="searchResultsText"></span>
                 <small class="search-hint">Esc za brisanje • Ctrl+F za fokus</small>
             </div>
-            <div class="filter-controls">
-                <select id="statusFilter" class="filter-select">
-                    <option value="">Svi statusi</option>
-                    <option value="aktivan">Aktivni</option>
-                    <option value="neaktivan">Neaktivni</option>
-                </select>
-                <select id="categoryFilter" class="filter-select">
-                    <option value="">Sve kategorije</option>
-                    <option value="dominantni">🏢 Dominantni operateri</option>
-                    <option value="alternativni">� Alternativni operateri</option>
-                </select>
-                <select id="typeFilter" class="filter-select">
-                    <option value="">Svi tipovi</option>
-                    <option value="mobilni">📱 Mobilni operater</option>
-                    <option value="mvno">📡 MVNO</option>
-                    <option value="isp">🌐 Internet servis provajder (ISP)</option>
-                    <option value="kablovski">📺 Kablovski operater</option>
-                    <option value="enterprise">💼 Enterprise/B2B</option>
-                    <option value="ostali">⚙️ Ostali</option>
-                </select>
-            </div>
+
         </div>
 
-        <!-- Quick Category Filters -->
-        <div class="quick-filters">
-            <button class="filter-btn active" data-category="all" id="filterAll">
-                🔷 Svi Operateri (<span id="countAll">0</span>)
-            </button>
-            <button class="filter-btn" data-category="dominantni" id="filterDominantni">
-                🏢 Dominantni (<span id="countDominantni">0</span>)
-            </button>
-            <button class="filter-btn" data-category="alternativni" id="filterAlternativni">
-                🔷 Alternativni (<span id="countAlternativni">0</span>)
-            </button>
-        </div>
+        <!-- Filter and Stats Combined -->
+        <div class="filters-stats-combined">
+            <!-- Quick Category Filters with Type Dropdown -->
+            <div class="quick-filters-enhanced">
+                <button class="filter-btn active" data-category="all" id="filterAll">
+                    🔷 Svi Operateri (<span id="countAll">0</span>)
+                </button>
+                <button class="filter-btn" data-category="dominantni" id="filterDominantni">
+                    🏢 Dominantni (<span id="countDominantni">0</span>)
+                </button>
+                <button class="filter-btn" data-category="alternativni" id="filterAlternativni">
+                    🔷 Alternativni (<span id="countAlternativni">0</span>)
+                </button>
+                <div class="type-filter-dropdown">
+                    <select id="typeFilter" class="filter-select-enhanced">
+                        <option value="">📋 Svi tipovi</option>
+                        <option value="mobilni">📱 Mobilni operater</option>
+                        <option value="mvno">📡 MVNO</option>
+                        <option value="isp">🌐 ISP</option>
+                        <option value="kablovski">📺 Kablovski</option>
+                        <option value="enterprise">💼 Enterprise/B2B</option>
+                        <option value="ostali">⚙️ Ostali</option>
+                    </select>
+                </div>
+            </div>
 
-        <!-- Statistics Dashboard -->
-        <div class="stats-dashboard">
-            <div class="stat-card">
-                <div class="stat-icon">
-                    <i class="fas fa-building"></i>
-                </div>
-                <div class="stat-info">
-                    <h3 id="totalOperators">0</h3>
-                    <p>Ukupno Operatera</p>
-                </div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-icon active">
-                    <i class="fas fa-check-circle"></i>
-                </div>
-                <div class="stat-info">
-                    <h3 id="activeOperators">0</h3>
-                    <p>Aktivni Operateri</p>
-                </div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-icon inactive">
-                    <i class="fas fa-times-circle"></i>
-                </div>
-                <div class="stat-info">
-                    <h3 id="inactiveOperators">0</h3>
-                    <p>Neaktivni Operateri</p>
-                </div>
+            <!-- Statistics Cards (Clickable) -->
+            <div class="stats-dashboard-enhanced">
+                <button class="stat-card-btn" data-status="all" id="statTotal">
+                    <div class="stat-icon">
+                        <i class="fas fa-building"></i>
+                    </div>
+                    <div class="stat-info">
+                        <h3 id="totalOperators">0</h3>
+                        <p>Ukupno Operatera</p>
+                    </div>
+                </button>
+                <button class="stat-card-btn" data-status="aktivan" id="statActive">
+                    <div class="stat-icon active">
+                        <i class="fas fa-check-circle"></i>
+                    </div>
+                    <div class="stat-info">
+                        <h3 id="activeOperators">0</h3>
+                        <p>Aktivni Operateri</p>
+                    </div>
+                </button>
+                <button class="stat-card-btn" data-status="neaktivan" id="statInactive">
+                    <div class="stat-icon inactive">
+                        <i class="fas fa-times-circle"></i>
+                    </div>
+                    <div class="stat-info">
+                        <h3 id="inactiveOperators">0</h3>
+                        <p>Neaktivni Operateri</p>
+                    </div>
+                </button>
             </div>
         </div>
 
