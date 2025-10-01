@@ -1,0 +1,52 @@
+{
+  "id": 18,
+  "naziv": "M&H Company d.o.o",
+  "komercijalni_naziv": "",
+  "status": "aktivan",
+  "opis": "",
+  "napomena": "",
+  "kontakt": {
+    "adresa": " [potrebno dopuniti]",
+    "telefon": "-",
+    "email": "info@mhcompany.ba",
+    "web": "",
+    "customer_service": {},
+    "drustvene_mreze": {}
+  },
+  "tehnicki_kontakti": [],
+  "detaljne_usluge": {
+    "mobilne": [],
+    "fiksne": [],
+    "internet": [
+      "internet_ftth",
+      "internet_fixed_wireless",
+      "tech_ftth_fttb",
+      "tech_fixed_wireless"
+    ],
+    "tv": [],
+    "cloud_poslovne": [],
+    "dodatne": []
+  },
+  "detaljne_tehnologije": {
+    "mobilne": [
+      "GSM 900/1800",
+      "UMTS 900/2100",
+      "LTE 800/1800/2600",
+      "5G 3500"
+    ],
+    "fiksne": [],
+    "mrezne": [
+      "FTTH/FTTB",
+      "WiFi/Wireless"
+    ]
+  },
+  "zakonske_obaveze": {
+    "napomene": "Potrebna provera zakonskih obaveza"
+  },
+  "datum_azuriranja": "2025-09-08",
+  "kontakt_osoba": "",
+  "kategorija": "alternativni",
+  "tipovi": [
+    "isp"
+  ]
+}

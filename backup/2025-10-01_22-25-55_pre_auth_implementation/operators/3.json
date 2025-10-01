@@ -1,0 +1,423 @@
+{
+  "id": 3,
+  "naziv": "BH Telecom d.d. Sarajevo",
+  "komercijalni_naziv": "BH Telecom",
+  "status": "aktivan",
+  "opis": "Najveći telekom operater u BiH sa kompletnom ponudom telekomunikacijskih usluga. Lider na tržištu mobilne i fiksne telefonije, interneta i digitalnih usluga.",
+  "napomena": "",
+  "kontakt": {
+    "adresa": "",
+    "telefon": "",
+    "email": "",
+    "web": "",
+    "customer_service": {
+      "privatni": "1500",
+      "poslovni": "+387 33 000 900"
+    },
+    "drustvene_mreze": {
+      "facebook": "https://www.facebook.com/BHTelecom/",
+      "instagram": "https://www.instagram.com/bhtelecom/",
+      "twitter": "https://twitter.com/BHTelecom",
+      "linkedin": "https://www.linkedin.com/company/bh-telecom/"
+    }
+  },
+  "tehnicki_kontakti": [
+    {
+      "ime": "Nedim Fazlibegović",
+      "pozicija": "Šef službe za ZPT i saradnju sa sudovima, tužilaštvima, policijskim i sigurnosnim agencijama",
+      "email": "nedim.fazlibegovic@bhtelecom.ba",
+      "telefon": "+387 61 616 034",
+      "tip_kontakta": "bezbednost"
+    },
+    {
+      "ime": "Muhamed Ništović",
+      "pozicija": "Stručni saradnik za mreže u Službi za ZPT i saradnju sa sudovima, tužilaštvima, policijskim i sigurnosnim agencijama",
+      "email": "muhamed.nistovic@bhtelecom.ba",
+      "telefon": "+387 61 137 616",
+      "tip_kontakta": "tehnicki"
+    }
+  ],
+  "detaljne_usluge": {
+    "mobilne": [
+      "mobile_prepaid",
+      "mobile_postpaid",
+      "mobile_esim",
+      "mobile_volte_vowifi",
+      "mobile_roaming",
+      "mobile_mnp"
+    ],
+    "fiksne": [
+      "fixed_pstn",
+      "fixed_isdn",
+      "fixed_voip",
+      "voice_mail"
+    ],
+    "internet": [
+      "internet_ftth",
+      "internet_adsl_vdsl",
+      "internet_mobile",
+      "dedicated_internet"
+    ],
+    "tv": [
+      "iptv"
+    ],
+    "cloud_poslovne": [
+      "cloud_hosting",
+      "cloud_backup",
+      "data_center",
+      "office365",
+      "smart_city",
+      "smart_home",
+      "digital_signature"
+    ],
+    "dodatne": [
+      "device_sales",
+      "router_sales",
+      "system_integration"
+    ]
+  },
+  "detaljne_tehnologije": {
+    "mobilne": [
+      "tech_2g",
+      "tech_3g",
+      "tech_4g",
+      "tech_5g_ready",
+      "tech_volte",
+      "tech_vowifi",
+      "tech_hlr_hss",
+      "tech_eir",
+      "tech_smsc_mmsc"
+    ],
+    "fiksne": [
+      "tech_pstn",
+      "tech_isdn",
+      "tech_voip_fixed",
+      "tech_ims_fixed"
+    ],
+    "mrezne": [
+      "tech_ftth_fttb",
+      "tech_xdsl",
+      "tech_docsis",
+      "tech_ipv6",
+      "tech_cgnat",
+      "tech_mpls",
+      "tech_sdwan",
+      "tech_cdn"
+    ]
+  },
+  "zakonske_obaveze": {
+    "zakonito_presretanje": true,
+    "pristup_obracunskim_podacima": true,
+    "implementacija": "Implementirano i dostupno - Vlastita medijacija",
+    "kontakt_osoba": "Nedim Fazlibegović",
+    "email_kontakt": "nedim.fazlibegovic@bhtelecom.ba",
+    "telefon_kontakt": "+387 61 616 034",
+    "posjeduje_misljenje_zuo": "Da",
+    "napomene": "Kao dominantni operater, BH Telecom ima sve zakonske obaveze implementirane i dostupne u skladu sa BiH zakonom. Vlastita medijacija za zakonito presretanje."
+  },
+  "datum_azuriranja": "2025-10-01",
+  "kontakt_osoba": "Nedim Fazlibegović - Šef službe za ZPT i saradnju sa sudovima",
+  "kategorija": "dominantni",
+  "adresa": "",
+  "telefon": "",
+  "email": "",
+  "web": "",
+  "usluge": [
+    {
+      "kategorija": "unknown",
+      "naziv": "Mobilni Prepaid",
+      "opis": "Mobilne usluge na prepaid osnovu",
+      "status": "aktivna"
+    },
+    {
+      "kategorija": "unknown",
+      "naziv": "Mobilni Postpaid",
+      "opis": "Mobilne usluge na postpaid osnovu",
+      "status": "aktivna"
+    },
+    {
+      "kategorija": "unknown",
+      "naziv": "eSIM",
+      "opis": "Elektronska SIM kartica",
+      "status": "aktivna"
+    },
+    {
+      "kategorija": "unknown",
+      "naziv": "VoLTE/VoWiFi",
+      "opis": "Voice over LTE i WiFi pozivi",
+      "status": "aktivna"
+    },
+    {
+      "kategorija": "unknown",
+      "naziv": "Roaming",
+      "opis": "Usluge u roaming-u",
+      "status": "aktivna"
+    },
+    {
+      "kategorija": "unknown",
+      "naziv": "Prenos broja (MNP)",
+      "opis": "Mobile Number Portability",
+      "status": "aktivna"
+    },
+    {
+      "kategorija": "unknown",
+      "naziv": "PSTN Fiksni telefon",
+      "opis": "Klasični analogni fiksni telefon",
+      "status": "aktivna"
+    },
+    {
+      "kategorija": "unknown",
+      "naziv": "ISDN",
+      "opis": "Integrated Services Digital Network",
+      "status": "aktivna"
+    },
+    {
+      "kategorija": "unknown",
+      "naziv": "VoIP Fiksni",
+      "opis": "IP telefonija za fiksne korisnike",
+      "status": "aktivna"
+    },
+    {
+      "kategorija": "unknown",
+      "naziv": "Voice Mail",
+      "opis": "Govorna pošta",
+      "status": "aktivna"
+    },
+    {
+      "kategorija": "unknown",
+      "naziv": "FTTH Internet",
+      "opis": "Fiber to the Home internet",
+      "status": "aktivna"
+    },
+    {
+      "kategorija": "unknown",
+      "naziv": "ADSL/VDSL Internet",
+      "opis": "Internet preko bakarnih linija",
+      "status": "aktivna"
+    },
+    {
+      "kategorija": "unknown",
+      "naziv": "Mobilni Internet",
+      "opis": "Internet preko mobilne mreže",
+      "status": "aktivna"
+    },
+    {
+      "kategorija": "unknown",
+      "naziv": "Poslovni Internet",
+      "opis": "Dedicirani internet za poslovne korisnike",
+      "status": "aktivna"
+    },
+    {
+      "kategorija": "unknown",
+      "naziv": "IPTV",
+      "opis": "TV preko IP mreže",
+      "status": "aktivna"
+    },
+    {
+      "kategorija": "unknown",
+      "naziv": "Cloud Hosting",
+      "opis": "Hosting usluge u oblaku",
+      "status": "aktivna"
+    },
+    {
+      "kategorija": "unknown",
+      "naziv": "Cloud Backup",
+      "opis": "Backup servisi u oblaku",
+      "status": "aktivna"
+    },
+    {
+      "kategorija": "unknown",
+      "naziv": "Data Center",
+      "opis": "Data center usluge",
+      "status": "aktivna"
+    },
+    {
+      "kategorija": "unknown",
+      "naziv": "Office 365",
+      "opis": "Microsoft Office 365 servisi",
+      "status": "aktivna"
+    },
+    {
+      "kategorija": "unknown",
+      "naziv": "Smart City",
+      "opis": "Pametni grad rešenja",
+      "status": "aktivna"
+    },
+    {
+      "kategorija": "unknown",
+      "naziv": "Smart Home",
+      "opis": "Pametni dom rešenja",
+      "status": "aktivna"
+    },
+    {
+      "kategorija": "unknown",
+      "naziv": "Digitalni potpis",
+      "opis": "Digitalna sertifikacija",
+      "status": "aktivna"
+    },
+    {
+      "kategorija": "unknown",
+      "naziv": "Prodaja uređaja",
+      "opis": "Prodaja telekom opreme",
+      "status": "aktivna"
+    },
+    {
+      "kategorija": "unknown",
+      "naziv": "Prodaja rutera",
+      "opis": "Prodaja mrežne opreme",
+      "status": "aktivna"
+    },
+    {
+      "kategorija": "unknown",
+      "naziv": "Sistemska integracija",
+      "opis": "IT sistemi i integracija",
+      "status": "aktivna"
+    },
+    {
+      "kategorija": "unknown",
+      "naziv": "Satelitska TV",
+      "opis": "TV preko satelita",
+      "status": "aktivna"
+    }
+  ],
+  "tehnologije": [
+    {
+      "tip": "unknown",
+      "naziv": "2G/GSM",
+      "opis": "Druga generacija mobilnih mreža",
+      "kapacitet": ""
+    },
+    {
+      "tip": "unknown",
+      "naziv": "3G/UMTS",
+      "opis": "Treća generacija mobilnih mreža",
+      "kapacitet": ""
+    },
+    {
+      "tip": "unknown",
+      "naziv": "4G/LTE",
+      "opis": "Četvrta generacija - LTE",
+      "kapacitet": ""
+    },
+    {
+      "tip": "unknown",
+      "naziv": "5G Ready",
+      "opis": "Priprema za 5G mrežu",
+      "kapacitet": ""
+    },
+    {
+      "tip": "unknown",
+      "naziv": "VoLTE",
+      "opis": "Voice over LTE tehnologija",
+      "kapacitet": ""
+    },
+    {
+      "tip": "unknown",
+      "naziv": "VoWiFi",
+      "opis": "Voice over WiFi tehnologija",
+      "kapacitet": ""
+    },
+    {
+      "tip": "unknown",
+      "naziv": "HLR/HSS",
+      "opis": "Home Location Register/Home Subscriber Server",
+      "kapacitet": ""
+    },
+    {
+      "tip": "unknown",
+      "naziv": "EIR",
+      "opis": "Equipment Identity Register",
+      "kapacitet": ""
+    },
+    {
+      "tip": "unknown",
+      "naziv": "SMSC/MMSC",
+      "opis": "SMS/MMS Message Center",
+      "kapacitet": ""
+    },
+    {
+      "tip": "unknown",
+      "naziv": "PSTN",
+      "opis": "Public Switched Telephone Network",
+      "kapacitet": ""
+    },
+    {
+      "tip": "unknown",
+      "naziv": "ISDN",
+      "opis": "Integrated Services Digital Network",
+      "kapacitet": ""
+    },
+    {
+      "tip": "unknown",
+      "naziv": "VoIP Fiksni",
+      "opis": "Voice over IP za fiksne linije",
+      "kapacitet": ""
+    },
+    {
+      "tip": "unknown",
+      "naziv": "IMS Fiksni",
+      "opis": "IP Multimedia Subsystem za fiksne",
+      "kapacitet": ""
+    },
+    {
+      "tip": "unknown",
+      "naziv": "FTTH/FTTB",
+      "opis": "Fiber to the Home/Building",
+      "kapacitet": ""
+    },
+    {
+      "tip": "unknown",
+      "naziv": "xDSL",
+      "opis": "Digital Subscriber Line familija",
+      "kapacitet": ""
+    },
+    {
+      "tip": "unknown",
+      "naziv": "DOCSIS",
+      "opis": "Cable modem tehnologija",
+      "kapacitet": ""
+    },
+    {
+      "tip": "unknown",
+      "naziv": "IPv6",
+      "opis": "Internet Protocol version 6",
+      "kapacitet": ""
+    },
+    {
+      "tip": "unknown",
+      "naziv": "CG-NAT",
+      "opis": "Carrier Grade Network Address Translation",
+      "kapacitet": ""
+    },
+    {
+      "tip": "unknown",
+      "naziv": "MPLS",
+      "opis": "Multiprotocol Label Switching",
+      "kapacitet": ""
+    },
+    {
+      "tip": "unknown",
+      "naziv": "SD-WAN",
+      "opis": "Software Defined WAN",
+      "kapacitet": ""
+    },
+    {
+      "tip": "unknown",
+      "naziv": "CDN",
+      "opis": "Content Delivery Network",
+      "kapacitet": ""
+    },
+    {
+      "tip": "unknown",
+      "naziv": "IPV4",
+      "opis": "Internet Protocol version 4",
+      "kapacitet": ""
+    }
+  ],
+  "tipovi": [
+    "mobilni",
+    "isp",
+    "kablovski",
+    "enterprise"
+  ]
+}

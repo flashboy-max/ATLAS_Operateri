@@ -1,0 +1,80 @@
+{
+  "id": 15,
+  "naziv": "Global Internet d.o.o. Novi Travnik",
+  "komercijalni_naziv": "Global Internet",
+  "status": "aktivan",
+  "opis": "ISP koji pruža usluge interneta, fiksne telefonije i televizije na području Novog Travnika i okoline. Koristi FTTH/FTTB i fixed wireless tehnologije sa VoIP i IPTV infrastrukturom.",
+  "napomena": "Regionalni triple-play ISP sa naprednom infrastrukturom (optika, VoIP, IPTV) na području Novi Travnik. Upravljaju sa 10.240 IP adresa u upravljanju.",
+  "kontakt": {
+    "adresa": "Travnička bb, 72270 Novi Travnik",
+    "telefon": "+387 30 550 300",
+    "email": "info@globalinternet.ba",
+    "web": "https://www.globalinternet.ba/",
+    "customer_service": {
+      "telefon": "+387 30 550 300",
+      "email": "info@globalinternet.ba"
+    },
+    "drustvene_mreze": {
+      "facebook": "[potrebno dopuniti]",
+      "instagram": "[potrebno dopuniti]",
+      "twitter": "[potrebno dopuniti]",
+      "linkedin": "[potrebno dopuniti]"
+    }
+  },
+  "tehnicki_kontakti": [
+    {
+      "ime": "[potrebno dopuniti]",
+      "pozicija": "[potrebno dopuniti]",
+      "email": "[potrebno dopuniti]",
+      "telefon": "[potrebno dopuniti]"
+    }
+  ],
+  "detaljne_usluge": {
+    "mobilne": [],
+    "fiksne": [
+      "fixed_voip"
+    ],
+    "internet": [
+      "internet_ftth",
+      "internet_fixed_wireless",
+      "business_internet_packages"
+    ],
+    "tv": [
+      "iptv"
+    ],
+    "cloud": [],
+    "ostalo": [],
+    "cloud_poslovne": [],
+    "dodatne": []
+  },
+  "detaljne_tehnologije": {
+    "mobilne": [],
+    "fiksne": [
+      "tech_voip_fixed"
+    ],
+    "internet": [
+      "tech_ftth_fttb",
+      "tech_fixed_wireless"
+    ],
+    "tv": [
+      "tech_iptv"
+    ],
+    "mrezne": [
+      "tech_ipv4",
+      "tech_ipv6"
+    ],
+    "ostalo": []
+  },
+  "zakonske_obaveze": {
+    "zakonito_presretanje": true,
+    "implementacija": "[potrebno dopuniti - lokalni ISP]"
+  },
+  "kontakt_osoba": "[potrebno dopuniti]",
+  "completion_percentage": 95,
+  "last_updated": "2025-09-08",
+  "kategorija": "alternativni",
+  "tipovi": [
+    "isp",
+    "kablovski"
+  ]
+}

@@ -1,0 +1,104 @@
+{
+  "id": 4,
+  "naziv": "Dasto Semtel d.o.o. Bijeljina",
+  "komercijalni_naziv": "Zona.ba",
+  "status": "aktivan",
+  "opis": "Jedinstveni hibridni operater koji kombinuje MVNO mobilne usluge sa ISP internet uslugama. Pruža usluge interneta, mobilne telefonije, satelitskog interneta i digitalne TV (IPTV).",
+  "napomena": "Prvi hibridni MVNO/ISP u BiH sa RAK dozvolom broj 085PMUXD za Multiplex D digitalne zemaljske radiodifuzije. Unikatan portfolio usluga sa MVNO, ISP, IPTV i satelitskim uslugama.",
+  "kontakt": {
+    "adresa": "Račanska 98, 76300 Bijeljina",
+    "telefon": "+387 55 420 100",
+    "email": "info@zona.ba",
+    "web": "https://zona.ba",
+    "customer_service": {
+      "telefon": "0800 30 930",
+      "email": "info@zona.ba"
+    },
+    "drustvene_mreze": {
+      "facebook": "https://www.facebook.com/zonatelekomunikacije",
+      "instagram": "[potrebno dopuniti]",
+      "twitter": "https://x.com/zonadastosemtel",
+      "linkedin": "[potrebno dopuniti]"
+    }
+  },
+  "tehnicki_kontakti": [
+    {
+      "ime": "Suzana Simić",
+      "pozicija": "Administrativni kontakt",
+      "email": "administracija.muxd@zona.ba",
+      "telefon": "+387 55 420 100"
+    },
+    {
+      "ime": "Semir Selimović",
+      "pozicija": "Tehnički kontakt",
+      "email": "tehnika.muxd@zona.ba",
+      "telefon": "+387 64 460 4041"
+    }
+  ],
+  "detaljne_usluge": {
+    "mobilne": [
+      "mobile_prepaid",
+      "mobile_postpaid",
+      "mobile_esim",
+      "mobile_volte_vowifi",
+      "mobile_roaming",
+      "mobile_mnp"
+    ],
+    "fiksne": [
+      "fixed_voip"
+    ],
+    "internet": [
+      "internet_ftth",
+      "internet_satellite",
+      "internet_mobile",
+      "internet_dedicated"
+    ],
+    "tv": [
+      "iptv"
+    ],
+    "cloud": [
+      "multiplex_d",
+      "satellite_services"
+    ],
+    "ostalo": [],
+    "cloud_poslovne": [],
+    "dodatne": []
+  },
+  "detaljne_tehnologije": {
+    "mobilne": [
+      "tech_2g",
+      "tech_3g",
+      "tech_4g",
+      "tech_mvno"
+    ],
+    "fiksne": [
+      "tech_voip_fixed"
+    ],
+    "internet": [
+      "tech_ftth_fttb",
+      "tech_satellite"
+    ],
+    "tv": [
+      "tech_iptv"
+    ],
+    "mrezne": [
+      "tech_ipv4",
+      "tech_ipv6",
+      "tech_multiplex_d",
+      "tech_digital_terrestrial"
+    ],
+    "ostalo": []
+  },
+  "zakonske_obaveze": {
+    "zakonito_presretanje": true
+  },
+  "kontakt_osoba": "Suzana Simić",
+  "completion_percentage": 95,
+  "last_updated": "2025-09-08",
+  "kategorija": "alternativni",
+  "tipovi": [
+    "mobilni",
+    "isp",
+    "kablovski"
+  ]
+}

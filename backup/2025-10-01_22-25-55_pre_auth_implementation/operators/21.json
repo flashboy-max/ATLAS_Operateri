@@ -1,0 +1,67 @@
+{
+  "id": 21,
+  "naziv": "Novotel d.o.o. Sarajevo",
+  "komercijalni_naziv": "Novotel",
+  "status": "neaktivan",
+  "opis": "Bivši MVNO operater koji je preuzeo pozivni broj 067 od bivšeg IZI mobil-a. Bio je fokusiran na postpaid usluge i eSIM tehnologiju sa franšiznim partnerstvima.",
+  "napomena": "Ugašen MVNO operater. Koristio je 067 pozivni broj (ex-IZI mobil). Imao franšizno partnerstvo sa Wirac.Net Pale. eSIM tehnologija. Dio m:tel grupe.",
+  "kontakt": {
+    "adresa": "Sarajevo",
+    "telefon": "",
+    "email": "",
+    "web": "",
+    "customer_service": {
+      "telefon": "",
+      "email": ""
+    },
+    "drustvene_mreze": {
+      "facebook": "",
+      "instagram": "",
+      "twitter": "",
+      "linkedin": ""
+    }
+  },
+  "tehnicki_kontakti": [
+    {
+      "ime": "",
+      "pozicija": "Istorijski kontakt",
+      "email": "",
+      "telefon": "",
+      "tip_kontakta": "istorijski"
+    }
+  ],
+  "detaljne_usluge": {
+    "mobilne": [
+      "mobile_postpaid",
+      "mobile_esim"
+    ],
+    "fiksne": [],
+    "internet": [],
+    "tv": [],
+    "cloud": [],
+    "cloud_poslovne": [],
+    "dodatne": []
+  },
+  "detaljne_tehnologije": {
+    "mobilne": [
+      "tech_2g",
+      "tech_3g",
+      "tech_4g",
+      "tech_esim"
+    ],
+    "fiksne": [],
+    "mrezne": [
+      "tech_mvno_infrastructure"
+    ]
+  },
+  "zakonske_obaveze": {
+    "implementacija": "Preko host operatera (istorijski)",
+    "napomene": "Bivši MVNO operater - obaveze prenesene na host operatera."
+  },
+  "datum_azuriranja": "2025-09-08",
+  "kontakt_osoba": "",
+  "kategorija": "alternativni",
+  "tipovi": [
+    "mobilni"
+  ]
+}

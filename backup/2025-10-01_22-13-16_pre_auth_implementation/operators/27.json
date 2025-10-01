@@ -1,0 +1,77 @@
+{
+  "id": 27,
+  "naziv": "VKT-Net d.o.o. Bugojno",
+  "komercijalni_naziv": "VKT-Net",
+  "status": "aktivan",
+  "opis": "Kablovski operater koji pruža triple-play usluge (internet, televizija, fiksna telefonija) na području Bugojna i okolnih gradova Srednjobosanskog kantona. Koristi FTTH i DOCSIS tehnologije.",
+  "napomena": "Regionalni kablovski operater fokusiran na Srednjobosanski kanton sa kompletnom ponudom kablovskih usluga.",
+  "kontakt": {
+    "adresa": "Wagnerova ulica 1, 70230 Bugojno",
+    "telefon": "+387 30 251 792",
+    "email": "info@vkt.net",
+    "web": "https://vkt.net/",
+    "customer_service": {
+      "privatni": "+387 30 251 792",
+      "poslovni": "+387 30 251 792",
+      "info": "info@vkt.net"
+    },
+    "drustvene_mreze": {
+      "facebook": "https://www.facebook.com/vktnetbugojno/",
+      "instagram": "",
+      "twitter": "",
+      "linkedin": ""
+    }
+  },
+  "tehnicki_kontakti": [
+    {
+      "ime": "",
+      "pozicija": "Korisnička podrška",
+      "email": "info@vkt.net",
+      "telefon": "+387 30 251 792",
+      "tip_kontakta": "korisnicki"
+    }
+  ],
+  "detaljne_usluge": {
+    "mobilne": [],
+    "fiksne": [
+      "fixed_voip"
+    ],
+    "internet": [
+      "internet_ftth",
+      "internet_cable",
+      "internet_business"
+    ],
+    "tv": [
+      "cable_tv",
+      "digital_tv"
+    ],
+    "cloud": [],
+    "cloud_poslovne": [],
+    "dodatne": []
+  },
+  "detaljne_tehnologije": {
+    "mobilne": [],
+    "fiksne": [
+      "tech_voip_fixed"
+    ],
+    "mrezne": [
+      "tech_ftth_fttb",
+      "tech_docsis",
+      "tech_ipv4",
+      "tech_ipv6"
+    ]
+  },
+  "zakonske_obaveze": {
+    "zakonito_presretanje": true,
+    "pristup_obracunskim_podacima": true,
+    "implementacija": "Regionalni kablovski operater sa standardnim zakonskim obavezama",
+    "napomene": "Regionalni kablovski operater sa obavezama za zakonito presretanje i pristup obračunskim podacima u skladu sa BiH zakonodavstvom."
+  },
+  "datum_azuriranja": "2025-09-08",
+  "kontakt_osoba": "",
+  "kategorija": "alternativni",
+  "tipovi": [
+    "isp",
+    "kablovski"
+  ]
+}

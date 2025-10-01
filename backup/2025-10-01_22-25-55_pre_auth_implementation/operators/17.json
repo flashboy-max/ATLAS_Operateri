@@ -1,0 +1,76 @@
+{
+  "id": 17,
+  "naziv": "KATV HS d.o.o.",
+  "komercijalni_naziv": "KATV HS",
+  "status": "neaktivan",
+  "opis": "Bivši sarajevski kablovski operater koji je bio deo M&H Company grupe. Pripojen operateru Telemach, sa kojim se sada pružaju sve usluge koje je prethodno pružao KATV HS.",
+  "napomena": "❌ ARHIVIRAN - Status potvrđen kroz analizu kao pripojen Telemachu zajedno sa drugim operaterima iz M&H Company grupe. Web stranica usmjerava na telemach.ba.",
+  "kontakt": {
+    "adresa": "Sarajevo, Bosna i Hercegovina",
+    "telefon": "[arhivirano]",
+    "email": "info@katvhs.ba",
+    "web": "https://telemach.ba/",
+    "customer_service": {
+      "telefon": "[prebačeno na Telemach]",
+      "email": "[prebačeno na Telemach]"
+    },
+    "drustvene_mreze": {
+      "facebook": "[neaktivno]",
+      "instagram": "[neaktivno]",
+      "twitter": "[neaktivno]",
+      "linkedin": "[neaktivno]"
+    }
+  },
+  "tehnicki_kontakti": [
+    {
+      "ime": "Redžo Salihović",
+      "pozicija": "Glavni kontakt (povezan sa M&H Company)",
+      "email": "[arhivirano]",
+      "telefon": "+387 66 580 855"
+    }
+  ],
+  "detaljne_usluge": {
+    "mobilne": [],
+    "fiksne": [],
+    "internet": [
+      "internet_ftth",
+      "internet_cable",
+      "internet_business"
+    ],
+    "tv": [
+      "cable_tv"
+    ],
+    "cloud": [],
+    "ostalo": [],
+    "cloud_poslovne": [],
+    "dodatne": []
+  },
+  "detaljne_tehnologije": {
+    "mobilne": [],
+    "fiksne": [],
+    "internet": [
+      "tech_fiber",
+      "tech_cable"
+    ],
+    "tv": [
+      "tech_cable_tv"
+    ],
+    "mrezne": [],
+    "ostalo": []
+  },
+  "zakonske_obaveze": {
+    "implementacija": "Preko Telemach infrastrukture",
+    "kontakt_osoba": "Redžo Salihović",
+    "email_kontakt": "[arhivirano]",
+    "telefon_kontakt": "+387 66 580 855",
+    "posjeduje_misljenje_zuo": "[arhivirano]"
+  },
+  "kontakt_osoba": "Redžo Salihović (M&H Company grupa)",
+  "completion_percentage": 95,
+  "last_updated": "2025-09-08",
+  "kategorija": "alternativni",
+  "tipovi": [
+    "isp",
+    "kablovski"
+  ]
+}

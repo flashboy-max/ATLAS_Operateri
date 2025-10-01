@@ -1,0 +1,95 @@
+{
+  "id": 1,
+  "naziv": "ADRIA NET d.o.o.",
+  "komercijalni_naziv": "ADRIA NET",
+  "status": "aktivan",
+  "opis": "Osnovan 2017. godine sa vizijom osiguravanja najpouzdanijeg interneta u regiji. Specijalizovan za WiFi širokopojasnu infrastrukturu sa preko 6000 privatnih i poslovnih korisnika u Mostaru i okolini.",
+  "napomena": "Tržišni i tehnološki lider u WiFi uslugama, afirmiše se kao prepoznatljiv brend u regiji.",
+  "kontakt": {
+    "adresa": "Dr. Ante Starčevića 48, 88000 Mostar",
+    "telefon": "+387 36 348 641",
+    "email": "adrianet@adrianet.ba",
+    "web": "https://adrianet.ba",
+    "customer_service": {},
+    "drustvene_mreze": {}
+  },
+  "tehnicki_kontakti": [
+    {
+      "ime": "Marko Džeba",
+      "pozicija": "Direktor",
+      "email": "adrianet@adrianet.ba",
+      "telefon": "+387 36 348 641",
+      "tip_kontakta": "tehnicki"
+    }
+  ],
+  "detaljne_usluge": {
+    "mobilne": [],
+    "fiksne": [],
+    "internet": [
+      "internet_fixed_wireless",
+      "internet_business"
+    ],
+    "tv": [],
+    "cloud_poslovne": [],
+    "dodatne": []
+  },
+  "detaljne_tehnologije": {
+    "mobilne": [],
+    "fiksne": [],
+    "mrezne": [
+      "tech_fixed_wireless",
+      "tech_ipv4",
+      "tech_ipv6"
+    ]
+  },
+  "zakonske_obaveze": {
+    "zakonito_presretanje": true,
+    "pristup_obracunskim_podacima": true,
+    "implementacija": "ISP standard",
+    "kontakt_osoba": "Marko Džeba",
+    "email_kontakt": "adrianet@adrianet.ba",
+    "telefon_kontakt": "+387 36 348 641",
+    "posjeduje_misljenje_zuo": "Da",
+    "napomene": "ISP operater sa obavezama za zakonito presretanje i pristup obračunskim podacima."
+  },
+  "datum_azuriranja": "2025-10-01",
+  "kontakt_osoba": "Marko Džeba - Direktor",
+  "usluge": [
+    {
+      "kategorija": "unknown",
+      "naziv": "Fixed Wireless Internet",
+      "opis": "Bežični internet sa fiksnom instalacijom",
+      "status": "aktivna"
+    },
+    {
+      "kategorija": "unknown",
+      "naziv": "Poslovni Internet",
+      "opis": "Poslovni internet sa SLA garantijama",
+      "status": "aktivna"
+    }
+  ],
+  "tehnologije": [
+    {
+      "tip": "unknown",
+      "naziv": "Fixed Wireless",
+      "opis": "Bežična pristupna tehnologija",
+      "kapacitet": ""
+    },
+    {
+      "tip": "unknown",
+      "naziv": "IPv4",
+      "opis": "Internet Protocol version 4",
+      "kapacitet": ""
+    },
+    {
+      "tip": "unknown",
+      "naziv": "IPv6",
+      "opis": "Internet Protocol version 6",
+      "kapacitet": ""
+    }
+  ],
+  "kategorija": "alternativni",
+  "tipovi": [
+    "isp"
+  ]
+}

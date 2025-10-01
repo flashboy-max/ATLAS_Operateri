@@ -1,0 +1,77 @@
+{
+  "id": 28,
+  "naziv": "Wirac.Net d.o.o. Gračanica",
+  "komercijalni_naziv": "Wirac.Net",
+  "status": "aktivan",
+  "opis": "Regionalni ISP koji nudi WiFi i optički internet (FiBi), digitalnu televiziju i mobilnu telefoniju kao franšizni partner Novotela. Pokriva područje Gračanice, Pale i okolnih mjesta.",
+  "napomena": "Lokalni ISP sa dugogodišnjim iskustvom, franšizni partner Novotel-a za 067 mobilne usluge. Omogućava preuzimanje 067 broja, potpisivanje ugovora i plaćanje za Novotel usluge. Aktivni operator prema CRA registru.",
+  "kontakt": {
+    "adresa": "Gračanica, Pale",
+    "telefon": "",
+    "email": "info@wirac.net",
+    "web": "https://wirac.net/",
+    "customer_service": {
+      "privatni": "",
+      "poslovni": "",
+      "info": "info@wirac.net"
+    },
+    "drustvene_mreze": {
+      "facebook": "",
+      "instagram": "",
+      "twitter": "",
+      "linkedin": ""
+    }
+  },
+  "tehnicki_kontakti": [
+    {
+      "ime": "",
+      "pozicija": "Korisnička podrška",
+      "email": "info@wirac.net",
+      "telefon": "",
+      "tip_kontakta": "korisnicki"
+    }
+  ],
+  "detaljne_usluge": {
+    "mobilne": [
+      "mobile_postpaid",
+      "mobile_esim",
+      "mobile_mnp"
+    ],
+    "fiksne": [],
+    "internet": [
+      "internet_ftth",
+      "internet_fixed_wireless"
+    ],
+    "tv": [],
+    "cloud": [],
+    "cloud_poslovne": [],
+    "dodatne": []
+  },
+  "detaljne_tehnologije": {
+    "mobilne": [
+      "tech_4g_lte",
+      "tech_5g_ready",
+      "tech_esim",
+      "tech_mnp"
+    ],
+    "fiksne": [],
+    "mrezne": [
+      "tech_ftth_fttb",
+      "tech_fixed_wireless",
+      "tech_ipv4"
+    ]
+  },
+  "zakonske_obaveze": {
+    "zakonito_presretanje": true,
+    "pristup_obracunskim_podacima": true,
+    "implementacija": "Za internet usluge - direktno; za mobilne usluge - preko Novotel partnera",
+    "napomene": "Franšizni partner Novotel mobilnog operatera. Mobilne usluge regulisane preko Novotel-a. Lokalni ISP operater sa obavezama za zakonito presretanje i pristup obračunskim podacima."
+  },
+  "datum_azuriranja": "2025-09-08",
+  "kontakt_osoba": "Potreban kontakt",
+  "kategorija": "alternativni",
+  "tipovi": [
+    "mobilni",
+    "isp"
+  ]
+}

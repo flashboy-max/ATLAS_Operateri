@@ -1,0 +1,93 @@
+{
+  "id": 26,
+  "naziv": "TX TV d.o.o. Tuzla",
+  "komercijalni_naziv": "TX TV",
+  "status": "aktivan",
+  "opis": "Regionalni kablovski operater koji pruža internet, kablovsku televiziju i fiksne usluge prvenstveno na području Tuzlanskog kantona. Prešli na nadprovajdera MisNet u martu 2025.",
+  "napomena": "Kablovski operater fokusiran na Tuzlanski kanton sa DOCSIS tehnologijom. Promjena nadprovajdera na MisNet u 2025. godini.",
+  "kontakt": {
+    "adresa": "Fočanska 1N, 75000 Tuzla",
+    "telefon": "+387 35 302 333",
+    "email": "info@txtv-tz.com",
+    "web": "https://www.txtv.ba",
+    "customer_service": {
+      "privatni": "080 022 236",
+      "poslovni": "+387 35 302 333",
+      "info": "kablovska@txtv.ba"
+    },
+    "drustvene_mreze": {
+      "facebook": "",
+      "instagram": "",
+      "twitter": "",
+      "linkedin": ""
+    }
+  },
+  "tehnicki_kontakti": [
+    {
+      "ime": "Admir Jaganjac",
+      "pozicija": "Tehnička podrška",
+      "email": "",
+      "telefon": "+387 62 861 315",
+      "tip_kontakta": "tehnicki"
+    },
+    {
+      "ime": "Almira Turčinović",
+      "pozicija": "Administracija",
+      "email": "",
+      "telefon": "+387 61 132 787",
+      "tip_kontakta": "administrativni"
+    },
+    {
+      "ime": "Almir Ćiriković",
+      "pozicija": "Tehnička podrška",
+      "email": "",
+      "telefon": "+387 62 938 310",
+      "tip_kontakta": "tehnicki"
+    },
+    {
+      "ime": "Siniša Lakić",
+      "pozicija": "Tehnička podrška",
+      "email": "",
+      "telefon": "+387 62 922 769",
+      "tip_kontakta": "tehnicki"
+    }
+  ],
+  "detaljne_usluge": {
+    "mobilne": [],
+    "fiksne": [
+      "fixed_voip"
+    ],
+    "internet": [
+      "internet_cable",
+      "internet_ftth"
+    ],
+    "tv": [
+      "cable_tv"
+    ],
+    "cloud": [],
+    "cloud_poslovne": [],
+    "dodatne": []
+  },
+  "detaljne_tehnologije": {
+    "mobilne": [],
+    "fiksne": [
+      "tech_voip_fixed"
+    ],
+    "mrezne": [
+      "tech_ftth_fttb",
+      "tech_docsis"
+    ]
+  },
+  "zakonske_obaveze": {
+    "zakonito_presretanje": true,
+    "pristup_obracunskim_podacima": true,
+    "napomene": "Regionalni ISP operater sa obavezama za zakonito presretanje i pristup obračunskim podacima."
+  },
+  "datum_azuriranja": "2025-09-08",
+  "kontakt_osoba": "Admir Jaganjac",
+  "kategorija": "alternativni",
+  "tipovi": [
+    "isp",
+    "kablovski"
+  ]
+}

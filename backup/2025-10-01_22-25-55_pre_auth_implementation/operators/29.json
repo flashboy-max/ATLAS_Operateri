@@ -1,0 +1,72 @@
+{
+  "id": 29,
+  "naziv": "haloo",
+  "komercijalni_naziv": "haloo",
+  "status": "aktivan",
+  "opis": "Flanker brend i podružnica HT Eroneta, pokrenut 2011. godine. Pozicionira se kao jednostavan i jeftin provajder mobilnih usluga sa fokusom na transparentnost, bez skrivenih troškova.",
+  "napomena": "MVNO operater koji koristi mobilnu mrežu HT Eroneta. Flanker brend sa fokusom na cjenovno pristupačne i jednostavne mobilne tarife.",
+  "kontakt": {
+    "adresa": "Kneza Branimira bb, 88000 Mostar",
+    "telefon": "064 4 400 400",
+    "email": "info@haloo.ba",
+    "web": "https://www.haloo.ba/",
+    "customer_service": {
+      "privatni": "064 4 400 400",
+      "poslovni": "064 4 400 400",
+      "info": "064 4 400 400"
+    },
+    "drustvene_mreze": {
+      "facebook": "https://www.facebook.com/haloo.ba",
+      "instagram": "https://www.instagram.com/haloo.ba",
+      "twitter": "",
+      "linkedin": ""
+    }
+  },
+  "tehnicki_kontakti": [
+    {
+      "ime": "",
+      "pozicija": "Korisnička podrška",
+      "email": "info@haloo.ba",
+      "telefon": "064 4 400 400",
+      "tip_kontakta": "korisnicki"
+    }
+  ],
+  "detaljne_usluge": {
+    "mobilne": [
+      "mobile_prepaid",
+      "mobile_postpaid",
+      "mobile_roaming",
+      "mobile_mnp"
+    ],
+    "fiksne": [],
+    "internet": [],
+    "tv": [],
+    "cloud": [],
+    "cloud_poslovne": [],
+    "dodatne": []
+  },
+  "detaljne_tehnologije": {
+    "mobilne": [
+      "tech_3g",
+      "tech_4g"
+    ],
+    "fiksne": [],
+    "mrezne": [
+      "tech_ipv4",
+      "tech_ipv6",
+      "tech_mvno_infrastructure"
+    ]
+  },
+  "zakonske_obaveze": {
+    "zakonito_presretanje": true,
+    "pristup_obracunskim_podacima": true,
+    "implementacija": "Realizuje se kroz infrastrukturu HT Eroneta",
+    "napomene": "Kao podružnica, zakonske obaveze se izvršavaju preko HT Eroneta."
+  },
+  "datum_azuriranja": "2025-09-08",
+  "kontakt_osoba": "HT Eronet korisnička podrška",
+  "kategorija": "alternativni",
+  "tipovi": [
+    "mobilni"
+  ]
+}

@@ -1,0 +1,189 @@
+{
+  "id": 30,
+  "naziv": "TeleConnect d.o.o. Sarajevo",
+  "komercijalni_naziv": "TeleConnect",
+  "status": "neaktivan",
+  "opis": "Testni MVNO operater fokusiran na mobilne usluge i internet pakete. Nudi moderne prepaid i postpaid tarife sa 4G/5G podrškom.",
+  "napomena": "🧪 TESTNI OPERATOR - Kreiran za testiranje sistema. Sve informacije su fiktivne.",
+  "kontakt": {
+    "adresa": "Testna ulica 123, 71000 Sarajevo",
+    "telefon": "+387 33 555 1000",
+    "email": "info@teleconnect.ba",
+    "web": "https://www.teleconnect.ba",
+    "customer_service": {
+      "privatni": "1555",
+      "poslovni": "+387 33 555 2000"
+    },
+    "drustvene_mreze": {
+      "facebook": "https://www.facebook.com/teleconnectbih",
+      "instagram": "https://www.instagram.com/teleconnect_ba",
+      "twitter": "https://twitter.com/TeleConnectBA",
+      "linkedin": "https://www.linkedin.com/company/teleconnect-ba"
+    }
+  },
+  "tehnicki_kontakti": [
+    {
+      "ime": "Marko Marković",
+      "pozicija": "Tehnički direktor",
+      "email": "marko.markovic@teleconnect.ba",
+      "telefon": "+387 61 555 0001",
+      "tip_kontakta": "tehnicki"
+    },
+    {
+      "ime": "Ana Anić",
+      "pozicija": "Šefica službe za bezbednost",
+      "email": "ana.anic@teleconnect.ba",
+      "telefon": "+387 61 555 0002",
+      "tip_kontakta": "bezbednost"
+    },
+    {
+      "ime": "Petar Petrović",
+      "pozicija": "Odgovorni za obračunske podatke",
+      "email": "petar.petrovic@teleconnect.ba",
+      "telefon": "+387 61 555 0003",
+      "tip_kontakta": "bezbednost"
+    }
+  ],
+  "detaljne_usluge": {
+    "mobilne": [
+      "mobile_prepaid",
+      "mobile_postpaid",
+      "mobile_esim",
+      "mobile_roaming",
+      "mobile_mnp"
+    ],
+    "fiksne": [],
+    "internet": [
+      "internet_mobile"
+    ],
+    "tv": [],
+    "cloud_poslovne": [
+      "m2m_services"
+    ],
+    "dodatne": [
+      "device_sales"
+    ]
+  },
+  "detaljne_tehnologije": {
+    "mobilne": [
+      "tech_3g",
+      "tech_4g",
+      "tech_5g_ready",
+      "tech_mvno"
+    ],
+    "fiksne": [],
+    "mrezne": [
+      "tech_ipv4",
+      "tech_ipv6"
+    ]
+  },
+  "zakonske_obaveze": {
+    "zakonito_presretanje": true,
+    "pristup_obracunskim_podacima": true,
+    "implementacija": "Preko host operatera - m:tel",
+    "kontakt_osoba": "Ana Anić",
+    "email_kontakt": "ana.anic@teleconnect.ba",
+    "telefon_kontakt": "+387 61 555 0002",
+    "posjeduje_misljenje_zuo": "Da",
+    "napomene": "Testni MVNO operater sa kompletnom implementacijom zakonskih obaveza."
+  },
+  "datum_azuriranja": "2025-10-01",
+  "kontakt_osoba": "Ana Anić - Šefica službe za bezbednost",
+  "kategorija": "dominantni",
+  "tipovi": [
+    "mobilni",
+    "mvno",
+    "isp",
+    "kablovski",
+    "enterprise",
+    "ostali"
+  ],
+  "usluge": [
+    {
+      "kategorija": "unknown",
+      "naziv": "Mobilni Prepaid",
+      "opis": "Mobilne usluge na prepaid osnovu",
+      "status": "aktivna"
+    },
+    {
+      "kategorija": "unknown",
+      "naziv": "Mobilni Postpaid",
+      "opis": "Mobilne usluge na postpaid osnovu",
+      "status": "aktivna"
+    },
+    {
+      "kategorija": "unknown",
+      "naziv": "eSIM",
+      "opis": "Elektronska SIM kartica",
+      "status": "aktivna"
+    },
+    {
+      "kategorija": "unknown",
+      "naziv": "Roaming",
+      "opis": "Usluge u roaming-u",
+      "status": "aktivna"
+    },
+    {
+      "kategorija": "unknown",
+      "naziv": "Prenos broja (MNP)",
+      "opis": "Mobile Number Portability",
+      "status": "aktivna"
+    },
+    {
+      "kategorija": "unknown",
+      "naziv": "Mobilni Internet",
+      "opis": "Internet preko mobilne mreže",
+      "status": "aktivna"
+    },
+    {
+      "kategorija": "unknown",
+      "naziv": "M2m Services",
+      "opis": "Telekomunikaciona usluga za krajnje korisnike",
+      "status": "aktivna"
+    },
+    {
+      "kategorija": "unknown",
+      "naziv": "Prodaja uređaja",
+      "opis": "Prodaja telekom opreme",
+      "status": "aktivna"
+    }
+  ],
+  "tehnologije": [
+    {
+      "tip": "unknown",
+      "naziv": "3G/UMTS",
+      "opis": "Treća generacija mobilnih mreža",
+      "kapacitet": ""
+    },
+    {
+      "tip": "unknown",
+      "naziv": "4G/LTE",
+      "opis": "Četvrta generacija - LTE",
+      "kapacitet": ""
+    },
+    {
+      "tip": "unknown",
+      "naziv": "5G Ready",
+      "opis": "Priprema za 5G mrežu",
+      "kapacitet": ""
+    },
+    {
+      "tip": "unknown",
+      "naziv": "MVNO Platform",
+      "opis": "Napredna telekomunikaciona tehnologija",
+      "kapacitet": ""
+    },
+    {
+      "tip": "unknown",
+      "naziv": "IPv4",
+      "opis": "Internet Protocol version 4",
+      "kapacitet": ""
+    },
+    {
+      "tip": "unknown",
+      "naziv": "IPv6",
+      "opis": "Internet Protocol version 6",
+      "kapacitet": ""
+    }
+  ]
+}

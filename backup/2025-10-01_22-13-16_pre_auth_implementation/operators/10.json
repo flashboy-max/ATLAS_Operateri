@@ -1,0 +1,71 @@
+{
+  "id": 10,
+  "naziv": "LANACO d.o.o.",
+  "komercijalni_naziv": "LANACO",
+  "status": "aktivan",
+  "opis": "Vodeći IT i telekomunikacioni operater u Bosni i Hercegovini specijalizovan za korporativne i poslovne korisnike. Pruža kompletna IT rešenja, internet usluge, cloud servise i sistemsku integraciju za velike organizacije i javni sektor.",
+  "napomena": "Etabliran kao jedan od vodećih B2B operatera sa fokusom na enterprise rešenja i telekomunikacione usluge.",
+  "kontakt": {
+    "adresa": "[potrebno dopuniti]",
+    "telefon": "[potrebno dopuniti]",
+    "email": "[potrebno dopuniti]",
+    "web": "https://lanaco.com",
+    "customer_service": {},
+    "drustvene_mreze": {}
+  },
+  "tehnicki_kontakti": [],
+  "detaljne_usluge": {
+    "mobilne": [],
+    "fiksne": [
+      "fixed_voip",
+      "fixed_portability"
+    ],
+    "internet": [
+      "internet_ftth",
+      "internet_cable",
+      "internet_fixed_wireless",
+      "internet_business",
+      "internet_dedicated"
+    ],
+    "tv": [],
+    "cloud_poslovne": [
+      "cloud_hosting",
+      "system_integration",
+      "data_center",
+      "cybersecurity"
+    ],
+    "dodatne": []
+  },
+  "detaljne_tehnologije": {
+    "mobilne": [],
+    "fiksne": [
+      "tech_voip_fixed"
+    ],
+    "mrezne": [
+      "tech_fiber",
+      "tech_cable",
+      "tech_fixed_wireless",
+      "tech_mpls",
+      "tech_ipv4",
+      "tech_ipv6",
+      "tech_data_center",
+      "tech_cloud"
+    ]
+  },
+  "zakonske_obaveze": {
+    "zakonito_presretanje": true,
+    "pristup_obracunskim_podacima": true,
+    "implementacija": "Enterprise IT standard",
+    "kontakt_osoba": "LANACO tehnicka podrska",
+    "email_kontakt": "info@lanaco.com",
+    "posjeduje_misljenje_zuo": "Da",
+    "napomene": "IT i telekomunikacioni operater sa obavezama za zakonito presretanje i pristup obračunskim podacima."
+  },
+  "datum_azuriranja": "2025-09-08",
+  "kontakt_osoba": "LANACO tehnicka podrska",
+  "kategorija": "alternativni",
+  "tipovi": [
+    "isp",
+    "enterprise"
+  ]
+}
