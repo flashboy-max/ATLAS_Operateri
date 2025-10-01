@@ -898,6 +898,8 @@ class ATLASApp {
     handleSearch(searchTerm) {
         const term = searchTerm ? searchTerm.toLowerCase().trim() : '';
         
+        console.log('🔍 Search triggered:', term);
+        
         // Clear any existing highlights
         this.clearSearchHighlights();
         
@@ -1013,10 +1015,15 @@ class ATLASApp {
                 const telefon = operator.kontakt?.telefon || '';
                 const web = operator.kontakt?.web || '';
                 
+                // Pretraga tipova iz niza
+                const tipoviMatch = operator.tipovi && Array.isArray(operator.tipovi) ? 
+                    operator.tipovi.some(tip => tip.toLowerCase().includes(term)) : false;
+                
                 return (
                     operator.naziv.toLowerCase().includes(term) ||
                     (operator.komercijalni_naziv && operator.komercijalni_naziv.toLowerCase().includes(term)) ||
-                    operator.tip.toLowerCase().includes(term) ||
+                    tipoviMatch ||
+                    (operator.kategorija && operator.kategorija.toLowerCase().includes(term)) ||
                     (operator.opis && operator.opis.toLowerCase().includes(term)) ||
                     adresa.toLowerCase().includes(term) ||
                     email.toLowerCase().includes(term) ||
