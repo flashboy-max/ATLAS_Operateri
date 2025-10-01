@@ -90,10 +90,9 @@
   },
   "zakonske_obaveze": {
     "zakonito_presretanje": true,
+    "pristup_obracunskim_podacima": true,
     "implementacija": "Preko m:tel infrastrukture",
     "kontakt_osoba": "Berina Hrustić",
-    "posleduje_misljenje_zuo": "",
-    "pristup_obracunskim_podacima": true,
     "napomene": "Kao MVNO i ISP operater, zakonske obaveze realizuje kroz m:tel infrastrukturu i vlastite sisteme."
   },
   "datum_azuriranja": "2025-09-08",

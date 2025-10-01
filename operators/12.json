@@ -68,16 +68,7 @@
     "ostalo": []
   },
   "zakonske_obaveze": {
-    "zakonito_presretanje": {
-      "implementirano": "Da",
-      "nacin_implementacije": "[potrebno dopuniti]",
-      "kontakt_osoba": "[potrebno dopuniti]",
-      "email": "[potrebno dopuniti]",
-      "telefon": "[potrebno dopuniti]",
-      "misljenje_zuo": "[potrebno dopuniti]"
-    },
-    "pristup_podacima": "Da",
-    "napomena": "Telekomunikacioni operater sa CRA licencom, obaveze za zakonito presretanje i pristup obračunskim podacima."
+    "zakonito_presretanje": true
   },
   "kontakt_osoba": "[potrebno dopuniti]",
   "completion_percentage": 95,

@@ -45,13 +45,13 @@
     ]
   },
   "zakonske_obaveze": {
-    "zakonito_presretanje": "Da",
+    "zakonito_presretanje": true,
+    "pristup_obracunskim_podacima": true,
     "implementacija": "ISP standard",
     "kontakt_osoba": "Marko Džeba",
     "email_kontakt": "adrianet@adrianet.ba",
     "telefon_kontakt": "+387 36 348 641",
     "posleduje_misljenje_zuo": "Da",
-    "pristup_obracunskim_podacima": "Da",
     "napomene": "ISP operater sa obavezama za zakonito presretanje i pristup obračunskim podacima."
   },
   "datum_azuriranja": "2025-09-08",

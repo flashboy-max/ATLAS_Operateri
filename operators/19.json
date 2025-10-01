@@ -56,11 +56,8 @@
     ]
   },
   "zakonske_obaveze": {
-    "zakonito_presretanje": "N/A",
     "implementacija": "Preko BH Telecom infrastrukture (istorijski)",
     "kontakt_osoba": "Edis Bošnjaković",
-    "posleduje_misljenje_zuo": "",
-    "pristup_obracunskim_podacima": "",
     "napomene": "Bivši ISP operater sa BH Telecom nadprovajderom, sve obaveze su prenesene na Logosoft/m:tel grupu."
   },
   "datum_azuriranja": "2025-09-08",

@@ -70,10 +70,8 @@
   },
   "zakonske_obaveze": {
     "zakonito_presretanje": true,
-    "implementacija": "Preko United Group infrastrukture",
-    "kontakt_osoba": "",
-    "posleduje_misljenje_zuo": "",
     "pristup_obracunskim_podacima": true,
+    "implementacija": "Preko United Group infrastrukture",
     "napomene": "Kao veliki kablovski operater (United Group), Telemach ima sve zakonske obaveze implementirane u skladu sa BiH zakonodavstvom za elektronske komunikacije."
   },
   "datum_azuriranja": "2025-09-08",

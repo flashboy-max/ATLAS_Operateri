@@ -80,9 +80,6 @@
   },
   "zakonske_obaveze": {
     "zakonito_presretanje": true,
-    "implementacija": "",
-    "kontakt_osoba": "",
-    "posleduje_misljenje_zuo": "",
     "pristup_obracunskim_podacima": true,
     "napomene": "Regionalni ISP operater sa obavezama za zakonito presretanje i pristup obračunskim podacima."
   },

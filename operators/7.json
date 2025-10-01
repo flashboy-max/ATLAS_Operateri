@@ -75,13 +75,13 @@
     ]
   },
   "zakonske_obaveze": {
-    "zakonito_presretanje": "Da",
+    "zakonito_presretanje": true,
+    "pristup_obracunskim_podacima": true,
     "implementacija": "A1 grupa standard",
     "kontakt_osoba": "ZPT služba ONE",
     "email_kontakt": "info@one.ba",
     "telefon_kontakt": "066 15 15 15",
     "posleduje_misljenje_zuo": "Da",
-    "pristup_obracunskim_podacima": "Da",
     "napomene": "Kao veliki mobilni operater (A1 grupa), ONE.Vip ima sve zakonske obaveze implementirane u skladu sa BiH zakonodavstvom za elektronske komunikacije."
   },
   "datum_azuriranja": "2025-10-01",

@@ -63,10 +63,8 @@
   },
   "zakonske_obaveze": {
     "zakonito_presretanje": true,
-    "implementacija": "Za internet usluge - direktno; za mobilne usluge - preko Novotel partnera",
-    "kontakt_osoba": "",
-    "posleduje_misljenje_zuo": "",
     "pristup_obracunskim_podacima": true,
+    "implementacija": "Za internet usluge - direktno; za mobilne usluge - preko Novotel partnera",
     "napomene": "Franšizni partner Novotel mobilnog operatera. Mobilne usluge regulisane preko Novotel-a. Lokalni ISP operater sa obavezama za zakonito presretanje i pristup obračunskim podacima."
   },
   "datum_azuriranja": "2025-09-08",

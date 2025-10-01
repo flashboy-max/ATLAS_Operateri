@@ -63,10 +63,8 @@
   },
   "zakonske_obaveze": {
     "zakonito_presretanje": true,
-    "implementacija": "Regionalni kablovski operater sa standardnim zakonskim obavezama",
-    "kontakt_osoba": "",
-    "posleduje_misljenje_zuo": "",
     "pristup_obracunskim_podacima": true,
+    "implementacija": "Regionalni kablovski operater sa standardnim zakonskim obavezama",
     "napomene": "Regionalni kablovski operater sa obavezama za zakonito presretanje i pristup obračunskim podacima u skladu sa BiH zakonodavstvom."
   },
   "datum_azuriranja": "2025-09-08",

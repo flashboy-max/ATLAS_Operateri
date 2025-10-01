@@ -54,16 +54,12 @@
     "ostalo": []
   },
   "zakonske_obaveze": {
-    "zakonito_presretanje": {
-      "implementirano": "Da",
-      "nacin_implementacije": "Preko Telemach infrastrukture",
-      "kontakt_osoba": "Redžo Salihović",
-      "email": "[arhivirano]",
-      "telefon": "+387 66 580 855",
-      "misljenje_zuo": "[arhivirano]"
-    },
-    "pristup_podacima": "Da",
-    "napomena": "ISP operater sa nadprovajderom Telemach, obaveze za zakonito presretanje i pristup obračunskim podacima prebačene na Telemach."
+    "zakonito_presretanje": true,
+    "implementacija": "Preko Telemach infrastrukture",
+    "kontakt_osoba": "Redžo Salihović",
+    "email_kontakt": "[arhivirano]",
+    "telefon_kontakt": "+387 66 580 855",
+    "posleduje_misljenje_zuo": "[arhivirano]"
   },
   "kontakt_osoba": "Redžo Salihović (grupa M&H/KATV HS)",
   "completion_percentage": 95,

@@ -62,16 +62,10 @@
     "ostalo": []
   },
   "zakonske_obaveze": {
-    "zakonito_presretanje": {
-      "implementirano": "Da",
-      "nacin_implementacije": "Preko m:tel infrastrukture",
-      "kontakt_osoba": "Goran Vujković",
-      "email": "[potrebno dopuniti]",
-      "telefon": "+387 65 017 676",
-      "misljenje_zuo": "[potrebno dopuniti]"
-    },
-    "pristup_podacima": "Da",
-    "napomena": "ISP operater sa m:tel nadprovajderom, aktivan u obračunskim podacima i zakonitom presretanju."
+    "zakonito_presretanje": true,
+    "implementacija": "Preko m:tel infrastrukture",
+    "kontakt_osoba": "Goran Vujković",
+    "telefon_kontakt": "+387 65 017 676"
   },
   "kontakt_osoba": "Goran Vujković",
   "completion_percentage": 95,

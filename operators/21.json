@@ -55,11 +55,7 @@
     ]
   },
   "zakonske_obaveze": {
-    "zakonito_presretanje": "N/A",
     "implementacija": "Preko host operatera (istorijski)",
-    "kontakt_osoba": "",
-    "posleduje_misljenje_zuo": "",
-    "pristup_obracunskim_podacima": "",
     "napomene": "Bivši MVNO operater - obaveze prenesene na host operatera."
   },
   "datum_azuriranja": "2025-09-08",

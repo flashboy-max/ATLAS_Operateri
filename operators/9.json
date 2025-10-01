@@ -44,13 +44,13 @@
     ]
   },
   "zakonske_obaveze": {
-    "zakonito_presretanje": "Da",
+    "zakonito_presretanje": true,
+    "pristup_obracunskim_podacima": true,
     "implementacija": "Regionalni ISP standard",
     "kontakt_osoba": "Emir Pačić",
     "email_kontakt": "podrska@missnet.ba",
     "telefon_kontakt": "+387 63 295 011",
     "posleduje_misljenje_zuo": "Da",
-    "pristup_obracunskim_podacima": "Da",
     "napomene": "Regionalni ISP operater sa obavezama za zakonito presretanje i pristup obračunskim podacima."
   },
   "datum_azuriranja": "2025-09-08",

@@ -63,10 +63,9 @@
   },
   "zakonske_obaveze": {
     "zakonito_presretanje": true,
+    "pristup_obracunskim_podacima": true,
     "implementacija": "Preko BH Telecom infrastrukture",
     "kontakt_osoba": "Adi Vaizović",
-    "posleduje_misljenje_zuo": "",
-    "pristup_obracunskim_podacima": true,
     "napomene": "ISP operater sa BH Telecom nadprovajderom, obaveze za zakonito presretanje i pristup obračunskim podacima."
   },
   "datum_azuriranja": "2025-09-08",

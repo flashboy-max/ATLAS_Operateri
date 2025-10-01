@@ -90,16 +90,7 @@
     "ostalo": []
   },
   "zakonske_obaveze": {
-    "zakonito_presretanje": {
-      "implementirano": "Da",
-      "nacin_implementacije": "[potrebno dopuniti]",
-      "kontakt_osoba": "[potrebno dopuniti]",
-      "email": "[potrebno dopuniti]",
-      "telefon": "[potrebno dopuniti]",
-      "misljenje_zuo": "[potrebno dopuniti]"
-    },
-    "pristup_podacima": "Da",
-    "napomena": "Hibridni operater sa podvojenim zakonskim obavezama (MVNO + ISP + radiodifuzija)."
+    "zakonito_presretanje": true
   },
   "kontakt_osoba": "Suzana Simić",
   "completion_percentage": 95,

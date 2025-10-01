@@ -68,16 +68,11 @@
     "ostalo": []
   },
   "zakonske_obaveze": {
-    "zakonito_presretanje": {
-      "implementirano": "[arhivirano]",
-      "nacin_implementacije": "[preneseno na Supernova]",
-      "kontakt_osoba": "[arhivirano]",
-      "email": "[arhivirano]",
-      "telefon": "[arhivirano]",
-      "misljenje_zuo": "[arhivirano]"
-    },
-    "pristup_podacima": "[preneseno na Supernova]",
-    "napomena": "Bivši kablovski operater, sve obaveze su prenesene na Supernova brend u okviru Mtel-a."
+    "implementacija": "[preneseno na Supernova]",
+    "kontakt_osoba": "[arhivirano]",
+    "email_kontakt": "[arhivirano]",
+    "telefon_kontakt": "[arhivirano]",
+    "posleduje_misljenje_zuo": "[arhivirano]"
   },
   "kontakt_osoba": "[prebačeno na Supernova]",
   "completion_percentage": 95,

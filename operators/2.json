@@ -45,13 +45,13 @@
     ]
   },
   "zakonske_obaveze": {
-    "zakonito_presretanje": "Da",
+    "zakonito_presretanje": true,
+    "pristup_obracunskim_podacima": true,
     "implementacija": "B2B carrier standard",
     "kontakt_osoba": "AKTON tehnicka podrska",
     "email_kontakt": "info@akton.ba",
     "telefon_kontakt": "+387 33 296 622",
     "posleduje_misljenje_zuo": "Da",
-    "pristup_obracunskim_podacima": "Da",
     "napomene": "B2B operater sa nacionalnom licencom za veleprodajne usluge."
   },
   "datum_azuriranja": "2025-09-08",

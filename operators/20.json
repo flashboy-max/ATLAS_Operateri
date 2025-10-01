@@ -63,18 +63,6 @@
     ],
     "ostalo": []
   },
-  "zakonske_obaveze": {
-    "zakonito_presretanje": {
-      "implementirano": "[potrebno dopuniti]",
-      "nacin_implementacije": "[potrebno dopuniti]",
-      "kontakt_osoba": "[potrebno dopuniti]",
-      "email": "[potrebno dopuniti]",
-      "telefon": "[potrebno dopuniti]",
-      "misljenje_zuo": "[potrebno dopuniti]"
-    },
-    "pristup_podacima": "[potrebno dopuniti]",
-    "napomena": "Satelitski operater sa specifičnim zakonskim obavezama za satelitske usluge."
-  },
   "kontakt_osoba": "[potrebno dopuniti]",
   "completion_percentage": 95,
   "last_updated": "2025-09-08",

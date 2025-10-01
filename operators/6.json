@@ -108,12 +108,12 @@
   },
   "zakonske_obaveze": {
     "zakonito_presretanje": true,
+    "pristup_obracunskim_podacima": true,
     "implementacija": "Implementirano i dostupno - Vlastita medijacija",
     "kontakt_osoba": "Zoran Sopka",
     "email_kontakt": "zoran.sopka@mtel.ba",
     "telefon_kontakt": "+387 66 915 505",
     "posleduje_misljenje_zuo": "Da",
-    "pristup_obracunskim_podacima": true,
     "napomene": "Kao dominantni operater, m:tel ima sve zakonske obaveze implementirane i dostupne u skladu sa BiH zakonom."
   },
   "datum_azuriranja": "2025-09-08",

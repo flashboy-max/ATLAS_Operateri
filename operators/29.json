@@ -59,10 +59,8 @@
   },
   "zakonske_obaveze": {
     "zakonito_presretanje": true,
-    "implementacija": "Realizuje se kroz infrastrukturu HT Eroneta",
-    "kontakt_osoba": "",
-    "posleduje_misljenje_zuo": "",
     "pristup_obracunskim_podacima": true,
+    "implementacija": "Realizuje se kroz infrastrukturu HT Eroneta",
     "napomene": "Kao podružnica, zakonske obaveze se izvršavaju preko HT Eroneta."
   },
   "datum_azuriranja": "2025-09-08",

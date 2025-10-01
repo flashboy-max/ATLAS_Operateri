@@ -107,12 +107,12 @@
   },
   "zakonske_obaveze": {
     "zakonito_presretanje": true,
+    "pristup_obracunskim_podacima": true,
     "implementacija": "Implementirano i dostupno - Vlastita medijacija",
     "kontakt_osoba": "Nedim Fazlibegović",
     "email_kontakt": "nedim.fazlibegovic@bhtelecom.ba",
     "telefon_kontakt": "+387 61 616 034",
     "posleduje_misljenje_zuo": "Da",
-    "pristup_obracunskim_podacima": true,
     "napomene": "Kao dominantni operater, BH Telecom ima sve zakonske obaveze implementirane i dostupne u skladu sa BiH zakonom. Vlastita medijacija za zakonito presretanje."
   },
   "datum_azuriranja": "2025-10-01",
