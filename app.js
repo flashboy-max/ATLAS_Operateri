@@ -342,7 +342,7 @@ class ATLASApp {
             // TEMPORARILY DISABLED FOR TESTING API
             if (false && localData && Array.isArray(localData.operateri) && localData.operateri.length >= 0) {
                 this.operators = localData.operateri;
-                console.log('🎯 PRIORITET: Učitani podaci IZ LOCALSTORAGE (persistencija brisanja/dodavanja)');
+                console.log('PRIORITET: Učitani podaci IZ LOCALSTORAGE (persistencija brisanja/dodavanja)');
                 console.log('   - Ukupno operatera:', this.operators.length);
                 console.log('   - Verzija:', localVersion);
                 console.log('   - Izvor: LocalStorage (prioritet)');
@@ -400,13 +400,13 @@ class ATLASApp {
                 
                 this.operators = jsonData.operateri || [];
                 this.saveToLocalStorage(jsonData); // Sačuvaj u LocalStorage za budućnost
-                console.log('📄 Podaci učitani IZ JSON FAJLA (fallback):', this.operators.length, 'operatera');
+                console.log('Podaci učitani IZ JSON FAJLA (fallback):', this.operators.length, 'operatera');
                 console.log('   - Verzija:', jsonVersion);
                 console.log('   - Sačuvano u LocalStorage za sljedeći put');
             }
             
         } catch (error) {
-            console.error('❌ Greška pri učitavanju JSON fajla:', error);
+            console.error('Greška pri učitavanju JSON fajla:', error);
             
             // Provjeri da li je CORS greška
             if (error.message.includes('Failed to fetch') || error.toString().includes('CORS')) {
@@ -466,10 +466,10 @@ class ATLASApp {
                             const operatorData = await operatorResponse.json();
                             this.operators.push(operatorData);
                         } else {
-                            console.warn(`⚠️ Nije moguće učitati operatera ${op.naziv} (${op.id})`);
+                            console.warn(`Nije moguće učitati operatera ${op.naziv} (${op.id})`);
                         }
                     } catch (opError) {
-                        console.warn(`⚠️ Greška pri učitavanju operatera ${op.naziv}:`, opError.message);
+                        console.warn(`Greška pri učitavanju operatera ${op.naziv}:`, opError.message);
                     }
                 }
                 
@@ -518,7 +518,7 @@ class ATLASApp {
             
             this.showLoading(false);
         } catch (error) {
-            console.error('❌ Greška pri reload-u:', error);
+            console.error('Greška pri reload-u:', error);
             this.showLoading(false);
             alert('Greška pri reload-u podataka: ' + error.message);
         }
@@ -639,7 +639,7 @@ class ATLASApp {
             this.showNotification(`Izvoženo ${exportData.operateri.length} operatera u fajl: ${a.download}`, 'success', 5000);
             
         } catch (error) {
-            console.error('❌ Greška pri exportu:', error);
+            console.error('Greška pri exportu:', error);
             this.showNotification('Greška pri exportu podataka', 'error');
         }
     }
@@ -684,7 +684,7 @@ class ATLASApp {
                     this.showNotification(`Učitano ${importedData.operateri.length} operatera iz fajla: ${file.name}`, 'success', 5000);
                     
                 } catch (error) {
-                    console.error('❌ Greška pri importu:', error);
+                    console.error('Greška pri importu:', error);
                     this.showNotification('Greška pri čitanju fajla - proverite format', 'error');
                 }
             };
@@ -2230,11 +2230,11 @@ class ATLASApp {
             
             // Dodaj visual feedback sa instrukcijama
             setTimeout(() => {
-                this.showNotification('💡 Tip: Zamenite stari operateri.json sa novo izvoženim fajlom da sačuvate promene', 'info', 8000);
+                this.showNotification('Tip: Zamenite stari operateri.json sa novo izvoženim fajlom da sačuvate promene', 'info', 8000);
             }, 2000);
             
         } catch (error) {
-            console.error('❌ Greška pri exportu:', error);
+            console.error('Greška pri exportu:', error);
             this.showNotification('Greška pri exportu podataka', 'error');
         }
     }
