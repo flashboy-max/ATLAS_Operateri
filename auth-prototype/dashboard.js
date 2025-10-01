@@ -250,12 +250,12 @@ class Dashboard {
 
         document.getElementById('activitySection').style.display = 'block';
         
-        const activities = this.getMockActivities(role);
+        const activities = this.getRecentActivities(5);
         const activityList = document.getElementById('activityList');
         
         activityList.innerHTML = activities.map(activity => `
             <div class="activity-item">
-                <div class="activity-icon">
+                <div class="activity-icon ${activity.iconClass}">
                     <i class="${activity.icon}"></i>
                 </div>
                 <div class="activity-content">
@@ -264,6 +264,53 @@ class Dashboard {
                 </div>
             </div>
         `).join('');
+    }
+
+    getRecentActivities(limit = 5) {
+        // Load from SYSTEM_LOGS if available
+        if (typeof SYSTEM_LOGS === 'undefined') {
+            return this.getMockActivities();
+        }
+
+        const recentLogs = SYSTEM_LOGS.slice(0, limit);
+        
+        return recentLogs.map(log => {
+            const icon = this.getActivityIcon(log.action);
+            return {
+                icon: icon.icon,
+                iconClass: icon.class,
+                text: `${log.user_name}: ${log.target}`,
+                time: this.getTimeAgo(log.timestamp)
+            };
+        });
+    }
+
+    getActivityIcon(action) {
+        const icons = {
+            'LOGIN': { icon: 'fas fa-sign-in-alt', class: 'icon-success' },
+            'LOGOUT': { icon: 'fas fa-sign-out-alt', class: 'icon-muted' },
+            'CREATE_USER': { icon: 'fas fa-user-plus', class: 'icon-primary' },
+            'UPDATE_USER': { icon: 'fas fa-user-edit', class: 'icon-warning' },
+            'DELETE_USER': { icon: 'fas fa-user-minus', class: 'icon-danger' },
+            'CREATE_OPERATOR': { icon: 'fas fa-plus-circle', class: 'icon-primary' },
+            'UPDATE_OPERATOR': { icon: 'fas fa-edit', class: 'icon-warning' },
+            'DELETE_OPERATOR': { icon: 'fas fa-trash-alt', class: 'icon-danger' },
+            'SEARCH': { icon: 'fas fa-search', class: 'icon-info' },
+            'EXPORT': { icon: 'fas fa-file-export', class: 'icon-success' }
+        };
+        return icons[action] || { icon: 'fas fa-info-circle', class: '' };
+    }
+
+    getTimeAgo(timestamp) {
+        const now = new Date();
+        const logTime = new Date(timestamp);
+        const diff = Math.floor((now - logTime) / 1000); // seconds
+
+        if (diff < 60) return 'Upravo sada';
+        if (diff < 3600) return `Prije ${Math.floor(diff / 60)} min`;
+        if (diff < 86400) return `Prije ${Math.floor(diff / 3600)} sati`;
+        if (diff < 172800) return 'Juče';
+        return `Prije ${Math.floor(diff / 86400)} dana`;
     }
 
     getMockActivities(role) {
@@ -317,18 +364,12 @@ class Dashboard {
             userMenu.classList.remove('active');
         });
 
-        // Dropdown items - close on click
+        // Dropdown items - linkovi sada rade normalno
+        // Samo zatvaramo dropdown, bez preventDefault() da bi linkovi radili
         document.querySelectorAll('.user-dropdown .dropdown-item:not(#logoutBtn)').forEach(item => {
-            item.addEventListener('click', (e) => {
-                e.preventDefault();
+            item.addEventListener('click', () => {
                 userMenu.classList.remove('active');
-                
-                const text = item.querySelector('span').textContent;
-                if (text === 'Moj profil') {
-                    alert('Moj profil - U razvoju\n\nOvdje će biti stranica za uređivanje vašeg profila.');
-                } else if (text === 'Postavke') {
-                    alert('Postavke - U razvoju\n\nOvdje će biti postavke aplikacije.');
-                }
+                // Dozvoli da link radi normalno (navigacija na href)
             });
         });
 

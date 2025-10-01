@@ -43,11 +43,16 @@
                         </div>
                     </div>
                     <div class="dropdown-divider"></div>
-                    <a href="#" class="dropdown-item">
+                    <a href="system-logs.html" class="dropdown-item">
+                        <i class="fas fa-clipboard-list"></i>
+                        <span>Sistemski logovi</span>
+                    </a>
+                    <div class="dropdown-divider"></div>
+                    <a href="moj-profil.html" class="dropdown-item">
                         <i class="fas fa-user-circle"></i>
                         <span>Moj profil</span>
                     </a>
-                    <a href="#" class="dropdown-item">
+                    <a href="postavke.html" class="dropdown-item">
                         <i class="fas fa-cog"></i>
                         <span>Postavke</span>
                     </a>
@@ -87,7 +92,12 @@
 
         <!-- Recent Activity (samo za ADMIN i SUPERADMIN) -->
         <section class="activity-section" id="activitySection" style="display: none;">
-            <h2 class="section-title">Nedavne aktivnosti</h2>
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--spacing-md);">
+                <h2 class="section-title" style="margin: 0;">Nedavne aktivnosti</h2>
+                <a href="system-logs.html" class="btn-text" style="color: var(--primary-color); text-decoration: none; font-weight: 500;">
+                    Prikaži sve <i class="fas fa-arrow-right"></i>
+                </a>
+            </div>
             <div class="activity-list" id="activityList">
                 <!-- Activities će biti dinamički ubačene -->
             </div>

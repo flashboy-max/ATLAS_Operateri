@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="bs">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Postavke - ATLAS</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="common.css">
+    <link rel="stylesheet" href="dashboard.css">
+    <link rel="stylesheet" href="user-management.css">
+</head>
+<body>
+    <div class="dashboard-container">
+        <header class="dashboard-header">
+            <div class="header-left">
+                <div class="logo">
+                    <i class="fas fa-satellite-dish"></i>
+                    <span>ATLAS</span>
+                </div>
+                <nav class="nav-menu">
+                    <a href="dashboard.html" class="nav-link">
+                        <i class="fas fa-tachometer-alt"></i>
+                        <span>Dashboard</span>
+                    </a>
+                    <a href="user-management.html" class="nav-link">
+                        <i class="fas fa-users"></i>
+                        <span>Korisnici</span>
+                    </a>
+                </nav>
+            </div>
+            <div class="header-right">
+                <div class="user-info" id="userInfoBtn">
+                    <div class="user-avatar">
+                        <i class="fas fa-user"></i>
+                    </div>
+                    <div class="user-details">
+                        <span class="user-name" id="headerUserName">Ime Prezime</span>
+                        <span class="user-role">Super Administrator</span>
+                    </div>
+                    <div class="dropdown-icon">
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                    
+                    <!-- Dropdown Menu -->
+                    <div class="user-dropdown" id="userDropdown">
+                        <div class="dropdown-header">
+                            <div class="dropdown-user-info">
+                                <strong id="dropdownUserName">Ime Prezime</strong>
+                                <small id="dropdownUserEmail">email@example.com</small>
+                                <span class="dropdown-agency" id="dropdownAgency">Agencija</span>
+                            </div>
+                        </div>
+                        <div class="dropdown-divider"></div>
+                        <a href="dashboard.html" class="dropdown-item">
+                            <i class="fas fa-tachometer-alt"></i>
+                            <span>Dashboard</span>
+                        </a>
+                        <a href="system-logs.html" class="dropdown-item">
+                            <i class="fas fa-clipboard-list"></i>
+                            <span>Sistemski logovi</span>
+                        </a>
+                        <div class="dropdown-divider"></div>
+                        <a href="moj-profil.html" class="dropdown-item">
+                            <i class="fas fa-user-circle"></i>
+                            <span>Moj profil</span>
+                        </a>
+                        <a href="postavke.html" class="dropdown-item active">
+                            <i class="fas fa-cog"></i>
+                            <span>Postavke</span>
+                        </a>
+                        <div class="dropdown-divider"></div>
+                        <a href="#" class="dropdown-item logout-item" id="logoutBtn">
+                            <i class="fas fa-sign-out-alt"></i>
+                            <span>Odjavi se</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <div class="content-container">
+            <!-- Page Header -->
+            <div class="page-header">
+                <div>
+                    <h1 class="page-title">
+                        <i class="fas fa-cog"></i>
+                        Postavke
+                    </h1>
+                    <p class="page-subtitle">Prilagodite svoje postavke</p>
+                </div>
+            </div>
+
+            <!-- Settings Content -->
+            <div class="profile-section">
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="card-title">
+                            <i class="fas fa-bell"></i>
+                            Obavještenja
+                        </h2>
+                    </div>
+                    <div class="card-body">
+                        <div class="coming-soon-message">
+                            <i class="fas fa-construction"></i>
+                            <p>Postavke obavještenja će biti dostupne nakon integracije sa backend sistemom.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="card-title">
+                            <i class="fas fa-palette"></i>
+                            Izgled
+                        </h2>
+                    </div>
+                    <div class="card-body">
+                        <div class="coming-soon-message">
+                            <i class="fas fa-construction"></i>
+                            <p>Postavke izgleda (tamna tema, jezik) će biti dostupne nakon integracije sa backend sistemom.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="card-title">
+                            <i class="fas fa-shield-alt"></i>
+                            Privatnost i sigurnost
+                        </h2>
+                    </div>
+                    <div class="card-body">
+                        <div class="coming-soon-message">
+                            <i class="fas fa-construction"></i>
+                            <p>Postavke privatnosti i sigurnosti će biti dostupne nakon integracije sa backend sistemom.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="mock-data.js"></script>
+    <script src="auth.js"></script>
+    <script src="postavke.js"></script>
+</body>
+</html>

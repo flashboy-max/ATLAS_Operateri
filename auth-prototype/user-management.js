@@ -248,18 +248,8 @@ class UserManagement {
             userMenu.classList.remove('active');
         });
 
-        // Dropdown items
-        document.getElementById('myProfileBtn')?.addEventListener('click', (e) => {
-            e.preventDefault();
-            userMenu.classList.remove('active');
-            alert('Moj profil - U razvoju\n\nOvdje će biti stranica za uređivanje vašeg profila.');
-        });
-
-        document.getElementById('settingsBtn')?.addEventListener('click', (e) => {
-            e.preventDefault();
-            userMenu.classList.remove('active');
-            alert('Postavke - U razvoju\n\nOvdje će biti postavke aplikacije.');
-        });
+        // Dropdown items - ovi linkovi sada rade i vode na prave stranice
+        // Više ne treba preventDefault() jer su linkovi ispravni
 
         // Logout
         document.getElementById('logoutBtn').addEventListener('click', (e) => {

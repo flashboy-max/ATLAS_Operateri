@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="bs">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistemski logovi - ATLAS</title>
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Custom Styles -->
+    <link rel="stylesheet" href="auth.css">
+    <link rel="stylesheet" href="dashboard.css">
+    <link rel="stylesheet" href="system-logs.css">
+</head>
+<body class="dashboard-body">
+    <!-- Main Content -->
+    <main class="dashboard-main">
+        <!-- Header -->
+        <header class="dashboard-header">
+            <div class="header-left">
+                <div class="logo-small">
+                    <i class="fas fa-satellite-dish"></i>
+                    <span>ATLAS</span>
+                </div>
+                <div class="breadcrumb">
+                    <a href="dashboard.html">Dashboard</a>
+                    <i class="fas fa-chevron-right"></i>
+                    <span>Sistemski logovi</span>
+                </div>
+            </div>
+            
+            <div class="header-right">
+                <div class="user-menu">
+                    <div class="user-avatar" id="userAvatar">
+                        <i class="fas fa-user"></i>
+                    </div>
+                    <div class="user-info" id="userInfo">
+                        <span class="user-name">Admir Adminović</span>
+                        <span class="user-role">Super Administrator</span>
+                    </div>
+                    <div class="dropdown-icon">
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                    
+                    <!-- Dropdown Menu -->
+                    <div class="user-dropdown" id="userDropdown">
+                        <div class="dropdown-header">
+                            <div class="dropdown-user-info">
+                                <strong id="dropdownUserName">Admir Adminović</strong>
+                                <small id="dropdownUserEmail">admin@atlas.ba</small>
+                                <span class="dropdown-agency" id="dropdownAgency">Sistem administrator</span>
+                            </div>
+                        </div>
+                        <div class="dropdown-divider"></div>
+                        <a href="dashboard.html" class="dropdown-item">
+                            <i class="fas fa-tachometer-alt"></i>
+                            <span>Dashboard</span>
+                        </a>
+                        <a href="user-management.html" class="dropdown-item">
+                            <i class="fas fa-users"></i>
+                            <span>Upravljanje korisnicima</span>
+                        </a>
+                        <a href="system-logs.html" class="dropdown-item active">
+                            <i class="fas fa-clipboard-list"></i>
+                            <span>Sistemski logovi</span>
+                        </a>
+                        <a href="moj-profil.html" class="dropdown-item">
+                            <i class="fas fa-user-circle"></i>
+                            <span>Moj profil</span>
+                        </a>
+                        <a href="postavke.html" class="dropdown-item">
+                            <i class="fas fa-cog"></i>
+                            <span>Postavke</span>
+                        </a>
+                        <div class="dropdown-divider"></div>
+                        <a href="#" class="dropdown-item logout-item" id="logoutBtn">
+                            <i class="fas fa-sign-out-alt"></i>
+                            <span>Odjavi se</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <div class="content-container">
+            <!-- Page Header -->
+            <div class="page-header">
+                <div>
+                    <h1 class="page-title">
+                        <i class="fas fa-clipboard-list"></i>
+                        Sistemski logovi
+                    </h1>
+                    <p class="page-subtitle" id="pageSubtitle">Pregled svih aktivnosti u sistemu</p>
+                </div>
+                <div class="header-actions">
+                    <button class="btn-secondary" id="exportLogsBtn">
+                        <i class="fas fa-file-export"></i>
+                        <span>Eksportuj logove</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Stats Overview -->
+            <div class="stats-row">
+                <div class="stat-card-small">
+                    <div class="stat-icon-small primary">
+                        <i class="fas fa-list"></i>
+                    </div>
+                    <div>
+                        <div class="stat-value-small" id="totalLogs">0</div>
+                        <div class="stat-label-small">Ukupno logova</div>
+                    </div>
+                </div>
+                <div class="stat-card-small">
+                    <div class="stat-icon-small success">
+                        <i class="fas fa-check-circle"></i>
+                    </div>
+                    <div>
+                        <div class="stat-value-small" id="successLogs">0</div>
+                        <div class="stat-label-small">Uspješno</div>
+                    </div>
+                </div>
+                <div class="stat-card-small">
+                    <div class="stat-icon-small danger">
+                        <i class="fas fa-exclamation-triangle"></i>
+                    </div>
+                    <div>
+                        <div class="stat-value-small" id="failedLogs">0</div>
+                        <div class="stat-label-small">Greške</div>
+                    </div>
+                </div>
+                <div class="stat-card-small">
+                    <div class="stat-icon-small info">
+                        <i class="fas fa-clock"></i>
+                    </div>
+                    <div>
+                        <div class="stat-value-small" id="todayLogs">0</div>
+                        <div class="stat-label-small">Danas</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tabs -->
+            <div class="tabs-container">
+                <div class="tabs">
+                    <button class="tab-btn active" data-tab="all">
+                        <i class="fas fa-list"></i>
+                        Sve aktivnosti
+                    </button>
+                    <button class="tab-btn" data-tab="my">
+                        <i class="fas fa-user"></i>
+                        Moje aktivnosti
+                    </button>
+                </div>
+            </div>
+
+            <!-- Filters -->
+            <div class="filters-section">
+                <div class="filters-row">
+                    <div class="filter-group">
+                        <label>
+                            <i class="fas fa-search"></i>
+                            Pretraga
+                        </label>
+                        <input type="text" id="searchLogs" placeholder="Pretraži logove...">
+                    </div>
+                    <div class="filter-group">
+                    <label>
+                        <i class="fas fa-user"></i>
+                        Korisnik
+                    </label>
+                    <select id="filterUser">
+                        <option value="">Svi korisnici</option>
+                        <!-- Dynamically populated -->
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label>
+                        <i class="fas fa-tasks"></i>
+                        Tip akcije
+                    </label>
+                    <select id="filterAction">
+                        <option value="">Sve akcije</option>
+                        <option value="LOGIN">Prijava</option>
+                        <option value="LOGOUT">Odjava</option>
+                        <option value="CREATE_USER">Kreiranje korisnika</option>
+                        <option value="UPDATE_USER">Ažuriranje korisnika</option>
+                        <option value="DELETE_USER">Brisanje korisnika</option>
+                        <option value="CREATE_OPERATOR">Dodavanje operatera</option>
+                        <option value="UPDATE_OPERATOR">Uređivanje operatera</option>
+                        <option value="DELETE_OPERATOR">Brisanje operatera</option>
+                        <option value="SEARCH">Pretraga</option>
+                        <option value="EXPORT">Eksport</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label>
+                        <i class="fas fa-calendar"></i>
+                        Period
+                    </label>
+                    <select id="filterPeriod">
+                        <option value="all">Svi</option>
+                        <option value="today">Danas</option>
+                        <option value="week">Zadnjih 7 dana</option>
+                        <option value="month">Ovaj mjesec</option>
+                        <option value="custom">Prilagođeno</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label>
+                        <i class="fas fa-info-circle"></i>
+                        Status
+                    </label>
+                    <select id="filterStatus">
+                        <option value="">Svi</option>
+                        <option value="SUCCESS">Uspješno</option>
+                        <option value="FAILED">Greška</option>
+                    </select>
+                </div>
+                </div>
+            </div>
+
+            <!-- Logs Table -->
+            <div class="table-container">
+                <table class="logs-table">
+                    <thead>
+                        <tr>
+                            <th>Vrijeme</th>
+                            <th>Korisnik</th>
+                            <th>Akcija</th>
+                            <th>Cilj</th>
+                            <th>IP Adresa</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody id="logsTableBody">
+                        <!-- Dynamically populated -->
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Pagination -->
+            <div class="pagination" id="pagination">
+                <button class="page-btn" id="prevPage" disabled>
+                    <i class="fas fa-chevron-left"></i>
+                    Prethodna
+                </button>
+                <div class="page-numbers" id="pageNumbers"></div>
+                <button class="page-btn" id="nextPage">
+                    Sljedeća
+                    <i class="fas fa-chevron-right"></i>
+                </button>
+            </div>
+
+        </div> <!-- Close content-container -->
+    </main>
+
+    <script src="mock-data.js"></script>
+    <script src="auth.js"></script>
+    <script src="system-logs.js"></script>
+</body>
+</html>

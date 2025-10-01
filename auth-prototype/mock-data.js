@@ -86,6 +86,272 @@ const AGENCIJE = [
     { id: 'MUP_KANTON_10', naziv: 'MUP Kantona 10 – Livno (MUP K10)', tip: 'kantonalni', order: 15 }
 ];
 
+// ================================================
+// SYSTEM LOGS - Mock podaci
+// ================================================
+const SYSTEM_LOGS = [
+    {
+        id: 1,
+        timestamp: '2025-10-02 10:15:30',
+        user_id: 2,
+        user_name: 'Kemal Kemo',
+        user_role: 'ADMIN',
+        action: 'CREATE_USER',
+        action_display: 'Kreiranje korisnika',
+        target: 'Novi korisnik: test test',
+        details: { role: 'KORISNIK', agencija: 'SIPA' },
+        ip_address: '192.168.1.100',
+        status: 'SUCCESS'
+    },
+    {
+        id: 2,
+        timestamp: '2025-10-02 09:45:12',
+        user_id: 1,
+        user_name: 'Admir Adminović',
+        user_role: 'SUPERADMIN',
+        action: 'UPDATE_USER',
+        action_display: 'Ažuriranje korisnika',
+        target: 'Korisnik: Kemal Kemo',
+        details: { changed_fields: ['email', 'role'] },
+        ip_address: '192.168.1.50',
+        status: 'SUCCESS'
+    },
+    {
+        id: 3,
+        timestamp: '2025-10-02 09:30:00',
+        user_id: 1,
+        user_name: 'Admir Adminović',
+        user_role: 'SUPERADMIN',
+        action: 'LOGIN',
+        action_display: 'Prijava',
+        target: 'Uspješna prijava',
+        details: { browser: 'Chrome', os: 'Windows' },
+        ip_address: '192.168.1.50',
+        status: 'SUCCESS'
+    },
+    {
+        id: 4,
+        timestamp: '2025-10-01 16:20:45',
+        user_id: 3,
+        user_name: 'Amira Amirica',
+        user_role: 'KORISNIK',
+        action: 'SEARCH',
+        action_display: 'Pretraga',
+        target: 'Pretraga operatera: "BH Telecom"',
+        details: { results: 3, query: 'BH Telecom' },
+        ip_address: '192.168.1.105',
+        status: 'SUCCESS'
+    },
+    {
+        id: 5,
+        timestamp: '2025-10-01 15:55:30',
+        user_id: 2,
+        user_name: 'Kemal Kemo',
+        user_role: 'ADMIN',
+        action: 'CREATE_OPERATOR',
+        action_display: 'Dodavanje operatera',
+        target: 'Operator: Telekom Srpske',
+        details: { kategori: 'Mobilni', agencija: 'MUP_KS' },
+        ip_address: '192.168.1.100',
+        status: 'SUCCESS'
+    },
+    {
+        id: 6,
+        timestamp: '2025-10-01 15:30:18',
+        user_id: 4,
+        user_name: 'Nedžad Nedžo',
+        user_role: 'ADMIN',
+        action: 'UPDATE_OPERATOR',
+        action_display: 'Uređivanje operatera',
+        target: 'Operator: HT Eronet',
+        details: { changed: 'kontakt_info' },
+        ip_address: '192.168.1.110',
+        status: 'SUCCESS'
+    },
+    {
+        id: 7,
+        timestamp: '2025-10-01 14:45:00',
+        user_id: 1,
+        user_name: 'Admir Adminović',
+        user_role: 'SUPERADMIN',
+        action: 'DELETE_USER',
+        action_display: 'Brisanje korisnika',
+        target: 'Korisnik: Stari test',
+        details: { reason: 'Test korisnik' },
+        ip_address: '192.168.1.50',
+        status: 'SUCCESS'
+    },
+    {
+        id: 8,
+        timestamp: '2025-10-01 14:15:22',
+        user_id: 2,
+        user_name: 'Kemal Kemo',
+        user_role: 'ADMIN',
+        action: 'EXPORT',
+        action_display: 'Eksport podataka',
+        target: 'Eksport: Operateri MUP KS',
+        details: { format: 'Excel', records: 45 },
+        ip_address: '192.168.1.100',
+        status: 'SUCCESS'
+    },
+    {
+        id: 9,
+        timestamp: '2025-10-01 13:50:10',
+        user_id: 3,
+        user_name: 'Amira Amirica',
+        user_role: 'KORISNIK',
+        action: 'LOGIN',
+        action_display: 'Prijava',
+        target: 'Uspješna prijava',
+        details: { browser: 'Firefox', os: 'Windows' },
+        ip_address: '192.168.1.105',
+        status: 'SUCCESS'
+    },
+    {
+        id: 10,
+        timestamp: '2025-10-01 13:30:00',
+        user_id: 1,
+        user_name: 'Admir Adminović',
+        user_role: 'SUPERADMIN',
+        action: 'UPDATE_USER',
+        action_display: 'Ažuriranje korisnika',
+        target: 'Korisnik: Amira Amirica',
+        details: { changed_fields: ['status'] },
+        ip_address: '192.168.1.50',
+        status: 'SUCCESS'
+    },
+    {
+        id: 11,
+        timestamp: '2025-09-30 17:45:30',
+        user_id: 2,
+        user_name: 'Kemal Kemo',
+        user_role: 'ADMIN',
+        action: 'LOGOUT',
+        action_display: 'Odjava',
+        target: 'Odjava iz sistema',
+        details: { duration: '8h 15m' },
+        ip_address: '192.168.1.100',
+        status: 'SUCCESS'
+    },
+    {
+        id: 12,
+        timestamp: '2025-09-30 16:30:45',
+        user_id: 2,
+        user_name: 'Kemal Kemo',
+        user_role: 'ADMIN',
+        action: 'DELETE_OPERATOR',
+        action_display: 'Brisanje operatera',
+        target: 'Operator: Test Operator',
+        details: { reason: 'Neaktivan' },
+        ip_address: '192.168.1.100',
+        status: 'SUCCESS'
+    },
+    {
+        id: 13,
+        timestamp: '2025-09-30 15:20:00',
+        user_id: 4,
+        user_name: 'Nedžad Nedžo',
+        user_role: 'ADMIN',
+        action: 'CREATE_USER',
+        action_display: 'Kreiranje korisnika',
+        target: 'Novi korisnik: Novi Admin',
+        details: { role: 'ADMIN', agencija: 'MUP_UNSKO_SANSKI' },
+        ip_address: '192.168.1.110',
+        status: 'FAILED'
+    },
+    {
+        id: 14,
+        timestamp: '2025-09-30 14:55:30',
+        user_id: 3,
+        user_name: 'Amira Amirica',
+        user_role: 'KORISNIK',
+        action: 'SEARCH',
+        action_display: 'Pretraga',
+        target: 'Pretraga: operateri mobilni',
+        details: { results: 12, query: 'mobilni' },
+        ip_address: '192.168.1.105',
+        status: 'SUCCESS'
+    },
+    {
+        id: 15,
+        timestamp: '2025-09-30 14:30:15',
+        user_id: 2,
+        user_name: 'Kemal Kemo',
+        user_role: 'ADMIN',
+        action: 'UPDATE_OPERATOR',
+        action_display: 'Uređivanje operatera',
+        target: 'Operator: M:tel',
+        details: { changed: 'adresa' },
+        ip_address: '192.168.1.100',
+        status: 'SUCCESS'
+    },
+    {
+        id: 16,
+        timestamp: '2025-09-30 14:15:00',
+        user_id: 2,
+        user_name: 'Kemal Kemo',
+        user_role: 'ADMIN',
+        action: 'LOGIN',
+        action_display: 'Prijava',
+        target: 'Uspješna prijava',
+        details: { browser: 'Chrome', os: 'Windows' },
+        ip_address: '192.168.1.100',
+        status: 'SUCCESS'
+    },
+    {
+        id: 17,
+        timestamp: '2025-09-29 16:45:20',
+        user_id: 3,
+        user_name: 'Amira Amirica',
+        user_role: 'KORISNIK',
+        action: 'LOGOUT',
+        action_display: 'Odjava',
+        target: 'Odjava iz sistema',
+        details: { duration: '7h 25m' },
+        ip_address: '192.168.1.105',
+        status: 'SUCCESS'
+    },
+    {
+        id: 18,
+        timestamp: '2025-09-29 11:20:00',
+        user_id: 3,
+        user_name: 'Amira Amirica',
+        user_role: 'KORISNIK',
+        action: 'LOGIN',
+        action_display: 'Prijava',
+        target: 'Uspješna prijava',
+        details: { browser: 'Firefox', os: 'Windows' },
+        ip_address: '192.168.1.105',
+        status: 'SUCCESS'
+    },
+    {
+        id: 19,
+        timestamp: '2025-09-29 10:30:45',
+        user_id: 1,
+        user_name: 'Admir Adminović',
+        user_role: 'SUPERADMIN',
+        action: 'CREATE_OPERATOR',
+        action_display: 'Dodavanje operatera',
+        target: 'Operator: BH Telecom',
+        details: { kategorija: 'Fiksni', agencija: 'SIPA' },
+        ip_address: '192.168.1.50',
+        status: 'SUCCESS'
+    },
+    {
+        id: 20,
+        timestamp: '2025-09-29 09:15:30',
+        user_id: 4,
+        user_name: 'Nedžad Nedžo',
+        user_role: 'ADMIN',
+        action: 'LOGIN',
+        action_display: 'Prijava',
+        target: 'Uspješna prijava',
+        details: { browser: 'Edge', os: 'Windows' },
+        ip_address: '192.168.1.110',
+        status: 'SUCCESS'
+    }
+];
+
 // Helper funkcije
 function getMockUser(username, password) {
     return MOCK_USERS.find(user => 
