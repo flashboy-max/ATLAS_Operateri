@@ -898,8 +898,6 @@ class ATLASApp {
     handleSearch(searchTerm) {
         const term = searchTerm ? searchTerm.toLowerCase().trim() : '';
         
-        console.log('🔍 Search triggered:', term);
-        
         // Clear any existing highlights
         this.clearSearchHighlights();
         
