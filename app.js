@@ -321,9 +321,6 @@ class ATLASApp {
     }
     
     async loadData() {
-        console.log('=== Početak loadData() ===');
-        console.log('Storage key:', this.storageKey);
-        
         try {
             // PRIORITET 1: UVIJEK prvo pročitaj LocalStorage
             const savedData = localStorage.getItem(this.storageKey);
@@ -336,16 +333,9 @@ class ATLASApp {
                     localData = JSON.parse(savedData);
                     localVersion = localData.version || '1.0';
                     localOperatorCount = localData.operateri ? localData.operateri.length : 0;
-                    console.log('✅ LocalStorage pronađen:');
-                    console.log('   - Verzija:', localVersion);
-                    console.log('   - Broj operatera:', localOperatorCount);
-                    console.log('   - Datum ažuriranja:', localData.metadata ? localData.metadata.lastUpdated : 'Nepoznato');
                 } catch (parseError) {
-                    console.warn('⚠️ Greška pri parsiranju LocalStorage:', parseError);
-                    console.log('   - Nastavljam sa JSON fallback-om');
+                    console.warn('Greška pri parsiranju LocalStorage:', parseError);
                 }
-            } else {
-                console.log('❌ LocalStorage nije pronađen - koristi JSON');
             }
             
             // PRIORITET 2: Ako LocalStorage ima podatke, KORISTI GA ODMAH (bez JSON-a za brisanja)
@@ -360,21 +350,16 @@ class ATLASApp {
             }
             
             // PRIORITET 3: Učitaj iz API-ja umesto iz JSON-a
-            console.log('📥 Učitavam operatere iz individualnih fajlova preko API-ja...');
             
             try {
                 // Prvo dobij listu operatera
-                console.log('🔄 Pozivam API: /api/operators');
                 const operatorsResponse = await fetch('/api/operators?v=' + Date.now());
-                console.log('📡 API Response status:', operatorsResponse.status, operatorsResponse.statusText);
                 
                 if (!operatorsResponse.ok) {
                     throw new Error(`HTTP ${operatorsResponse.status}: Nije moguće učitati listu operatera`);
                 }
                 
                 const operatorsList = await operatorsResponse.json();
-                console.log('✅ Lista operatera učitana:', operatorsList.length, 'operatera');
-                console.log('� Operateri lista:', operatorsList);
                 
                 // Učitaj svakog operatera individualno
                 this.operators = [];
@@ -385,14 +370,12 @@ class ATLASApp {
                             const operatorData = await operatorResponse.json();
                             this.operators.push(operatorData);
                         } else {
-                            console.warn(`⚠️ Nije moguće učitati operatera ${op.naziv} (${op.id})`);
+                            console.warn(`Nije moguće učitati operatera ${op.naziv} (${op.id})`);
                         }
                     } catch (opError) {
-                        console.warn(`⚠️ Greška pri učitavanju operatera ${op.naziv}:`, opError.message);
+                        console.warn(`Greška pri učitavanju operatera ${op.naziv}:`, opError.message);
                     }
                 }
-                
-                console.log('✅ Individualni fajlovi učitani:', this.operators.length, 'operatera');
                 
                 // Sačuvaj u LocalStorage za offline fallback
                 const dataToSave = {
@@ -403,11 +386,9 @@ class ATLASApp {
                         source: "individual-files-api"
                     }
                 };
-                this.saveToLocalStorage(dataToSave);
-                console.log('💾 Sačuvano u LocalStorage za offline fallback');
                 
             } catch (apiError) {
-                console.warn('⚠️ API nije dostupan, pokušavam JSON fallback:', apiError.message);
+                console.warn('API nije dostupan, pokušavam JSON fallback:', apiError.message);
                 
                 // FALLBACK: Učitaj stari JSON fajl
                 const response = await fetch('./operateri.json?v=' + Date.now()); // cache busting
@@ -416,12 +397,6 @@ class ATLASApp {
                 }
                 
                 const jsonData = await response.json();
-                const jsonVersion = jsonData.version || "1.0";
-                const jsonOperatorCount = jsonData.operateri ? jsonData.operateri.length : 0;
-                
-                console.log('✅ JSON učitan uspješno:');
-                console.log('   - Verzija:', jsonVersion);
-                console.log('   - Broj operatera:', jsonOperatorCount);
                 
                 this.operators = jsonData.operateri || [];
                 this.saveToLocalStorage(jsonData); // Sačuvaj u LocalStorage za budućnost
@@ -435,9 +410,9 @@ class ATLASApp {
             
             // Provjeri da li je CORS greška
             if (error.message.includes('Failed to fetch') || error.toString().includes('CORS')) {
-                console.log('🔒 CORS greška detektovana - potreban je HTTP server');
-                console.log('💡 Pokrenite: python -m http.server 8000');
-                console.log('💡 Ili otvorite: http://localhost:8000');
+                console.log('CORS greška detektovana - potreban je HTTP server');
+                console.log('Pokrenite: python -m http.server 8000');
+                console.log('Ili otvorite: http://localhost:8000');
                 
                 // Prikaži korisniku poruku o CORS problemu
                 this.showCORSWarning();
@@ -449,23 +424,16 @@ class ATLASApp {
                 try {
                     const parsedData = JSON.parse(savedData);
                     this.operators = parsedData.operateri || [];
-                    console.log('🔄 FALLBACK: Učitani podaci IZ LOCALSTORAGE zbog greške JSON-a:', this.operators.length, 'operatera');
                     return;
                 } catch (parseError) {
-                    console.warn('⚠️ Greška pri parsiranju LocalStorage u fallback-u:', parseError);
+                    console.warn('Greška pri parsiranju LocalStorage u fallback-u:', parseError);
                 }
             }
             
             // FALLBACK 2: Demo podaci
-            console.log('🚨 KRAJNJ FALLBACK: Koriste se demo podaci');
             this.operators = this.getDemoData();
             this.saveToLocalStorage();
         }
-        
-        console.log('=== loadData() završen ===');
-        console.log('Ukupno operatera učitano:', this.operators.length);
-        console.log('Izvor podataka:', this.operators.length > 0 ? 'LocalStorage ili JSON' : 'Demo');
-        console.log('====================');
     }
     
     // Forsiraj reload iz JSON fajla
@@ -487,7 +455,7 @@ class ATLASApp {
                 }
                 
                 const operatorsList = await operatorsResponse.json();
-                console.log('✅ Lista operatera učitana za reload:', operatorsList.length, 'operatera');
+                console.log('Lista operatera učitana za reload:', operatorsList.length, 'operatera');
                 
                 // Učitaj svakog operatera individualno
                 this.operators = [];
@@ -505,7 +473,7 @@ class ATLASApp {
                     }
                 }
                 
-                console.log('✅ Reload - individualni fajlovi učitani:', this.operators.length, 'operatera');
+                console.log('Reload - individualni fajlovi učitani:', this.operators.length, 'operatera');
                 
                 // Sačuvaj u LocalStorage
                 const dataToSave = {
@@ -522,11 +490,11 @@ class ATLASApp {
                 this.renderOperators();
                 this.updateStatistics();
                 
-                console.log(`✅ Reload uspješan! Učitano ${this.operators.length} operatera iz API-ja`);
+                console.log(`Reload uspješan! Učitano ${this.operators.length} operatera iz API-ja`);
                 alert(`Reload uspješan! Učitano ${this.operators.length} operatera iz individualnih fajlova.`);
                 
             } catch (apiError) {
-                console.warn('⚠️ API nije dostupan za reload, pokušavam JSON fallback:', apiError.message);
+                console.warn('API nije dostupan za reload, pokušavam JSON fallback:', apiError.message);
                 
                 // Fallback na JSON
                 const response = await fetch('./operateri.json?v=' + Date.now());
@@ -541,7 +509,7 @@ class ATLASApp {
                     this.saveToLocalStorage(data);
                     this.renderOperators();
                     this.updateStatistics();
-                    console.log(`✅ Reload uspješan iz JSON! Učitano ${data.operateri.length} operatera`);
+                    console.log(`Reload uspješan iz JSON! Učitano ${data.operateri.length} operatera`);
                     alert(`Reload uspješan iz JSON! Učitano ${data.operateri.length} operatera.`);
                 } else {
                     throw new Error('JSON nije valjan format operatera');
@@ -662,13 +630,13 @@ class ATLASApp {
             // Očisti URL
             URL.revokeObjectURL(url);
             
-            console.log('✅ Export završen:', {
+            console.log('Export završen:', {
                 fileName: a.download,
                 operators: exportData.operateri.length,
                 timestamp: exportData.metadata.exportedAt
             });
             
-            this.showNotification(`📥 Izvoženo ${exportData.operateri.length} operatera u fajl: ${a.download}`, 'success', 5000);
+            this.showNotification(`Izvoženo ${exportData.operateri.length} operatera u fajl: ${a.download}`, 'success', 5000);
             
         } catch (error) {
             console.error('❌ Greška pri exportu:', error);
@@ -707,13 +675,13 @@ class ATLASApp {
                     this.renderOperators();
                     this.updateCounts();
                     
-                    console.log('✅ Import završen:', {
+                    console.log('Import završen:', {
                         fileName: file.name,
                         operators: importedData.operateri.length,
                         version: importedData.version
                     });
                     
-                    this.showNotification(`📤 Učitano ${importedData.operateri.length} operatera iz fajla: ${file.name}`, 'success', 5000);
+                    this.showNotification(`Učitano ${importedData.operateri.length} operatera iz fajla: ${file.name}`, 'success', 5000);
                     
                 } catch (error) {
                     console.error('❌ Greška pri importu:', error);
@@ -982,42 +950,26 @@ class ATLASApp {
     }
     
     applyFilters() {
-        console.log('🔍 === APPLY FILTERS DEBUG START ===');
         let filtered = this.filteredOperators.length > 0 ? [...this.filteredOperators] : [...this.operators];
-        console.log('📊 Početni broj operatera za filtriranje:', filtered.length);
         
         // Status filter
         const statusFilter = this.elements.statusFilter.value;
-        console.log('📋 Status filter vrednost:', statusFilter);
         if (statusFilter) {
-            const beforeCount = filtered.length;
             filtered = filtered.filter(op => op.status === statusFilter);
-            console.log(`   Status filter: ${beforeCount} → ${filtered.length} operatera`);
         }
         
         // Category filter
         const categoryFilter = this.elements.categoryFilter.value;
-        console.log('📋 Category filter vrednost:', categoryFilter);
         if (categoryFilter) {
-            const beforeCount = filtered.length;
             filtered = filtered.filter(op => this.getCategoryClass(op) === categoryFilter);
-            console.log(`   Category filter: ${beforeCount} → ${filtered.length} operatera`);
         }
         
         // Type filter
         const typeFilter = this.elements.typeFilter.value;
-        console.log('📋 Type filter vrednost:', typeFilter);
         if (typeFilter) {
-            const beforeCount = filtered.length;
-            
-            // Koristimo direktno tip operatera
             filtered = filtered.filter(op => op.tip.includes(typeFilter));
-            console.log(`   Type filter: ${beforeCount} → ${filtered.length} operatera`);
-            console.log('   Filtrirani operateri:', filtered.map(op => `${op.naziv} (${op.tip})`));
         }
         
-        console.log('📊 Finalni broj operatera:', filtered.length);
-        console.log('🔍 === APPLY FILTERS DEBUG END ===');
         this.renderOperators(filtered);
     }
     
@@ -2265,13 +2217,13 @@ class ATLASApp {
             // Očisti URL
             URL.revokeObjectURL(url);
             
-            console.log('✅ Export završen:', {
+            console.log('Export završen:', {
                 fileName: link.download,
                 operators: exportData.operateri.length,
                 timestamp: exportData.metadata.exportedAt
             });
             
-            this.showNotification(`📥 Izvoženo ${exportData.operateri.length} operatera u fajl: ${link.download}`, 'success', 5000);
+            this.showNotification(`Izvoženo ${exportData.operateri.length} operatera u fajl: ${link.download}`, 'success', 5000);
             
             // Sakrij sync status bar jer su podaci izvezeni
             this.hideSyncStatus();
@@ -2905,31 +2857,19 @@ class ATLASApp {
         serviceDiv.className = 'service-form';
 
         // Standardni katalog usluga sa debug i fallback
-        console.log('🔍 === ADD SERVICE FIELD DEBUG ===');
-        console.log('Index:', index);
-        console.log('Existing children:', container.children.length);
-        console.log('Edit mode:', isEditMode);
-        console.log('Existing services count:', existingServices.length);
-
         let standardServices = [];
         try {
             const catalogData = this.getStandardServicesAndTechnologies();
             standardServices = catalogData.standardServices || [];
 
-            console.log('✅ Services catalog data loaded:', {
-                total: standardServices.length,
-                sample: standardServices.slice(0, 2),
-                domains: [...new Set(standardServices.map(s => s.domain))]
-            });
-
             // Fallback ako je katalog prazan
             if (standardServices.length === 0) {
-                console.warn('⚠️ Services catalog prazan, koristim fallback');
+                console.warn('Services catalog prazan, koristim fallback');
                 standardServices = this.getFallbackServices();
             }
 
         } catch (error) {
-            console.error('❌ Greška pri učitavanju usluga:', error);
+            console.error('Greška pri učitavanju usluga:', error);
             standardServices = this.getFallbackServices();
         }
 
@@ -2942,8 +2882,6 @@ class ATLASApp {
                        existing.naziv === service.naziv_en;
             })
         );
-
-        console.log('📊 Available services after filtering:', availableServices.length);
         
         // Kategorije za organizaciju - mapiraj domain na kategoriju
         const categoriesMap = {
@@ -3120,7 +3058,6 @@ class ATLASApp {
                 button.addEventListener('click', (e) => {
                     e.preventDefault();
                     const serviceIndex = parseInt(button.getAttribute('data-service-index'));
-                    console.log('🗑️ Removing existing service at index:', serviceIndex);
 
                     // Remove from existing services array
                     existingServices.splice(serviceIndex, 1);
@@ -3142,9 +3079,6 @@ class ATLASApp {
                             const opis = item.getAttribute('data-opis');
                             const domain = item.getAttribute('data-domain');
                             const status = item.getAttribute('data-status');
-
-                            console.log('➕ Adding service:', naziv);
-
                             // Add to existing services
                             existingServices.push({
                                 kategorija: domain,
@@ -3310,33 +3244,19 @@ class ATLASApp {
         const technologyDiv = document.createElement('div');
         technologyDiv.className = 'technology-form';
 
-        // Standardni katalog tehnologija sa debug i fallback
-        console.log('🔍 === ADD TECHNOLOGY FIELD DEBUG ===');
-        console.log('Index:', index);
-        console.log('Existing children:', container.children.length);
-        console.log('Edit mode:', isEditMode);
-        console.log('Existing technologies count:', existingTechnologies.length);
-
         let standardTechnologies = [];
         try {
             const catalogData = this.getStandardServicesAndTechnologies();
             standardTechnologies = catalogData.standardTechnologies || [];
 
-            console.log('✅ Technologies catalog data loaded:', {
-                total: standardTechnologies.length,
-                sample: standardTechnologies.slice(0, 2),
-                domains: [...new Set(standardTechnologies.map(t => t.domain))],
-                types: [...new Set(standardTechnologies.map(t => t.tip))]
-            });
-
             // Fallback ako je katalog prazan
             if (standardTechnologies.length === 0) {
-                console.warn('⚠️ Standard catalog prazan, koristim fallback');
+                console.warn('Standard catalog prazan, koristim fallback');
                 standardTechnologies = this.getFallbackTechnologies();
             }
 
         } catch (error) {
-            console.error('❌ Greška pri učitavanju tehnologija:', error);
+            console.error('Greška pri učitavanju tehnologija:', error);
             standardTechnologies = this.getFallbackTechnologies();
         }
 
@@ -3349,8 +3269,6 @@ class ATLASApp {
                        existing.naziv === tech.naziv_en;
             })
         );
-
-        console.log('📊 Available technologies after filtering:', availableTechnologies.length);
         
         // Kategorije za organizaciju - mapiraj domain na kategoriju
         const techTypesMap = {
@@ -3547,7 +3465,6 @@ class ATLASApp {
                 button.addEventListener('click', (e) => {
                     e.preventDefault();
                     const technologyIndex = parseInt(button.getAttribute('data-technology-index'));
-                    console.log('🗑️ Removing existing technology at index:', technologyIndex);
 
                     // Remove from existing technologies array
                     existingTechnologies.splice(technologyIndex, 1);
@@ -3570,8 +3487,6 @@ class ATLASApp {
                             const domain = item.getAttribute('data-domain');
                             const tip = item.getAttribute('data-tip');
                             const kapacitet = item.getAttribute('data-kapacitet');
-
-                            console.log('➕ Adding technology:', naziv);
 
                             // Add to existing technologies
                             existingTechnologies.push({
@@ -4141,10 +4056,10 @@ class ATLASApp {
             }
 
             const result = await response.json();
-            console.log('✅ Operator saved to API:', result.message);
+            console.log('Operator saved to API:', result.message);
             return true;
         } catch (error) {
-            console.error('❌ Error saving operator to API:', error);
+            console.error('Error saving operator to API:', error);
             // Don't show error to user, just log it - localStorage is still updated
             return false;
         }
@@ -4164,10 +4079,10 @@ class ATLASApp {
             }
 
             const result = await response.json();
-            console.log('✅ Operator deleted from API:', result.message);
+            console.log('Operator deleted from API:', result.message);
             return true;
         } catch (error) {
-            console.error('❌ Error deleting operator from API:', error);
+            console.error('Error deleting operator from API:', error);
             // Don't show error to user, just log it - localStorage is still updated
             return false;
         }
