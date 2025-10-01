@@ -6,27 +6,9 @@
 import { standardCatalog, catalogUtils } from './generated/standard_catalog.js';
 
 // Catalog loaded successfully
-console.log('✅ Standard catalog loaded:', standardCatalog?.services?.length || 0, 'services,', standardCatalog?.technologies?.length || 0, 'technologies');
+console.log('Standard catalog loaded:', standardCatalog?.services?.length || 0, 'services,', standardCatalog?.technologies?.length || 0, 'technologies');
 
-// Add global test function for debugging
-window.testCatalog = function() {
-    console.log('🧪 === CATALOG TEST FUNCTION ===');
-    console.log('Standard catalog:', standardCatalog);
-    console.log('Services count:', standardCatalog?.services?.length || 0);
-    console.log('Technologies count:', standardCatalog?.technologies?.length || 0);
-
-    const app = window.app;
-    if (app) {
-        const catalogData = app.getStandardServicesAndTechnologies();
-        console.log('App catalog data:', catalogData);
-        console.log('Services in app:', catalogData.standardServices?.length || 0);
-        console.log('Technologies in app:', catalogData.standardTechnologies?.length || 0);
-    } else {
-        console.error('❌ App not found in window');
-    }
-
-    console.log('🧪 === END CATALOG TEST ===');
-};
+// Global test function removed for production
 
 // Mapping funkcije za čitljive nazive
 function getReadableTechName(techKey) {
@@ -329,24 +311,7 @@ class ATLASApp {
                 this.cleanupDuplicateTooltips();
             }, 200);
             
-            // Debug: prikaži kategorizaciju svih operatera na početku
-            console.log('🏷️ === POČETNA KATEGORIZACIJA OPERATERA ===');
-            const categoryCounts = { dominantni: 0, mobilni: 0, b2b: 0, isp: 0 };
-            this.operators.forEach(op => {
-                const cat = this.getCategoryClass(op);
-                categoryCounts[cat]++;
-                console.log(`${op.naziv} (${op.komercijalni_naziv || 'N/A'}) → ${cat}`);
-            });
-            console.log('📊 Ukupno po kategorijama:', categoryCounts);
-            console.log('🏷️ === KRAJ KATEGORIZACIJE ===');
-            
             console.log('ATLAS aplikacija uspešno pokrenuta');
-            
-            // Standardizuj tipove operatera POSLE inicijalizacije
-            setTimeout(() => {
-                console.log('🕐 Pokretam standardizaciju sa 1s kašnjenjem...');
-                this.standardizeOperatorTypes();
-            }, 1000);
             
         } catch (error) {
             console.error('Greška pri pokretanju aplikacije:', error);
@@ -787,57 +752,15 @@ class ATLASApp {
         });
         
         // Quick Category Filters
-        console.log('🔧 === SETUP FILTER EVENT LISTENERS ===');
         const filterButtons = document.querySelectorAll('.filter-btn');
-        console.log('📊 Pronađeno filter dugmića:', filterButtons.length);
         
         filterButtons.forEach((btn, index) => {
             const category = btn.dataset.category;
-            console.log(`   ${index + 1}. "${btn.textContent.trim()}" → data-category="${category}"`);
             
             btn.addEventListener('click', (e) => {
-                console.log('🖱️ KLIK na filter dugme:', e.target.dataset.category);
                 this.handleQuickFilter(e.target.dataset.category);
             });
         });
-        console.log('🔧 === FILTER SETUP ZAVRŠEN ===');
-        
-        // Test funkcija za debug u konzoli
-        window.debugFilters = () => {
-            console.log('🔍 === FILTER SYSTEM DEBUG TEST ===');
-            console.log('📊 Ukupno operatera:', this.operators.length);
-            
-            // Test filter dugmići
-            const filterButtons = document.querySelectorAll('.filter-btn');
-            console.log('🔘 Filter dugmići:', filterButtons.length);
-            filterButtons.forEach(btn => {
-                console.log(`   - "${btn.textContent.trim()}" (${btn.dataset.category})`);
-            });
-            
-            // Test kategorizacija svih operatera
-            console.log('🏷️ Kategorizacija operatera:');
-            const categoryCounts = { dominantni: 0, mobilni: 0, b2b: 0, isp: 0 };
-            this.operators.forEach(op => {
-                const cat = this.getCategoryClass(op);
-                categoryCounts[cat]++;
-                console.log(`   ${op.naziv} → ${cat}`);
-            });
-            
-            console.log('📊 Broj po kategorijama:', categoryCounts);
-            
-            // Test quick filter za svaku kategoriju
-            ['dominantni', 'mobilni', 'b2b', 'isp'].forEach(category => {
-                const filtered = this.operators.filter(op => this.getCategoryClass(op) === category);
-                console.log(`🔍 Filter "${category}": ${filtered.length} operatera`);
-            });
-            
-            console.log('💡 Za testiranje pozovi: window.testFilter("dominantni")');
-        };
-        
-        window.testFilter = (category) => {
-            console.log(`🧪 Test filter: ${category}`);
-            this.handleQuickFilter(category);
-        };
         
         // Modal Controls
         this.elements.addOperatorBtn.addEventListener('click', () => {
@@ -982,8 +905,6 @@ class ATLASApp {
     handleSearch(searchTerm) {
         const term = searchTerm.toLowerCase().trim();
         
-        console.log('🔍 Search term:', term);
-        
         // Clear any existing highlights
         this.clearSearchHighlights();
         
@@ -1001,7 +922,7 @@ class ATLASApp {
                 const telefon = operator.kontakt?.telefon || '';
                 const web = operator.kontakt?.web || '';
                 
-                const matches = (
+                return (
                     operator.naziv.toLowerCase().includes(term) ||
                     (operator.komercijalni_naziv && operator.komercijalni_naziv.toLowerCase().includes(term)) ||
                     operator.tip.toLowerCase().includes(term) ||
@@ -1011,15 +932,7 @@ class ATLASApp {
                     telefon.toLowerCase().includes(term) ||
                     web.toLowerCase().includes(term)
                 );
-                
-                if (matches) {
-                    console.log('🎯 Match found:', operator.naziv);
-                }
-                
-                return matches;
             });
-            
-            console.log('🔍 Filtered results:', this.filteredOperators.length, 'od', this.operators.length);
             
             // Highlight search term in results
             this.highlightSearchTerm = term;
@@ -1239,48 +1152,27 @@ class ATLASApp {
     }
     
     handleQuickFilter(category) {
-        console.log('🔍 === QUICK FILTER DEBUG START ===');
-        console.log('📥 Primljena kategorija:', category);
-        console.log('📊 Ukupno operatera u aplikaciji:', this.operators.length);
-        console.log('📋 Trenutno filtrirani operateri (search):', this.filteredOperators.length);
-        
         // Reset search filters when using quick filter
         this.filteredOperators = [...this.operators];
         this.elements.searchInput.value = '';
         this.highlightSearchTerm = '';
-        console.log('🔄 Search resetovan - sada koristimo sve operatere');
         
         // Update active filter button
         document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
         const filterBtn = document.querySelector(`[data-category="${category}"]`);
         if (filterBtn) {
             filterBtn.classList.add('active');
-            console.log('✅ Filter dugme aktivirano za kategoriju:', category);
         } else {
-            console.warn('❌ Filter dugme za kategoriju "' + category + '" nije pronađeno');
             return;
         }
         
         // Filter operators
         if (category === 'all') {
             this.renderOperators();
-            console.log('📋 Prikazani svi operateri (', this.operators.length, ')');
         } else {
-            console.log('🔎 Filtriranje operatera po kategoriji "' + category + '"...');
-            
-            // Debug: prikaz kategorizacije za sve operatere
-            this.operators.forEach(op => {
-                const opCategory = this.getCategoryClass(op);
-                console.log(`   - ${op.naziv}: kategorija="${opCategory}", tip="${op.tip}"`);
-            });
-            
             const filtered = this.operators.filter(op => this.getCategoryClass(op) === category);
-            console.log('📊 Filtrirano operatera:', filtered.length);
-            console.log('📋 Filtrirani operateri:', filtered.map(op => op.naziv));
-            
             this.renderOperators(filtered);
         }
-        console.log('🔍 === QUICK FILTER DEBUG END ===');
     }
     
     openModal(mode, operatorId = null) {
@@ -4229,295 +4121,6 @@ class ATLASApp {
         }
         
         return technologies;
-    }
-
-    // Funkcija za standardizaciju postojećih operatera
-    standardizeOperatorTypes() {
-        console.log('🔧 === STANDARDIZACIJA TIPOVA OPERATERA ===');
-        console.log('📊 Ukupno operatera:', this.operators.length);
-        let changedCount = 0;
-        
-        this.operators.forEach((operator, index) => {
-            const oldTip = operator.tip;
-            const category = this.getCategoryClass(operator);
-            let newTip = oldTip;
-            
-            console.log(`🔍 Analiziram ${operator.naziv}: trenutni tip="${oldTip}", kategorija="${category}"`);
-            
-            // Standardizuj tip na osnovu kategorije i trenutnog tipa
-            switch(category) {
-                case 'dominantni':
-                    newTip = 'Dominantni operater';
-                    break;
-                    
-                case 'mobilni':
-                    if (oldTip && oldTip.includes('MVNO')) {
-                        newTip = oldTip.includes('ISP') ? 'ISP + MVNO' : 'MVNO';
-                    } else {
-                        newTip = 'MVNO';
-                    }
-                    break;
-                    
-                case 'b2b':
-                    // Za LANACO koji ima specifičan tip, zadrži kompletan naziv
-                    if (oldTip && oldTip.includes('IT provajder') && oldTip.includes('Sistemska integracija')) {
-                        newTip = 'IT provajder, Internet servis provajder (ISP), Sistemska integracija';
-                    } else {
-                        // Za sve ostale b2b operatere koristi kratki naziv
-                        newTip = 'Enterprise/B2B';
-                    }
-                    break;
-                    
-                case 'isp':
-                    if (oldTip && oldTip.includes('Kablovski') && oldTip.includes('United Group')) {
-                        newTip = 'Kablovski operater (United Group)';
-                    } else if (oldTip && oldTip.includes('Kablovski')) {
-                        newTip = 'Kablovski operater';
-                    } else if (oldTip && oldTip.includes('IPTV') && oldTip.includes('MMDS')) {
-                        newTip = 'ISP + MMDS + IPTV';
-                    } else if (oldTip && oldTip.includes('IPTV')) {
-                        newTip = 'ISP + IPTV';
-                    } else if (oldTip && oldTip.includes('Regionalni')) {
-                        newTip = oldTip.includes('Novotel') ? 'Regionalni ISP (Novotel partner)' : 'Regionalni ISP';
-                    } else if (oldTip && (oldTip.includes('Wi-Fi') || oldTip.includes('Internet servis provajder'))) {
-                        newTip = 'ISP';
-                    } else if (!oldTip || oldTip.trim() === '' || oldTip === 'ISP') {
-                        newTip = 'ISP';
-                    } else {
-                        newTip = 'ISP';
-                    }
-                    break;
-            }
-            
-            if (oldTip !== newTip) {
-                console.log(`📝 ${operator.naziv}: "${oldTip}" → "${newTip}"`);
-                this.operators[index].tip = newTip;
-                changedCount++;
-                
-                // Sačuvaj u API
-                this.saveOperatorToAPI(this.operators[index]);
-            }
-        });
-        
-        if (changedCount > 0) {
-            console.log(`✅ Standardizovano ${changedCount} operatera`);
-            this.saveToLocalStorage();
-            this.renderOperators();
-            this.updateStatistics();
-            this.showNotification(`Standardizovano ${changedCount} tipova operatera`, 'success');
-        } else {
-            console.log('✅ Svi operateri već imaju standardizovane tipove');
-        }
-        
-        console.log('🔧 === STANDARDIZACIJA ZAVRŠENA ===');
-    }
-
-    // Funkcija za validaciju konzistentnosti svih polja
-    validateDataConsistency() {
-        console.log('🔍 === VALIDACIJA KONZISTENTNOSTI PODATAKA ===');
-        
-        const issues = {
-            tehnicki_kontakti: [],
-            detaljne_usluge: [],
-            detaljne_tehnologije: [],
-            zakonske_obaveze: [],
-            kontakt_struktura: []
-        };
-        
-        this.operators.forEach((operator, index) => {
-            // Proveri tehnički kontakti strukturu
-            if (operator.tehnicki_kontakti) {
-                if (!Array.isArray(operator.tehnicki_kontakti)) {
-                    issues.tehnicki_kontakti.push(`${operator.naziv}: tehnicki_kontakti nije array`);
-                } else {
-                    operator.tehnicki_kontakti.forEach((kontakt, i) => {
-                        if (!kontakt.ime || !kontakt.email || !kontakt.tip_kontakta) {
-                            issues.tehnicki_kontakti.push(`${operator.naziv}: nedostaju obavezna polja u kontaktu ${i + 1}`);
-                        }
-                    });
-                }
-            }
-            
-            // Proveri detaljne usluge strukturu
-            if (operator.detaljne_usluge) {
-                const expectedCategories = ['mobilne', 'fiksne', 'internet', 'tv', 'cloud_poslovne', 'dodatne'];
-                expectedCategories.forEach(cat => {
-                    if (!operator.detaljne_usluge[cat] || !Array.isArray(operator.detaljne_usluge[cat])) {
-                        issues.detaljne_usluge.push(`${operator.naziv}: nedostaje kategorija "${cat}" ili nije array`);
-                    }
-                });
-            } else {
-                issues.detaljne_usluge.push(`${operator.naziv}: nema detaljne_usluge`);
-            }
-            
-            // Proveri detaljne tehnologije strukturu
-            if (operator.detaljne_tehnologije) {
-                const expectedTechCategories = ['mobilne', 'fiksne', 'mrezne'];
-                expectedTechCategories.forEach(cat => {
-                    if (!operator.detaljne_tehnologije[cat] || !Array.isArray(operator.detaljne_tehnologije[cat])) {
-                        issues.detaljne_tehnologije.push(`${operator.naziv}: nedostaje tech kategorija "${cat}" ili nije array`);
-                    }
-                });
-            } else {
-                issues.detaljne_tehnologije.push(`${operator.naziv}: nema detaljne_tehnologije`);
-            }
-            
-            // Proveri zakonske obaveze
-            if (operator.zakonske_obaveze) {
-                if (!operator.zakonske_obaveze.zakonito_presretanje) {
-                    issues.zakonske_obaveze.push(`${operator.naziv}: nedostaje zakonito_presretanje`);
-                }
-            } else {
-                issues.zakonske_obaveze.push(`${operator.naziv}: nema zakonske_obaveze`);
-            }
-            
-            // Proveri kontakt strukturu
-            if (operator.kontakt) {
-                if (!operator.kontakt.adresa || !operator.kontakt.email) {
-                    issues.kontakt_struktura.push(`${operator.naziv}: nedostaju osnovni kontakt podaci`);
-                }
-            } else {
-                issues.kontakt_struktura.push(`${operator.naziv}: nema kontakt strukturu`);
-            }
-        });
-        
-        // Prikaži rezultate
-        Object.keys(issues).forEach(category => {
-            if (issues[category].length > 0) {
-                console.log(`⚠️ ${category.toUpperCase()} problemi:`, issues[category]);
-            } else {
-                console.log(`✅ ${category}: sve u redu`);
-            }
-        });
-        
-        const totalIssues = Object.values(issues).reduce((sum, arr) => sum + arr.length, 0);
-        console.log(`📊 Ukupno problema: ${totalIssues}`);
-        console.log('🔍 === VALIDACIJA ZAVRŠENA ===');
-        
-        return issues;
-    }
-
-    // Funkcija za standardizaciju svih podataka
-    standardizeAllData() {
-        console.log('🔧 === STANDARDIZACIJA SVIH PODATAKA ===');
-        
-        // Prvo standardizuj tipove operatera
-        this.standardizeOperatorTypes();
-        
-        // Zatim validiraj konzistentnost
-        const issues = this.validateDataConsistency();
-        
-        // Automatski popravi manjkajuće kategorije usluga
-        this.fixMissingServiceCategories();
-        
-        // Popravi osnovne kontakt podatke
-        this.fixBasicContactData();
-        
-        console.log('🔧 === STANDARDIZACIJA SVIH PODATAKA ZAVRŠENA ===');
-        return issues;
-    }
-
-    // Funkcija za popunjavanje manjkajućih kategorija usluga
-    fixMissingServiceCategories() {
-        console.log('🔧 === POPUNJAVANJE MANJKAJUĆIH KATEGORIJA USLUGA ===');
-        let fixedCount = 0;
-        
-        this.operators.forEach((operator, index) => {
-            let wasModified = false;
-            
-            if (operator.detaljne_usluge) {
-                const expectedCategories = ['mobilne', 'fiksne', 'internet', 'tv', 'cloud_poslovne', 'dodatne'];
-                
-                expectedCategories.forEach(category => {
-                    if (!operator.detaljne_usluge[category]) {
-                        operator.detaljne_usluge[category] = [];
-                        console.log(`➕ ${operator.naziv}: dodana kategorija "${category}"`);
-                        wasModified = true;
-                    }
-                });
-                
-                if (wasModified) {
-                    fixedCount++;
-                    this.operators[index] = operator;
-                    this.saveOperatorToAPI(operator);
-                }
-            }
-        });
-        
-        if (fixedCount > 0) {
-            console.log(`✅ Popunjeno ${fixedCount} operatera sa manjkajućim kategorijama usluga`);
-            this.saveToLocalStorage();
-            this.renderOperators();
-            this.showNotification(`Popunjeno ${fixedCount} operatera sa manjkajućim kategorijama usluga`, 'success');
-        } else {
-            console.log('✅ Sve kategorije usluga su već popunjene');
-        }
-        
-        console.log('🔧 === POPUNJAVANJE KATEGORIJA ZAVRŠENO ===');
-    }
-
-    // Funkcija za popunjavanje osnovnih kontakt podataka
-    fixBasicContactData() {
-        console.log('🔧 === POPUNJAVANJE OSNOVNIH KONTAKT PODATAKA ===');
-        let fixedCount = 0;
-        
-        this.operators.forEach((operator, index) => {
-            let wasModified = false;
-            
-            if (!operator.kontakt) {
-                operator.kontakt = {
-                    adresa: '',
-                    telefon: '',
-                    email: '',
-                    web: '',
-                    customer_service: {},
-                    drustvene_mreze: {}
-                };
-                console.log(`➕ ${operator.naziv}: dodana kontakt struktura`);
-                wasModified = true;
-            } else {
-                // Proveri da li su osnovni podaci popunjeni
-                if (!operator.kontakt.adresa) {
-                    operator.kontakt.adresa = '';
-                    wasModified = true;
-                }
-                if (!operator.kontakt.email) {
-                    operator.kontakt.email = '';
-                    wasModified = true;
-                }
-            }
-            
-            // Dodaj zakonske obaveze ako ne postoje
-            if (!operator.zakonske_obaveze) {
-                operator.zakonske_obaveze = {
-                    zakonito_presretanje: 'N/A',
-                    implementacija: 'N/A',
-                    napomene: ''
-                };
-                console.log(`➕ ${operator.naziv}: dodane zakonske obaveze`);
-                wasModified = true;
-            } else if (!operator.zakonske_obaveze.zakonito_presretanje) {
-                operator.zakonske_obaveze.zakonito_presretanje = 'N/A';
-                wasModified = true;
-            }
-            
-            if (wasModified) {
-                fixedCount++;
-                this.operators[index] = operator;
-                this.saveOperatorToAPI(operator);
-            }
-        });
-        
-        if (fixedCount > 0) {
-            console.log(`✅ Popunjeno ${fixedCount} operatera sa osnovnim podacima`);
-            this.saveToLocalStorage();
-            this.renderOperators();
-            this.showNotification(`Popunjeno ${fixedCount} operatera sa osnovnim podacima`, 'success');
-        } else {
-            console.log('✅ Svi osnovni podaci su već popunjeni');
-        }
-        
-        console.log('🔧 === POPUNJAVANJE OSNOVNIH PODATAKA ZAVRŠENO ===');
     }
 
     async saveOperatorToAPI(operator) {

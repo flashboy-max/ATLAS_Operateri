@@ -35,18 +35,6 @@
                     <button class="btn btn-secondary" id="exportDataBtn">
                         <i class="fas fa-download"></i> Izvoz
                     </button>
-                    <button class="btn btn-warning" id="standardizeBtn" onclick="console.log('Pozivam standardizaciju...'); window.app.standardizeOperatorTypes()">
-                        <i class="fas fa-sync-alt"></i> Standardizuj Tipove
-                    </button>
-                    <button class="btn btn-success" id="fixDataBtn" onclick="console.log('Pozivam kompletnu standardizaciju...'); window.app.standardizeAllData()">
-                        <i class="fas fa-magic"></i> Popravi Sve Podatke
-                    </button>
-                    <button class="btn btn-info" id="validateBtn" onclick="console.log('Pozivam validaciju...'); window.app.validateDataConsistency()">
-                        <i class="fas fa-check-double"></i> Validiraj Podatke
-                    </button>
-                    <button class="btn btn-info" id="testBtn" onclick="console.log('Test op1:', app.getCategoryClass(app.operators[0]), app.operators[0].tip); console.log('Test op2:', app.getCategoryClass(app.operators[1]), app.operators[1].tip)">
-                        <i class="fas fa-bug"></i> Test
-                    </button>
                 </div>
             </div>
         </header>
