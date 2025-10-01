@@ -1,0 +1,264 @@
+{
+  "id": 7,
+  "naziv": "ONE.Vip d.o.o.",
+  "komercijalni_naziv": "ONE",
+  "tip": "MVNO",
+  "status": "aktivan",
+  "opis": "Jedan od vodećih mobilnih operatera u BiH sa fokusem na mobilne usluge. Dio A1 grupe (bivši Vip mobile) sa regionalnim pokrivanjem u Central i Eastern Europe.",
+  "napomena": "Mobilni operater sa vlastitom GSM/UMTS/LTE infrastrukturom. Deo A1 Telekom Austria Group sa međunarodnim roaming partnerstvima.",
+  "kontakt": {
+    "adresa": "",
+    "telefon": "",
+    "email": "",
+    "web": "",
+    "customer_service": {
+      "privatni": "066 15 15 15",
+      "poslovni": "066 15 15 15"
+    },
+    "drustvene_mreze": {
+      "facebook": "https://www.facebook.com/ONEbih",
+      "instagram": "https://www.instagram.com/one_bih/"
+    }
+  },
+  "tehnicki_kontakti": [
+    {
+      "ime": "ZPT služba ONE",
+      "pozicija": "Zakonito presretanje telekomunikacija",
+      "email": "info@one.ba",
+      "telefon": "066 15 15 15",
+      "tip_kontakta": "bezbednost"
+    }
+  ],
+  "detaljne_usluge": {
+    "mobilne": [
+      "mobile_prepaid",
+      "mobile_postpaid",
+      "mobile_esim",
+      "mobile_volte_vowifi",
+      "mobile_roaming",
+      "mobile_mnp"
+    ],
+    "fiksne": [],
+    "internet": [
+      "internet_mobile",
+      "business_internet_packages"
+    ],
+    "tv": [],
+    "cloud_poslovne": [
+      "cloud_services",
+      "iot_solutions",
+      "m2m_services"
+    ],
+    "dodatne": [
+      "device_sales",
+      "one_app"
+    ]
+  },
+  "detaljne_tehnologije": {
+    "mobilne": [
+      "tech_2g",
+      "tech_3g",
+      "tech_4g",
+      "tech_5g_ready",
+      "tech_ims_mobile",
+      "tech_volte",
+      "tech_vowifi",
+      "tech_hlr_hss",
+      "tech_eir",
+      "tech_smsc_mmsc"
+    ],
+    "fiksne": [],
+    "mrezne": [
+      "tech_ipv6",
+      "tech_cgnat",
+      "tech_mpls",
+      "tech_cdn"
+    ]
+  },
+  "zakonske_obaveze": {
+    "zakonito_presretanje": "Da",
+    "implementacija": "A1 grupa standard",
+    "kontakt_osoba": "ZPT služba ONE",
+    "email_kontakt": "info@one.ba",
+    "telefon_kontakt": "066 15 15 15",
+    "posleduje_misljenje_zuo": "Da",
+    "pristup_obracunskim_podacima": "Da",
+    "napomene": "Kao veliki mobilni operater (A1 grupa), ONE.Vip ima sve zakonske obaveze implementirane u skladu sa BiH zakonodavstvom za elektronske komunikacije."
+  },
+  "kompletnost": 77,
+  "datum_azuriranja": "2025-10-01",
+  "atlas_status": "U pripremi za ATLAS",
+  "prioritet": "visok",
+  "kontakt_osoba": "ZPT služba ONE - Zakonito presretanje telekomunikacija",
+  "kategorija": "regionalni_isp",
+  "adresa": "",
+  "telefon": "",
+  "email": "",
+  "web": "",
+  "usluge": [
+    {
+      "kategorija": "unknown",
+      "naziv": "Mobilni Prepaid",
+      "opis": "Mobilne usluge na prepaid osnovu",
+      "status": "aktivna"
+    },
+    {
+      "kategorija": "unknown",
+      "naziv": "Mobilni Postpaid",
+      "opis": "Mobilne usluge na postpaid osnovu",
+      "status": "aktivna"
+    },
+    {
+      "kategorija": "unknown",
+      "naziv": "eSIM",
+      "opis": "Elektronska SIM kartica",
+      "status": "aktivna"
+    },
+    {
+      "kategorija": "unknown",
+      "naziv": "VoLTE/VoWiFi",
+      "opis": "Voice over LTE i WiFi pozivi",
+      "status": "aktivna"
+    },
+    {
+      "kategorija": "unknown",
+      "naziv": "Roaming",
+      "opis": "Usluge u roaming-u",
+      "status": "aktivna"
+    },
+    {
+      "kategorija": "unknown",
+      "naziv": "Prenos broja (MNP)",
+      "opis": "Mobile Number Portability",
+      "status": "aktivna"
+    },
+    {
+      "kategorija": "unknown",
+      "naziv": "Mobilni Internet",
+      "opis": "Internet preko mobilne mreže",
+      "status": "aktivna"
+    },
+    {
+      "kategorija": "unknown",
+      "naziv": "Poslovni Paketi",
+      "opis": "Telekomunikaciona usluga za krajnje korisnike",
+      "status": "aktivna"
+    },
+    {
+      "kategorija": "unknown",
+      "naziv": "Cloud Services",
+      "opis": "Telekomunikaciona usluga za krajnje korisnike",
+      "status": "aktivna"
+    },
+    {
+      "kategorija": "unknown",
+      "naziv": "Iot Solutions",
+      "opis": "Telekomunikaciona usluga za krajnje korisnike",
+      "status": "aktivna"
+    },
+    {
+      "kategorija": "unknown",
+      "naziv": "M2m Services",
+      "opis": "Telekomunikaciona usluga za krajnje korisnike",
+      "status": "aktivna"
+    },
+    {
+      "kategorija": "unknown",
+      "naziv": "Prodaja uređaja",
+      "opis": "Prodaja telekom opreme",
+      "status": "aktivna"
+    },
+    {
+      "kategorija": "unknown",
+      "naziv": "One App",
+      "opis": "Telekomunikaciona usluga za krajnje korisnike",
+      "status": "aktivna"
+    }
+  ],
+  "tehnologije": [
+    {
+      "tip": "unknown",
+      "naziv": "2G/GSM",
+      "opis": "Druga generacija mobilnih mreža",
+      "kapacitet": ""
+    },
+    {
+      "tip": "unknown",
+      "naziv": "3G/UMTS",
+      "opis": "Treća generacija mobilnih mreža",
+      "kapacitet": ""
+    },
+    {
+      "tip": "unknown",
+      "naziv": "4G/LTE",
+      "opis": "Četvrta generacija - LTE",
+      "kapacitet": ""
+    },
+    {
+      "tip": "unknown",
+      "naziv": "5G Ready",
+      "opis": "Priprema za 5G mrežu",
+      "kapacitet": ""
+    },
+    {
+      "tip": "unknown",
+      "naziv": "IMS Mobile",
+      "opis": "IP Multimedia Subsystem za mobilne usluge",
+      "kapacitet": ""
+    },
+    {
+      "tip": "unknown",
+      "naziv": "VoLTE",
+      "opis": "Voice over LTE tehnologija",
+      "kapacitet": ""
+    },
+    {
+      "tip": "unknown",
+      "naziv": "VoWiFi",
+      "opis": "Voice over WiFi tehnologija",
+      "kapacitet": ""
+    },
+    {
+      "tip": "unknown",
+      "naziv": "HLR/HSS",
+      "opis": "Home Location Register/Home Subscriber Server",
+      "kapacitet": ""
+    },
+    {
+      "tip": "unknown",
+      "naziv": "EIR",
+      "opis": "Equipment Identity Register",
+      "kapacitet": ""
+    },
+    {
+      "tip": "unknown",
+      "naziv": "SMSC/MMSC",
+      "opis": "SMS/MMS Message Center",
+      "kapacitet": ""
+    },
+    {
+      "tip": "unknown",
+      "naziv": "IPv6",
+      "opis": "Internet Protocol version 6",
+      "kapacitet": ""
+    },
+    {
+      "tip": "unknown",
+      "naziv": "CG-NAT",
+      "opis": "Carrier Grade Network Address Translation",
+      "kapacitet": ""
+    },
+    {
+      "tip": "unknown",
+      "naziv": "MPLS",
+      "opis": "Multiprotocol Label Switching",
+      "kapacitet": ""
+    },
+    {
+      "tip": "unknown",
+      "naziv": "CDN",
+      "opis": "Content Delivery Network",
+      "kapacitet": ""
+    }
+  ]
+}

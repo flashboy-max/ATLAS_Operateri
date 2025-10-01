@@ -1,0 +1,105 @@
+{
+  "id": 11,
+  "naziv": "Logosoft d.o.o. Sarajevo",
+  "komercijalni_naziv": "Logosoft",
+  "tip": "ISP + MVNO",
+  "status": "aktivan",
+  "opis": "Hibridni telekomunikacioni operater koji pruža internet, fiksne i mobilne usluge te IT rješenja. U vlasništvu m:tel-a Banjaluka, registrovan kao MVNO. Fokus na poslovne korisnike i Cloud usluge.",
+  "napomena": "Hibridni operater (ISP + MVNO) u vlasništvu m:tel-a. Pripojen ST-Net d.o.o. Kakanj. Microsoft Partner. Tier certifikovani data centar.",
+  "kontakt": {
+    "adresa": "Grbavička 4, 71000 Sarajevo",
+    "telefon": "+387 33 931 900",
+    "email": "info@logosoft.ba",
+    "web": "https://www.logosoft.ba",
+    "customer_service": {
+      "telefon": "+387 33 931 900",
+      "email": "info@logosoft.ba"
+    },
+    "drustvene_mreze": {
+      "facebook": "https://www.facebook.com/Logosoft.ba/",
+      "instagram": "",
+      "twitter": "",
+      "linkedin": "https://www.linkedin.com/company/logosoft-d-o-o-sarajevo/"
+    }
+  },
+  "tehnicki_kontakti": [
+    {
+      "ime": "Fuad Trle",
+      "pozicija": "Tehnička podrška",
+      "email": "",
+      "telefon": "+387 67 130 1216",
+      "tip_kontakta": "tehnicki"
+    },
+    {
+      "ime": "Boris Knežević",
+      "pozicija": "Tehnička podrška",
+      "email": "",
+      "telefon": "+387 67 130 1333",
+      "tip_kontakta": "tehnicki"
+    },
+    {
+      "ime": "Berina Hrustić",
+      "pozicija": "Odgovorna za obračunske podatke",
+      "email": "",
+      "telefon": "+387 67 130 2010",
+      "tip_kontakta": "obracunski"
+    }
+  ],
+  "detaljne_usluge": {
+    "mobilne": [
+      "mobile_postpaid",
+      "mobile_internet"
+    ],
+    "fiksne": [
+      "fixed_voip"
+    ],
+    "internet": [
+      "internet_ftth"
+    ],
+    "tv": [
+      "tv_services"
+    ],
+    "cloud": [
+      "cloud_hosting",
+      "cloud_backup",
+      "data_center",
+      "business_ict_solutions",
+      "office365",
+      "cyber_security"
+    ],
+    "cloud_poslovne": [],
+    "dodatne": []
+  },
+  "detaljne_tehnologije": {
+    "mobilne": [
+      "tech_2g",
+      "tech_3g",
+      "tech_4g",
+      "tech_5g_ready"
+    ],
+    "fiksne": [
+      "tech_voip_fixed",
+      "tech_ftth_fttb",
+      "tech_xdsl"
+    ],
+    "mrezne": [
+      "tech_ipv6",
+      "tech_mpls",
+      "cloud_infrastructure",
+      "data_center_tier"
+    ]
+  },
+  "zakonske_obaveze": {
+    "zakonito_presretanje": true,
+    "implementacija": "Preko m:tel infrastrukture",
+    "kontakt_osoba": "Berina Hrustić",
+    "posleduje_misljenje_zuo": "",
+    "pristup_obracunskim_podacima": true,
+    "napomene": "Kao MVNO i ISP operater, zakonske obaveze realizuje kroz m:tel infrastrukturu i vlastite sisteme."
+  },
+  "kompletnost": 95,
+  "datum_azuriranja": "2025-09-08",
+  "atlas_status": "Spreman za ATLAS (hibridni operater sa kompletnim poslovnim fokusom)",
+  "prioritet": "visok",
+  "kontakt_osoba": "Fuad Trle"
+}

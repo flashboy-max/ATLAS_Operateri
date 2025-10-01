@@ -1,0 +1,74 @@
+{
+  "id": 16,
+  "naziv": "HKB Net d.o.o.",
+  "komercijalni_naziv": "HKB Net",
+  "tip": "ISP",
+  "status": "neaktivan",
+  "opis": "Bivši pružalac internet usluga koji je pripojen operateru Telemach. Usluge se sada pružaju preko Telemach-a.",
+  "napomena": "❌ ARHIVIRAN - Status potvrđen kao pripojen Telemachu. Dio grupe sa M&H Company i KATV HS (ista kontakt osoba Redžo Salihović). Operacije prebačene na Telemach.",
+  "kontakt": {
+    "adresa": "[potrebno dopuniti]",
+    "telefon": "[arhivirano]",
+    "email": "info@hkbnet.ba",
+    "web": "[neaktivno]",
+    "customer_service": {
+      "telefon": "[prebačeno na Telemach]",
+      "email": "[prebačeno na Telemach]"
+    },
+    "drustvene_mreze": {
+      "facebook": "[neaktivno]",
+      "instagram": "[neaktivno]",
+      "twitter": "[neaktivno]",
+      "linkedin": "[neaktivno]"
+    }
+  },
+  "tehnicki_kontakti": [
+    {
+      "ime": "Redžo Salihović",
+      "pozicija": "Glavni kontakt (povezan sa M&H Company i KATV HS)",
+      "email": "[arhivirano]",
+      "telefon": "+387 66 580 855"
+    }
+  ],
+  "detaljne_usluge": {
+    "mobilne": [],
+    "fiksne": [],
+    "internet": [
+      "internet_ftth",
+      "internet_fixed_wireless"
+    ],
+    "tv": [],
+    "cloud": [],
+    "ostalo": [],
+    "cloud_poslovne": [],
+    "dodatne": []
+  },
+  "detaljne_tehnologije": {
+    "mobilne": [],
+    "fiksne": [],
+    "internet": [
+      "tech_ftth_fttb",
+      "tech_fixed_wireless"
+    ],
+    "tv": [],
+    "mrezne": [],
+    "ostalo": []
+  },
+  "zakonske_obaveze": {
+    "zakonito_presretanje": {
+      "implementirano": "Da",
+      "nacin_implementacije": "Preko Telemach infrastrukture",
+      "kontakt_osoba": "Redžo Salihović",
+      "email": "[arhivirano]",
+      "telefon": "+387 66 580 855",
+      "misljenje_zuo": "[arhivirano]"
+    },
+    "pristup_podacima": "Da",
+    "napomena": "ISP operater sa nadprovajderom Telemach, obaveze za zakonito presretanje i pristup obračunskim podacima prebačene na Telemach."
+  },
+  "atlas_status": "❌ Arhiviran - Neaktivan (pripojen Telemachu)",
+  "prioritet": "arhiviran",
+  "kontakt_osoba": "Redžo Salihović (grupa M&H/KATV HS)",
+  "completion_percentage": 95,
+  "last_updated": "2025-09-08"
+}

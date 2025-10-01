@@ -1,0 +1,88 @@
+{
+  "id": 13,
+  "naziv": "Elta-kabel d.o.o.",
+  "komercijalni_naziv": "Elta-Kabel",
+  "tip": "ISP",
+  "status": "neaktivan",
+  "opis": "Bio je jedan od najvećih kablovskih operatera u Republici Srpskoj i Bosni i Hercegovini. Pružao je usluge interneta, digitalne televizije i fiksne telefonije. Nakon akvizicije od strane Mtel-a, uveo je i mobilnu telefoniju pod brendom MOVE.",
+  "napomena": "❌ ARHIVIRAN - Mtel je 2019. godine postao stopostotni vlasnik Elta-Kabela. U julu 2022. godine, Mtel je zvanično spojio svoje tri kompanije - Elta-Kabel, Blicnet i Telrad Net - pod jedan zajednički brend Supernova. Operacije prebačene na Supernova.",
+  "kontakt": {
+    "adresa": "Svetog Save 26, 74000 Doboj",
+    "telefon": "+387 53 222 515",
+    "email": "info@elta-kabel.com",
+    "web": "http://www.elta-kabel.com",
+    "customer_service": {
+      "telefon": "+387 53 222 515",
+      "email": "info@elta-kabel.com"
+    },
+    "drustvene_mreze": {
+      "facebook": "[neaktivno]",
+      "instagram": "[neaktivno]",
+      "twitter": "[neaktivno]",
+      "linkedin": "[neaktivno]"
+    }
+  },
+  "tehnicki_kontakti": [
+    {
+      "ime": "[arhivirano]",
+      "pozicija": "[arhivirano]",
+      "email": "[arhivirano]",
+      "telefon": "[arhivirano]"
+    }
+  ],
+  "detaljne_usluge": {
+    "mobilne": [
+      "mobile_mvno"
+    ],
+    "fiksne": [
+      "fixed_voip"
+    ],
+    "internet": [
+      "internet_fixed"
+    ],
+    "tv": [
+      "iptv",
+      "cable_tv"
+    ],
+    "cloud": [],
+    "ostalo": [],
+    "cloud_poslovne": [],
+    "dodatne": []
+  },
+  "detaljne_tehnologije": {
+    "mobilne": [
+      "tech_4g",
+      "tech_volte"
+    ],
+    "fiksne": [
+      "tech_voip_fixed"
+    ],
+    "internet": [
+      "tech_docsis",
+      "tech_ftth_fttb"
+    ],
+    "tv": [
+      "tech_iptv",
+      "tech_cable_tv"
+    ],
+    "mrezne": [],
+    "ostalo": []
+  },
+  "zakonske_obaveze": {
+    "zakonito_presretanje": {
+      "implementirano": "[arhivirano]",
+      "nacin_implementacije": "[preneseno na Supernova]",
+      "kontakt_osoba": "[arhivirano]",
+      "email": "[arhivirano]",
+      "telefon": "[arhivirano]",
+      "misljenje_zuo": "[arhivirano]"
+    },
+    "pristup_podacima": "[preneseno na Supernova]",
+    "napomena": "Bivši kablovski operater, sve obaveze su prenesene na Supernova brend u okviru Mtel-a."
+  },
+  "atlas_status": "❌ Arhiviran - Neaktivan (rebrendiran u Supernova)",
+  "prioritet": "arhiviran",
+  "kontakt_osoba": "[prebačeno na Supernova]",
+  "completion_percentage": 95,
+  "last_updated": "2025-09-08"
+}

@@ -1,0 +1,78 @@
+{
+  "id": 25,
+  "naziv": "Telinea d.o.o. Bihać",
+  "komercijalni_naziv": "Telinea",
+  "tip": "ISP + MMDS + IPTV",
+  "status": "aktivan",
+  "opis": "Regionalni ISP osnovan 2008. godine u Bihaću. Prema speedtest direktoriju, najbrži ISP u BiH sa prosekom od 264 Mbps. Specijalizovan za MMDS, IPTV, internet i fiksne usluge.",
+  "napomena": "Speedtest lider u BiH (264 Mbps prosek). LIR registracija potvrđena. Aktivna web-stranica sa tarifama i korisničkim zonama. Fokus na Unsko-sanski kanton (USK).",
+  "kontakt": {
+    "adresa": "Bihać, Bosna i Hercegovina",
+    "telefon": "+387 37 901 901",
+    "email": "info@telinea.ba",
+    "web": "",
+    "customer_service": {
+      "privatni": "+387 37 901 901",
+      "poslovni": "+387 37 901 901",
+      "info": "+387 37 901 901"
+    },
+    "drustvene_mreze": {
+      "facebook": "",
+      "instagram": "",
+      "twitter": "",
+      "linkedin": ""
+    }
+  },
+  "tehnicki_kontakti": [
+    {
+      "ime": "Adi Vaizović",
+      "pozicija": "Direktor/Glavni kontakt",
+      "email": "",
+      "telefon": "+387 37 901 901",
+      "tip_kontakta": "direktor"
+    }
+  ],
+  "detaljne_usluge": {
+    "mobilne": [],
+    "fiksne": [
+      "fixed_voip"
+    ],
+    "internet": [
+      "internet_ftth",
+      "internet_fixed_wireless",
+      "internet_business"
+    ],
+    "tv": [
+      "iptv"
+    ],
+    "cloud": [],
+    "cloud_poslovne": [],
+    "dodatne": []
+  },
+  "detaljne_tehnologije": {
+    "mobilne": [],
+    "fiksne": [
+      "tech_voip_fixed"
+    ],
+    "mrezne": [
+      "tech_fiber",
+      "tech_fixed_wireless",
+      "tech_mmds",
+      "tech_iptv",
+      "tech_ipv4"
+    ]
+  },
+  "zakonske_obaveze": {
+    "zakonito_presretanje": true,
+    "implementacija": "Preko BH Telecom infrastrukture",
+    "kontakt_osoba": "Adi Vaizović",
+    "posleduje_misljenje_zuo": "",
+    "pristup_obracunskim_podacima": true,
+    "napomene": "ISP operater sa BH Telecom nadprovajderom, obaveze za zakonito presretanje i pristup obračunskim podacima."
+  },
+  "kompletnost": 85,
+  "datum_azuriranja": "2025-09-08",
+  "atlas_status": "Prioritetan za ATLAS (najbrži ISP u BiH)",
+  "prioritet": "visok",
+  "kontakt_osoba": "Adi Vaizović"
+}

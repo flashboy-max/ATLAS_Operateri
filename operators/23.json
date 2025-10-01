@@ -1,0 +1,92 @@
+{
+  "id": 23,
+  "naziv": "PROINTER ITSS d.o.o.",
+  "komercijalni_naziv": "PROINTER ITSS",
+  "tip": "Enterprise/B2B",
+  "status": "aktivan",
+  "opis": "Specijalizovani IT sistemski integrator koji pruža napredna IT rešenja, telekomunikacione usluge i sistemsku integraciju za korporativne klijente, javni sektor i organizacije. Fokusiran na kompleksne IT projekte i infrastrukturna rešenja.",
+  "napomena": "ITSS (IT System Solutions) operater sa fokusom na enterprise segment, sistemsku integraciju, data centar usluge i kibernetičku bezbednost za korporativne klijente.",
+  "kontakt": {
+    "adresa": "[potrebno dopuniti]",
+    "telefon": "[potrebno dopuniti]",
+    "email": "[potrebno dopuniti]",
+    "web": "[potrebno dopuniti]",
+    "customer_service": {
+      "telefon": "[potrebno dopuniti]",
+      "email": "[potrebno dopuniti]"
+    },
+    "drustvene_mreze": {
+      "facebook": "[potrebno dopuniti]",
+      "instagram": "[potrebno dopuniti]",
+      "twitter": "[potrebno dopuniti]",
+      "linkedin": "[potrebno dopuniti]"
+    }
+  },
+  "tehnicki_kontakti": [
+    {
+      "ime": "[potrebno dopuniti]",
+      "pozicija": "[potrebno dopuniti]",
+      "email": "[potrebno dopuniti]",
+      "telefon": "[potrebno dopuniti]"
+    }
+  ],
+  "detaljne_usluge": {
+    "mobilne": [],
+    "fiksne": [
+      "fixed_voip"
+    ],
+    "internet": [
+      "internet_business",
+      "internet_dedicated",
+      "internet_vpn"
+    ],
+    "tv": [],
+    "cloud": [
+      "cloud_hosting",
+      "system_integration",
+      "data_center",
+      "cybersecurity",
+      "it_consulting"
+    ],
+    "ostalo": [],
+    "cloud_poslovne": [],
+    "dodatne": []
+  },
+  "detaljne_tehnologije": {
+    "mobilne": [],
+    "fiksne": [
+      "tech_voip_fixed"
+    ],
+    "internet": [
+      "tech_fiber",
+      "tech_mpls",
+      "tech_vpn"
+    ],
+    "tv": [],
+    "mrezne": [
+      "tech_ipv4",
+      "tech_ipv6",
+      "tech_data_center",
+      "tech_cloud",
+      "tech_cybersecurity"
+    ],
+    "ostalo": []
+  },
+  "zakonske_obaveze": {
+    "zakonito_presretanje": {
+      "implementirano": "[potrebno dopuniti]",
+      "nacin_implementacije": "[potrebno dopuniti]",
+      "kontakt_osoba": "[potrebno dopuniti]",
+      "email": "[potrebno dopuniti]",
+      "telefon": "[potrebno dopuniti]",
+      "misljenje_zuo": "[potrebno dopuniti]"
+    },
+    "pristup_podacima": "[potrebno dopuniti]",
+    "napomena": "IT sistemski integrator sa specifičnim obavezama za korporativne IT usluge."
+  },
+  "atlas_status": "U pripremi za ATLAS",
+  "prioritet": "srednji",
+  "kontakt_osoba": "[potrebno dopuniti]",
+  "completion_percentage": 95,
+  "last_updated": "2025-09-08"
+}

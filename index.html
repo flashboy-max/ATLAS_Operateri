@@ -35,6 +35,18 @@
                     <button class="btn btn-secondary" id="exportDataBtn">
                         <i class="fas fa-download"></i> Izvoz
                     </button>
+                    <button class="btn btn-warning" id="standardizeBtn" onclick="console.log('Pozivam standardizaciju...'); window.app.standardizeOperatorTypes()">
+                        <i class="fas fa-sync-alt"></i> Standardizuj Tipove
+                    </button>
+                    <button class="btn btn-success" id="fixDataBtn" onclick="console.log('Pozivam kompletnu standardizaciju...'); window.app.standardizeAllData()">
+                        <i class="fas fa-magic"></i> Popravi Sve Podatke
+                    </button>
+                    <button class="btn btn-info" id="validateBtn" onclick="console.log('Pozivam validaciju...'); window.app.validateDataConsistency()">
+                        <i class="fas fa-check-double"></i> Validiraj Podatke
+                    </button>
+                    <button class="btn btn-info" id="testBtn" onclick="console.log('Test op1:', app.getCategoryClass(app.operators[0]), app.operators[0].tip); console.log('Test op2:', app.getCategoryClass(app.operators[1]), app.operators[1].tip)">
+                        <i class="fas fa-bug"></i> Test
+                    </button>
                 </div>
             </div>
         </header>
@@ -42,10 +54,10 @@
         <!-- Data Sync Status Bar -->
         <div id="sync-status-bar" class="sync-status-bar" style="display: none;">
             <div class="sync-status-content">
-                <span class="sync-icon">🔄</span>
-                <span class="sync-message">Promene su sačuvane lokalno u browser-u</span>
-                <button class="btn btn-sm btn-warning" onclick="app.exportData()">
-                    <i class="fas fa-download"></i> Izvezi u JSON
+                <span class="sync-icon">✅</span>
+                <span class="sync-message">Promene su sačuvane u API-ju i sinhronizovane</span>
+                <button class="btn btn-sm btn-info" onclick="app.exportData()">
+                    <i class="fas fa-download"></i> Backup u JSON
                 </button>
                 <button class="sync-close" onclick="app.hideSyncStatus()">&times;</button>
             </div>
@@ -136,15 +148,6 @@
                     <p>Neaktivni Operateri</p>
                 </div>
             </div>
-            <div class="stat-card">
-                <div class="stat-icon priority">
-                    <i class="fas fa-building"></i>
-                </div>
-                <div class="stat-info">
-                    <h3 id="highPriorityOperators">0</h3>
-                    <p>Dominantni Operateri</p>
-                </div>
-            </div>
         </div>
 
         <!-- Operators Table -->
@@ -209,22 +212,36 @@
                             <select id="kategorija" name="kategorija" required>
                                 <option value="">Izaberite kategoriju</option>
                                 <option value="dominantni">🏢 Dominantni operateri</option>
-                                <option value="mobilni_mvno">📱 Mobilni/MVNO</option>
-                                <option value="regionalni_isp">🌐 Regionalni ISP</option>
-                                <option value="enterprise_b2b">💼 Enterprise/B2B</option>
+                                <option value="mobilni">📱 Mobilni/MVNO</option>
+                                <option value="isp">🌐 Regionalni ISP</option>
+                                <option value="b2b">💼 Enterprise/B2B</option>
                             </select>
                         </div>
                         <div class="form-group">
                             <label for="tip">Tip Operatera *</label>
                             <select id="tip" name="tip" required>
-                                <option value="">Izaberite tip</option>
+                                <option value="">Izaberite tip operatera</option>
+                                <!-- Dominantni operateri -->
                                 <option value="Dominantni operater">Dominantni operater</option>
+                                <!-- Mobilni operateri -->
+                                <option value="MVNO">MVNO</option>
+                                <option value="ISP + MVNO">ISP + MVNO</option>
                                 <option value="Mobilni operater">Mobilni operater</option>
-                                <option value="MVNO operater">MVNO operater</option>
-                                <option value="Internet servis provajder">Internet servis provajder</option>
+                                <!-- ISP operateri -->
+                                <option value="ISP">ISP</option>
+                                <option value="Internet servis provajder (ISP)">Internet servis provajder (ISP)</option>
+                                <option value="Internet servis provajder (ISP), Bežični (Wi-Fi) širokopojasni internet provajder (ISP)">ISP + Wi-Fi</option>
+                                <option value="Regionalni ISP">Regionalni ISP</option>
+                                <option value="Regionalni ISP (Novotel partner)">Regionalni ISP (Novotel partner)</option>
+                                <option value="ISP + IPTV">ISP + IPTV</option>
+                                <option value="ISP + MMDS + IPTV">ISP + MMDS + IPTV</option>
+                                <option value="ISP + Kablovski operater">ISP + Kablovski operater</option>
                                 <option value="Kablovski operater">Kablovski operater</option>
-                                <option value="B2B provajder">B2B provajder</option>
-                                <option value="IT provajder">IT provajder</option>
+                                <option value="Kablovski operater (United Group)">Kablovski operater (United Group)</option>
+                                <!-- B2B operateri -->
+                                <option value="Enterprise/B2B">Enterprise/B2B</option>
+                                <option value="IT provajder, Internet servis provajder (ISP), Sistemska integracija">IT provajder + ISP + Sistemska integracija</option>
+                                <option value="Internet servis provajder (ISP), Veleprodajne telekomunikacione usluge (\"carrier's carrier\"), B2B">ISP + Veleprodajne + B2B</option>
                             </select>
                         </div>
                     </div>
@@ -467,7 +484,29 @@
                 </div>
                 
                 <div class="help-section">
-                    <h3>🔍 Pretraga i filtriranje</h3>
+                    <h3>� Nova Backend/Frontend Arhitektura</h3>
+                    <div style="background: #e8f5e8; padding: 15px; border-radius: 8px; margin-bottom: 15px;">
+                        <h4 style="color: #2d5016; margin-bottom: 10px;">✅ Ažurirana arhitektura</h4>
+                        <ul style="color: #2d5016; margin: 0;">
+                            <li><strong>Server:</strong> Node.js/Express backend na portu 3001</li>
+                            <li><strong>API:</strong> REST endpoints za CRUD operacije</li>
+                            <li><strong>Podaci:</strong> Svaki operator u svom JSON fajlu (/operators/)</li>
+                            <li><strong>Sinhronizacija:</strong> Real-time sync između frontend-a i backend-a</li>
+                            <li><strong>Fallback:</strong> LocalStorage kao offline backup</li>
+                        </ul>
+                    </div>
+                    
+                    <h4>🔧 API Endpoints:</h4>
+                    <ul>
+                        <li><code>GET /api/operators</code> - lista svih operatera</li>
+                        <li><code>GET /api/operator/:id</code> - pojedinačni operator</li>
+                        <li><code>POST /api/save-operator</code> - čuvanje operatera</li>
+                        <li><code>DELETE /api/operator/:id</code> - brisanje operatera</li>
+                    </ul>
+                </div>
+                
+                <div class="help-section">
+                    <h3>�🔍 Pretraga i filtriranje</h3>
                     <ul>
                         <li><strong>Pretraga:</strong> Koristite search bar za pretragu po nazivu operatera</li>
                         <li><strong>Kategorije:</strong> Filtrirajte po kategorijama (Dominantni, Mobilni/MVNO, Regionalni ISP, Enterprise/B2B)</li>
@@ -483,28 +522,36 @@
                             <span class="category-icon">🏢</span>
                             <div>
                                 <strong>Dominantni operateri</strong>
-                                <p>BH Telecom, m:tel, HT Eronet</p>
+                                <p><em>Veliki nacionalni operateri sa kompletnom infrastrukturom</em></p>
+                                <p>Pružaju sve vrste telekomunikacionih usluga na nacionalnom nivou. Imaju vlastitu infrastrukturu i pokrivaju celu zemlju.</p>
+                                <small>Primeri: BH Telecom, m:tel, HT Eronet</small>
                             </div>
                         </div>
                         <div class="category-item">
                             <span class="category-icon">📱</span>
                             <div>
-                                <strong>Mobilni/MVNO</strong>
-                                <p>ONE, Zona.ba, haloo, Novotel, Logosoft</p>
+                                <strong>Mobilni/MVNO operateri</strong>
+                                <p><em>Operateri koji se fokusiraju na mobilne komunikacije</em></p>
+                                <p>MVNO (Mobile Virtual Network Operator) - koriste infrastrukturu drugih operatera. Pružaju mobilne usluge bez vlastite mreže.</p>
+                                <small>Primeri: ONE, Zona.ba, haloo, Novotel, Logosoft</small>
                             </div>
                         </div>
                         <div class="category-item">
                             <span class="category-icon">🌐</span>
                             <div>
-                                <strong>Regionalni ISP</strong>
-                                <p>Telemach, ADRIA NET, Miss.Net</p>
+                                <strong>Regionalni ISP operateri</strong>
+                                <p><em>Lokalni/provincijski internet servis provajderi</em></p>
+                                <p>Fokusirani na pružanje internet usluga u određenim regionima. Često nude i druge usluge kao TV i telefoniju.</p>
+                                <small>Primeri: Telemach, ADRIA NET, Miss.Net</small>
                             </div>
                         </div>
                         <div class="category-item">
                             <span class="category-icon">💼</span>
                             <div>
-                                <strong>Enterprise/B2B</strong>
-                                <p>AKTON, LANACO</p>
+                                <strong>Enterprise/B2B operateri</strong>
+                                <p><em>Poslovni operateri specijalizovani za korporativne klijente</em></p>
+                                <p>Pružaju usluge namenjene preduzećima i velikim organizacijama. Fokus na B2B (Business-to-Business) rešenja.</p>
+                                <small>Primeri: AKTON, LANACO</small>
                             </div>
                         </div>
                     </div>
@@ -521,7 +568,17 @@
                 
                 <div class="help-section">
                     <h3>💾 Čuvanje podataka</h3>
-                    <p>Svi podaci se automatski čuvaju u vašem browser-u (LocalStorage). Podaci će ostati sačuvani čak i nakon zatvaranja aplikacije.</p>
+                    <p><strong>🔄 Nova arhitektura backend/frontend:</strong></p>
+                    <ul>
+                        <li><strong>Individualni fajlovi:</strong> Svaki operator se čuva u svom JSON fajlu (/operators/1.json, /operators/2.json, itd.)</li>
+                        <li><strong>API endpoint-i:</strong> Podaci se učitavaju preko REST API-ja na localhost:3001</li>
+                        <li><strong>Automatsko čuvanje:</strong> Sve izmene se automatski sinhronizuju sa backend-om</li>
+                        <li><strong>LocalStorage backup:</strong> Podaci se čuvaju lokalno kao offline fallback</li>
+                        <li><strong>Real-time sync:</strong> Dodavanje, editovanje i brisanje operatera se odmah reflektuje u API-ju</li>
+                    </ul>
+                    
+                    <h4>🔧 Reload dugme:</h4>
+                    <p>Reload dugme sada učitava podatke iz API-ja (individualni fajlovi) umesto iz starog JSON formata. Ovo osigurava najnovije podatke sa servera.</p>
                 </div>
                 
                 <div class="help-section">

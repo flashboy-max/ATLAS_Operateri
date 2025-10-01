@@ -1,0 +1,44 @@
+{
+  "id": 24,
+  "naziv": "Supernova (Blicnet d.o.o. Banja Luka)",
+  "komercijalni_naziv": "",
+  "tip": "Regionalni ISP",
+  "status": "aktivan",
+  "opis": "",
+  "napomena": "",
+  "kontakt": {
+    "adresa": "",
+    "telefon": "",
+    "email": "",
+    "web": "",
+    "customer_service": {},
+    "drustvene_mreze": {}
+  },
+  "tehnicki_kontakti": [],
+  "detaljne_usluge": {
+    "mobilne": [],
+    "fiksne": [],
+    "internet": [],
+    "tv": [],
+    "cloud_poslovne": [],
+    "dodatne": []
+  },
+  "detaljne_tehnologije": {
+    "mobilne": [],
+    "fiksne": [],
+    "mrezne": []
+  },
+  "zakonske_obaveze": {
+    "zakonito_presretanje": "N/A",
+    "implementacija": "",
+    "kontakt_osoba": "",
+    "posleduje_misljenje_zuo": null,
+    "pristup_obracunskim_podacima": null,
+    "napomene": "Potrebna provera zakonskih obaveza"
+  },
+  "kompletnost": 20,
+  "datum_azuriranja": "2025-09-08",
+  "atlas_status": "U pripremi za ATLAS",
+  "prioritet": "srednji",
+  "kontakt_osoba": ""
+}

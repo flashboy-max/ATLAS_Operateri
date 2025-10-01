@@ -1,0 +1,85 @@
+{
+  "id": 8,
+  "naziv": "Telemach d.o.o. Sarajevo",
+  "komercijalni_naziv": "Telemach",
+  "tip": "Kablovski operater (United Group)",
+  "status": "aktivan",
+  "opis": "Jedan od vodećih kablovskih operatera u BiH sa kompletnom ponudom triple-play usluga: optički internet (GIGA mreža), digitalna televizija (EON), fiksna telefonija (VoIP), plus cloud i poslovne usluge. Dio United Group.",
+  "napomena": "Aktivno pripaja manje operatere (HS Kablovska TV, H&H Kable TV preko BHB Cable TV, BHB Cable TV). GIGA optička mreža pokriva 18+ gradova u BiH. Regionalni United Group partner.",
+  "kontakt": {
+    "adresa": "Džemala Bijedića 216, 71000 Sarajevo",
+    "telefon": "1360",
+    "email": "info@telemach.ba",
+    "web": "https://telemach.ba",
+    "customer_service": {
+      "privatni": "1360",
+      "poslovni": "0800 31 111",
+      "info": "info@telemach.ba"
+    },
+    "drustvene_mreze": {
+      "facebook": "https://www.facebook.com/Telemach.BiH",
+      "instagram": "https://www.instagram.com/telemach.ba",
+      "twitter": "",
+      "linkedin": "https://www.linkedin.com/company/telemach-bih"
+    }
+  },
+  "tehnicki_kontakti": [
+    {
+      "ime": "",
+      "pozicija": "Korisnička podrška",
+      "email": "info@telemach.ba",
+      "telefon": "1360",
+      "tip_kontakta": "korisnicki"
+    }
+  ],
+  "detaljne_usluge": {
+    "mobilne": [],
+    "fiksne": [
+      "fixed_voip"
+    ],
+    "internet": [
+      "internet_ftth",
+      "internet_cable",
+      "internet_business"
+    ],
+    "tv": [
+      "iptv",
+      "cable_tv",
+      "sat_tv"
+    ],
+    "cloud": [
+      "cloud_infra",
+      "data_center",
+      "telemach_app"
+    ],
+    "cloud_poslovne": [],
+    "dodatne": []
+  },
+  "detaljne_tehnologije": {
+    "mobilne": [],
+    "fiksne": [
+      "tech_voip_fixed"
+    ],
+    "mrezne": [
+      "tech_ftth_fttb",
+      "tech_docsis",
+      "tech_mpls",
+      "tech_sdwan",
+      "tech_cdn",
+      "tech_ipv6"
+    ]
+  },
+  "zakonske_obaveze": {
+    "zakonito_presretanje": true,
+    "implementacija": "Preko United Group infrastrukture",
+    "kontakt_osoba": "",
+    "posleduje_misljenje_zuo": "",
+    "pristup_obracunskim_podacima": true,
+    "napomene": "Kao veliki kablovski operater (United Group), Telemach ima sve zakonske obaveze implementirane u skladu sa BiH zakonodavstvom za elektronske komunikacije."
+  },
+  "kompletnost": 95,
+  "datum_azuriranja": "2025-09-08",
+  "atlas_status": "Spreman za ATLAS (vodeći kablovski operater - United Group)",
+  "prioritet": "visok",
+  "kontakt_osoba": "Telemach korisnička podrška"
+}

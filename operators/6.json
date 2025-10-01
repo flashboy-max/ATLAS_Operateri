@@ -1,0 +1,125 @@
+{
+  "id": 6,
+  "naziv": "Telekom Srpske a.d. Banja Luka",
+  "komercijalni_naziv": "m:tel",
+  "tip": "Dominantni operater",
+  "status": "aktivan",
+  "opis": "Drugi najveći telekom operater u BiH sa kompletnom ponudom usluga. Pokriva RS i značajan dio FBiH. Dio MTS grupe. Nacionalni operater sa vlastitom infrastrukturom. Aktivno pripaja manje ISP operatere (Logosoft, Supernova/Blicnet).",
+  "napomena": "Grupno povezivanje: Dio MTS grupe (Telekom Srbija). Podružnice: Logosoft d.o.o., Supernova (Blicnet d.o.o.), Novotel. Međunarodni MTS partneri.",
+  "kontakt": {
+    "adresa": "Banja Luka, Republika Srpska",
+    "telefon": "0800 50 000",
+    "email": "info@mtel.ba",
+    "web": "https://www.mtel.ba",
+    "customer_service": {
+      "privatni": "0800 50 000",
+      "poslovni": "0800 50 300",
+      "dopuna": "066 10 10 10",
+      "msat_podrska": "0800 50 905"
+    },
+    "drustvene_mreze": {
+      "facebook": "https://www.facebook.com/mtelbih",
+      "instagram": "https://www.instagram.com/mtelbh/",
+      "twitter": "https://x.com/mtelbih",
+      "linkedin": "https://www.linkedin.com/company/mtelbih/"
+    }
+  },
+  "tehnicki_kontakti": [
+    {
+      "ime": "Zoran Sopka",
+      "pozicija": "Šef Službe za bezbjednost",
+      "email": "zoran.sopka@mtel.ba",
+      "telefon": "+387 66 915 505",
+      "tip_kontakta": "bezbednost"
+    },
+    {
+      "ime": "Slaven Ćosić",
+      "pozicija": "Šef Službe za ISP - Funkcija eksploatacije i održavanja",
+      "email": "slaven.cosic@mtel.ba",
+      "telefon": "+387 65 901 873",
+      "tip_kontakta": "tehnicki"
+    }
+  ],
+  "detaljne_usluge": {
+    "mobilne": [
+      "mobile_prepaid",
+      "mobile_postpaid",
+      "mobile_esim",
+      "mobile_volte_vowifi",
+      "mobile_roaming",
+      "mobile_mnp"
+    ],
+    "fiksne": [
+      "fixed_pstn",
+      "fixed_isdn",
+      "fixed_voip",
+      "ip_centrex"
+    ],
+    "internet": [
+      "internet_ftth",
+      "internet_adsl_vdsl",
+      "internet_mobile",
+      "netbiz_packages"
+    ],
+    "tv": [
+      "sat_tv",
+      "iptv",
+      "tv_streaming"
+    ],
+    "cloud_poslovne": [
+      "data_center",
+      "system_integration",
+      "smart_city",
+      "smart_home",
+      "wholesale_services"
+    ],
+    "dodatne": [
+      "device_sales"
+    ]
+  },
+  "detaljne_tehnologije": {
+    "mobilne": [
+      "tech_2g",
+      "tech_3g",
+      "tech_4g",
+      "tech_5g_ready",
+      "tech_ims_mobile",
+      "tech_volte",
+      "tech_vowifi",
+      "tech_hlr_hss",
+      "tech_eir",
+      "tech_smsc_mmsc"
+    ],
+    "fiksne": [
+      "tech_pstn",
+      "tech_isdn",
+      "tech_voip_fixed",
+      "tech_ims_fixed",
+      "tech_softswitch_fixed"
+    ],
+    "mrezne": [
+      "tech_ftth_fttb",
+      "tech_xdsl",
+      "satellite_tv_infrastructure",
+      "tech_ipv6",
+      "tech_cgnat",
+      "tech_mpls",
+      "tech_sdwan"
+    ]
+  },
+  "zakonske_obaveze": {
+    "zakonito_presretanje": true,
+    "implementacija": "Implementirano i dostupno - Vlastita medijacija",
+    "kontakt_osoba": "Zoran Sopka",
+    "email_kontakt": "zoran.sopka@mtel.ba",
+    "telefon_kontakt": "+387 66 915 505",
+    "posleduje_misljenje_zuo": "Da",
+    "pristup_obracunskim_podacima": true,
+    "napomene": "Kao dominantni operater, m:tel ima sve zakonske obaveze implementirane i dostupne u skladu sa BiH zakonom."
+  },
+  "kompletnost": 100,
+  "datum_azuriranja": "2025-09-08",
+  "atlas_status": "U pripremi za ATLAS",
+  "prioritet": "visok",
+  "kontakt_osoba": "Zoran Sopka - Šef Službe za bezbjednost"
+}

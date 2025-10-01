@@ -1,0 +1,82 @@
+{
+  "id": 22,
+  "naziv": "Ortak d.o.o. Šipovo",
+  "komercijalni_naziv": "KDS Ortak",
+  "tip": "ISP",
+  "status": "aktivan",
+  "opis": "Etabliran lokalni kablovski i internet provajder na području općine Šipovo. Posluje od 2001. godine sa RAK licencom. Fokusiran na lokalne internet i kablove televizijske usluge u široj regiji Šipova.",
+  "napomena": "Lokalni ISP sa dugom tradicijom (od 2001.), upravlja web-stranicom kdsortak.net, moguće povezanost sa ortak.ba domenом u Ljubuškom. m:tel nadprovajder za obračunske podatke.",
+  "kontakt": {
+    "adresa": "Šipovo, Bosna i Hercegovina",
+    "telefon": "[potrebno dopuniti]",
+    "email": "[potrebno dopuniti]",
+    "web": "https://www.kdsortak.net/",
+    "customer_service": {
+      "telefon": "[potrebno dopuniti]",
+      "email": "[potrebno dopuniti]"
+    },
+    "drustvene_mreze": {
+      "facebook": "[potrebno dopuniti]",
+      "instagram": "[potrebno dopuniti]",
+      "twitter": "[potrebno dopuniti]",
+      "linkedin": "[potrebno dopuniti]"
+    }
+  },
+  "tehnicki_kontakti": [
+    {
+      "ime": "Goran Vujković",
+      "pozicija": "Direktor/Glavna kontakt osoba",
+      "email": "[potrebno dopuniti]",
+      "telefon": "+387 65 017 676",
+      "tip_kontakta": "direktor"
+    }
+  ],
+  "detaljne_usluge": {
+    "mobilne": [],
+    "fiksne": [],
+    "internet": [
+      "internet_ftth",
+      "internet_fixed_wireless",
+      "internet_business"
+    ],
+    "tv": [
+      "cable_tv"
+    ],
+    "cloud": [],
+    "ostalo": [],
+    "cloud_poslovne": [],
+    "dodatne": []
+  },
+  "detaljne_tehnologije": {
+    "mobilne": [],
+    "fiksne": [],
+    "internet": [
+      "tech_fiber",
+      "tech_fixed_wireless"
+    ],
+    "tv": [
+      "tech_cable_tv"
+    ],
+    "mrezne": [
+      "tech_ipv4"
+    ],
+    "ostalo": []
+  },
+  "zakonske_obaveze": {
+    "zakonito_presretanje": {
+      "implementirano": "Da",
+      "nacin_implementacije": "Preko m:tel infrastrukture",
+      "kontakt_osoba": "Goran Vujković",
+      "email": "[potrebno dopuniti]",
+      "telefon": "+387 65 017 676",
+      "misljenje_zuo": "[potrebno dopuniti]"
+    },
+    "pristup_podacima": "Da",
+    "napomena": "ISP operater sa m:tel nadprovajderom, aktivan u obračunskim podacima i zakonitom presretanju."
+  },
+  "atlas_status": "Spreman za ATLAS",
+  "prioritet": "srednji",
+  "kontakt_osoba": "Goran Vujković",
+  "completion_percentage": 95,
+  "last_updated": "2025-09-08"
+}

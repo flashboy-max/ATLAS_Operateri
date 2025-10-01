@@ -1,0 +1,57 @@
+{
+  "id": 18,
+  "naziv": "M&H Company d.o.o",
+  "komercijalni_naziv": "",
+  "tip": "Enterprise/B2B",
+  "status": "aktivan",
+  "opis": "",
+  "napomena": "",
+  "kontakt": {
+    "adresa": " [potrebno dopuniti]",
+    "telefon": "-",
+    "email": "info@mhcompany.ba",
+    "web": "",
+    "customer_service": {},
+    "drustvene_mreze": {}
+  },
+  "tehnicki_kontakti": [],
+  "detaljne_usluge": {
+    "mobilne": [],
+    "fiksne": [],
+    "internet": [
+      "internet_ftth",
+      "internet_fixed_wireless",
+      "tech_ftth_fttb",
+      "tech_fixed_wireless"
+    ],
+    "tv": [],
+    "cloud_poslovne": [],
+    "dodatne": []
+  },
+  "detaljne_tehnologije": {
+    "mobilne": [
+      "GSM 900/1800",
+      "UMTS 900/2100",
+      "LTE 800/1800/2600",
+      "5G 3500"
+    ],
+    "fiksne": [],
+    "mrezne": [
+      "FTTH/FTTB",
+      "WiFi/Wireless"
+    ]
+  },
+  "zakonske_obaveze": {
+    "zakonito_presretanje": "N/A",
+    "implementacija": "",
+    "kontakt_osoba": "",
+    "posleduje_misljenje_zuo": null,
+    "pristup_obracunskim_podacima": null,
+    "napomene": "Potrebna provera zakonskih obaveza"
+  },
+  "kompletnost": 70,
+  "datum_azuriranja": "2025-09-08",
+  "atlas_status": "U pripremi za ATLAS",
+  "prioritet": "srednji",
+  "kontakt_osoba": ""
+}

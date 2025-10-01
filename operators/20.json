@@ -1,0 +1,84 @@
+{
+  "id": 20,
+  "naziv": "MEDIASAT d.o.o.",
+  "komercijalni_naziv": "MEDIASAT",
+  "tip": "ISP",
+  "status": "aktivan",
+  "opis": "Specijalizovani satelitski operater koji pruža satelitsku televiziju, satelitski internet i povezane telekomunikacione usluge. Fokusiran na područja sa ograničenim pristupom tradicionalnim telekomunikacionim infrastrukturama.",
+  "napomena": "Satelitski operater specijalizovan za satelitske tehnologije sa fokusom na ruralne i teško dostupne oblasti. VSAT i satelitska infrastruktura za pokrivenost Bosne i Hercegovine.",
+  "kontakt": {
+    "adresa": "[potrebno dopuniti]",
+    "telefon": "[potrebno dopuniti]",
+    "email": "[potrebno dopuniti]",
+    "web": "[potrebno dopuniti]",
+    "customer_service": {
+      "telefon": "[potrebno dopuniti]",
+      "email": "[potrebno dopuniti]"
+    },
+    "drustvene_mreze": {
+      "facebook": "[potrebno dopuniti]",
+      "instagram": "[potrebno dopuniti]",
+      "twitter": "[potrebno dopuniti]",
+      "linkedin": "[potrebno dopuniti]"
+    }
+  },
+  "tehnicki_kontakti": [
+    {
+      "ime": "[potrebno dopuniti]",
+      "pozicija": "[potrebno dopuniti]",
+      "email": "[potrebno dopuniti]",
+      "telefon": "[potrebno dopuniti]"
+    }
+  ],
+  "detaljne_usluge": {
+    "mobilne": [],
+    "fiksne": [],
+    "internet": [
+      "internet_satellite",
+      "internet_business",
+      "internet_fixed_wireless"
+    ],
+    "tv": [
+      "satellite_tv",
+      "iptv"
+    ],
+    "cloud": [],
+    "ostalo": [],
+    "cloud_poslovne": [],
+    "dodatne": []
+  },
+  "detaljne_tehnologije": {
+    "mobilne": [],
+    "fiksne": [],
+    "internet": [
+      "tech_satellite",
+      "tech_fixed_wireless"
+    ],
+    "tv": [
+      "tech_satellite_tv",
+      "tech_iptv"
+    ],
+    "mrezne": [
+      "tech_ipv4",
+      "tech_vsat"
+    ],
+    "ostalo": []
+  },
+  "zakonske_obaveze": {
+    "zakonito_presretanje": {
+      "implementirano": "[potrebno dopuniti]",
+      "nacin_implementacije": "[potrebno dopuniti]",
+      "kontakt_osoba": "[potrebno dopuniti]",
+      "email": "[potrebno dopuniti]",
+      "telefon": "[potrebno dopuniti]",
+      "misljenje_zuo": "[potrebno dopuniti]"
+    },
+    "pristup_podacima": "[potrebno dopuniti]",
+    "napomena": "Satelitski operater sa specifičnim zakonskim obavezama za satelitske usluge."
+  },
+  "atlas_status": "U pripremi za ATLAS",
+  "prioritet": "srednji",
+  "kontakt_osoba": "[potrebno dopuniti]",
+  "completion_percentage": 95,
+  "last_updated": "2025-09-08"
+}

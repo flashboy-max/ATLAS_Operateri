@@ -1,0 +1,77 @@
+{
+  "id": 14,
+  "naziv": "GiNet d.o.o. Gornji Vakuf-Uskoplje",
+  "komercijalni_naziv": "GiNet",
+  "tip": "ISP",
+  "status": "aktivan",
+  "opis": "Lokalni ISP u Gornjem Vakuf-Uskoplju fokusiran na bežični i optički internet za lokalne korisnike. Pokriva općinu Gornji Vakuf-Uskoplje i okolinu.",
+  "napomena": "Regionalni ISP sa fokusom na srednjebosansku regiju, koristi fixed wireless i FTTH tehnologije. Aktivno prisutan na Facebook-u za lokalne korisnike.",
+  "kontakt": {
+    "adresa": "Fra Anđela Zvizdovića bb, 70323 Gornji Vakuf-Uskoplje",
+    "telefon": "+387 63 949 999",
+    "email": "ginet@tel.net.ba",
+    "web": "[potrebno dopuniti]",
+    "customer_service": {
+      "telefon": "+387 63 949 999",
+      "email": "ginet@tel.net.ba"
+    },
+    "drustvene_mreze": {
+      "facebook": "https://www.facebook.com/ginet.gornjivakufuskoplje/",
+      "instagram": "[potrebno dopuniti]",
+      "twitter": "[potrebno dopuniti]",
+      "linkedin": "[potrebno dopuniti]"
+    }
+  },
+  "tehnicki_kontakti": [
+    {
+      "ime": "[potrebno dopuniti]",
+      "pozicija": "[potrebno dopuniti]",
+      "email": "[potrebno dopuniti]",
+      "telefon": "[potrebno dopuniti]"
+    }
+  ],
+  "detaljne_usluge": {
+    "mobilne": [],
+    "fiksne": [],
+    "internet": [
+      "internet_ftth",
+      "internet_fixed_wireless"
+    ],
+    "tv": [],
+    "cloud": [],
+    "ostalo": [],
+    "cloud_poslovne": [],
+    "dodatne": []
+  },
+  "detaljne_tehnologije": {
+    "mobilne": [],
+    "fiksne": [],
+    "internet": [
+      "tech_ftth_fttb",
+      "tech_fixed_wireless"
+    ],
+    "tv": [],
+    "mrezne": [
+      "tech_ipv4",
+      "tech_ipv6"
+    ],
+    "ostalo": []
+  },
+  "zakonske_obaveze": {
+    "zakonito_presretanje": {
+      "implementirano": "Da",
+      "nacin_implementacije": "[potrebno dopuniti]",
+      "kontakt_osoba": "[potrebno dopuniti]",
+      "email": "[potrebno dopuniti]",
+      "telefon": "[potrebno dopuniti]",
+      "misljenje_zuo": "[potrebno dopuniti]"
+    },
+    "pristup_podacima": "Da",
+    "napomena": "ISP operater sa standardnim obavezama."
+  },
+  "atlas_status": "Spreman za ATLAS",
+  "prioritet": "srednji",
+  "kontakt_osoba": "[potrebno dopuniti]",
+  "completion_percentage": 95,
+  "last_updated": "2025-09-08"
+}

@@ -1,0 +1,110 @@
+{
+  "id": 5,
+  "naziv": "JP Hrvatske telekomunikacije d.d. Mostar",
+  "komercijalni_naziv": "HT Eronet",
+  "tip": "Dominantni operater",
+  "status": "aktivan",
+  "opis": "Treći najveći telekom operater u BiH, fokusiran na Hercegovačko-neretvansku županiju i šire područje FBiH. Dio Hrvatske telekomunikacije grupe.",
+  "napomena": "Regionalno fokusiran dominantni operater sa MVNO partnerom (Haloo). Pripojen ArtNet d.o.o. Kiseljak.",
+  "kontakt": {
+    "adresa": "Kneza Branimira bb, 88 000 Mostar",
+    "telefon": "+387 36 395 000",
+    "email": "info@hteronet.ba",
+    "web": "https://www.eronet.ba",
+    "customer_service": {
+      "privatni": "0800 88 888",
+      "poslovni": "0800 88 000",
+      "info_telefon": "0800 88 888"
+    },
+    "drustvene_mreze": {
+      "facebook": "https://www.facebook.com/HTERONET.ba/",
+      "instagram": "https://www.instagram.com/hteronet/",
+      "twitter": "https://x.com/hteronet",
+      "linkedin": "https://www.linkedin.com/company/hteronet/"
+    }
+  },
+  "tehnicki_kontakti": [
+    {
+      "ime": "Slaven Zelenika",
+      "pozicija": "Rukovoditelj Odjela za internu kontrolu i sigurnost",
+      "email": "slaven.zelenika@hteronet.ba",
+      "telefon": "+387 63 282 020",
+      "tip_kontakta": "bezbednost"
+    },
+    {
+      "ime": "Mladen Pehar",
+      "pozicija": "Odjel za internu kontrolu i sigurnost",
+      "email": "mladen.pehar@hteronet.ba",
+      "telefon": "+387 63 795 615",
+      "tip_kontakta": "tehnicki"
+    }
+  ],
+  "detaljne_usluge": {
+    "mobilne": [
+      "mobile_prepaid",
+      "mobile_postpaid",
+      "mobile_volte_vowifi",
+      "mobile_roaming",
+      "mobile_mnp",
+      "roaming_internet_options"
+    ],
+    "fiksne": [
+      "fixed_pstn",
+      "fixed_isdn",
+      "fixed_voip"
+    ],
+    "internet": [
+      "internet_flat",
+      "internet_flying",
+      "internet_adsl_vdsl",
+      "internet_ftth"
+    ],
+    "tv": [
+      "iptv"
+    ],
+    "cloud_poslovne": [
+      "4xl_packages",
+      "wholesale_network_services"
+    ],
+    "dodatne": [
+      "device_sales"
+    ]
+  },
+  "detaljne_tehnologije": {
+    "mobilne": [
+      "tech_2g",
+      "tech_3g",
+      "tech_4g",
+      "tech_ims_mobile",
+      "tech_volte",
+      "tech_vowifi",
+      "tech_hlr_hss",
+      "tech_smsc_mmsc"
+    ],
+    "fiksne": [
+      "tech_pstn",
+      "tech_voip_fixed",
+      "tech_xdsl",
+      "tech_ftth_fttb",
+      "iptv_platform"
+    ],
+    "mrezne": [
+      "tech_ipv6"
+    ]
+  },
+  "zakonske_obaveze": {
+    "zakonito_presretanje": true,
+    "implementacija": "Implementirano i dostupno - Vlastita medijacija",
+    "kontakt_osoba": "Slaven Zelenika",
+    "email_kontakt": "slaven.zelenika@hteronet.ba",
+    "telefon_kontakt": "+387 63 282 020",
+    "posleduje_misljenje_zuo": "Da",
+    "pristup_obracunskim_podacima": true,
+    "napomene": "Kao dominantni operater, HT Eronet ima sve zakonske obaveze implementirane i dostupne u skladu sa BiH zakonom."
+  },
+  "kompletnost": 100,
+  "datum_azuriranja": "2025-09-08",
+  "atlas_status": "U pripremi za ATLAS",
+  "prioritet": "visok",
+  "kontakt_osoba": "Slaven Zelenika - Rukovoditelj Odjela za internu kontrolu i sigurnost"
+}

@@ -1,0 +1,72 @@
+{
+  "id": 19,
+  "naziv": "MEDIA SKY d.o.o.",
+  "komercijalni_naziv": "MEDIA SKY",
+  "tip": "ISP + IPTV",
+  "status": "neaktivan",
+  "opis": "Bivši ISP i IPTV operater sa fokusom na internet i medijske usluge. Koristio je BH Telecom kao nadprovajder. Završene testne procedure do kraja 2020. godine.",
+  "napomena": "Pripojen Logosoft-u/m:tel grupi. Istorijski operater sa fokusom na internet i IPTV streaming. Korisnici preneti na Logosoft infrastrukturu.",
+  "kontakt": {
+    "adresa": "",
+    "telefon": "",
+    "email": "info@mediasky.ba",
+    "web": "",
+    "customer_service": {
+      "telefon": "",
+      "email": ""
+    },
+    "drustvene_mreze": {
+      "facebook": "",
+      "instagram": "",
+      "twitter": "",
+      "linkedin": ""
+    }
+  },
+  "tehnicki_kontakti": [
+    {
+      "ime": "Edis Bošnjaković",
+      "pozicija": "Direktor/Glavni kontakt (istorijski)",
+      "email": "",
+      "telefon": "+387 61 561 933",
+      "tip_kontakta": "direktor"
+    }
+  ],
+  "detaljne_usluge": {
+    "mobilne": [],
+    "fiksne": [],
+    "internet": [
+      "internet_ftth",
+      "internet_fixed_wireless",
+      "internet_business"
+    ],
+    "tv": [
+      "iptv"
+    ],
+    "cloud": [],
+    "cloud_poslovne": [],
+    "dodatne": []
+  },
+  "detaljne_tehnologije": {
+    "mobilne": [],
+    "fiksne": [],
+    "mrezne": [
+      "tech_fiber",
+      "tech_fixed_wireless",
+      "tech_iptv",
+      "tech_ipv4"
+    ]
+  },
+  "zakonske_obaveze": {
+    "zakonito_presretanje": "N/A",
+    "implementacija": "Preko BH Telecom infrastrukture (istorijski)",
+    "kontakt_osoba": "Edis Bošnjaković",
+    "posleduje_misljenje_zuo": "",
+    "pristup_obracunskim_podacima": "",
+    "napomene": "Bivši ISP operater sa BH Telecom nadprovajderom, sve obaveze su prenesene na Logosoft/m:tel grupu."
+  },
+  "kompletnost": 85,
+  "datum_azuriranja": "2025-09-08",
+  "atlas_status": "Arhiviran - pripojen Logosoft-u/m:tel grupi",
+  "prioritet": "arhivirani",
+  "kontakt_osoba": "Edis Bošnjaković (istorijski)"
+}
