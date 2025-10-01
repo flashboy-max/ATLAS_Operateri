@@ -2,7 +2,6 @@
   "id": 3,
   "naziv": "BH Telecom d.d. Sarajevo",
   "komercijalni_naziv": "BH Telecom",
-  "tip": "Dominantni operater",
   "status": "aktivan",
   "opis": "Najveći telekom operater u BiH sa kompletnom ponudom telekomunikacijskih usluga. Lider na tržištu mobilne i fiksne telefonije, interneta i digitalnih usluga.",
   "napomena": "",
@@ -116,10 +115,7 @@
     "pristup_obracunskim_podacima": true,
     "napomene": "Kao dominantni operater, BH Telecom ima sve zakonske obaveze implementirane i dostupne u skladu sa BiH zakonom. Vlastita medijacija za zakonito presretanje."
   },
-  "kompletnost": 77,
   "datum_azuriranja": "2025-10-01",
-  "atlas_status": "Spreman za ATLAS",
-  "prioritet": "visok",
   "kontakt_osoba": "Nedim Fazlibegović - Šef službe za ZPT i saradnju sa sudovima",
   "kategorija": "dominantni",
   "adresa": "",
@@ -417,5 +413,11 @@
       "opis": "Internet Protocol version 4",
       "kapacitet": ""
     }
+  ],
+  "tipovi": [
+    "mobilni",
+    "isp",
+    "kablovski",
+    "enterprise"
   ]
 }

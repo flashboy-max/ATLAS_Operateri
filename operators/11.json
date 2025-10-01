@@ -2,7 +2,6 @@
   "id": 11,
   "naziv": "Logosoft d.o.o. Sarajevo",
   "komercijalni_naziv": "Logosoft",
-  "tip": "ISP + MVNO",
   "status": "aktivan",
   "opis": "Hibridni telekomunikacioni operater koji pruža internet, fiksne i mobilne usluge te IT rješenja. U vlasništvu m:tel-a Banjaluka, registrovan kao MVNO. Fokus na poslovne korisnike i Cloud usluge.",
   "napomena": "Hibridni operater (ISP + MVNO) u vlasništvu m:tel-a. Pripojen ST-Net d.o.o. Kakanj. Microsoft Partner. Tier certifikovani data centar.",
@@ -97,9 +96,12 @@
     "pristup_obracunskim_podacima": true,
     "napomene": "Kao MVNO i ISP operater, zakonske obaveze realizuje kroz m:tel infrastrukturu i vlastite sisteme."
   },
-  "kompletnost": 95,
   "datum_azuriranja": "2025-09-08",
-  "atlas_status": "Spreman za ATLAS (hibridni operater sa kompletnim poslovnim fokusom)",
-  "prioritet": "visok",
-  "kontakt_osoba": "Fuad Trle"
+  "kontakt_osoba": "Fuad Trle",
+  "kategorija": "alternativni",
+  "tipovi": [
+    "mobilni",
+    "isp",
+    "kablovski"
+  ]
 }

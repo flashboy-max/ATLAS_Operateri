@@ -2,7 +2,6 @@
   "id": 6,
   "naziv": "Telekom Srpske a.d. Banja Luka",
   "komercijalni_naziv": "m:tel",
-  "tip": "Dominantni operater",
   "status": "aktivan",
   "opis": "Drugi najveći telekom operater u BiH sa kompletnom ponudom usluga. Pokriva RS i značajan dio FBiH. Dio MTS grupe. Nacionalni operater sa vlastitom infrastrukturom. Aktivno pripaja manje ISP operatere (Logosoft, Supernova/Blicnet).",
   "napomena": "Grupno povezivanje: Dio MTS grupe (Telekom Srbija). Podružnice: Logosoft d.o.o., Supernova (Blicnet d.o.o.), Novotel. Međunarodni MTS partneri.",
@@ -117,9 +116,13 @@
     "pristup_obracunskim_podacima": true,
     "napomene": "Kao dominantni operater, m:tel ima sve zakonske obaveze implementirane i dostupne u skladu sa BiH zakonom."
   },
-  "kompletnost": 100,
   "datum_azuriranja": "2025-09-08",
-  "atlas_status": "U pripremi za ATLAS",
-  "prioritet": "visok",
-  "kontakt_osoba": "Zoran Sopka - Šef Službe za bezbjednost"
+  "kontakt_osoba": "Zoran Sopka - Šef Službe za bezbjednost",
+  "kategorija": "dominantni",
+  "tipovi": [
+    "mobilni",
+    "isp",
+    "kablovski",
+    "enterprise"
+  ]
 }

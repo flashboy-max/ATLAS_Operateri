@@ -2,7 +2,6 @@
   "id": 27,
   "naziv": "VKT-Net d.o.o. Bugojno",
   "komercijalni_naziv": "VKT-Net",
-  "tip": "Kablovski operater",
   "status": "aktivan",
   "opis": "Kablovski operater koji pruža triple-play usluge (internet, televizija, fiksna telefonija) na području Bugojna i okolnih gradova Srednjobosanskog kantona. Koristi FTTH i DOCSIS tehnologije.",
   "napomena": "Regionalni kablovski operater fokusiran na Srednjobosanski kanton sa kompletnom ponudom kablovskih usluga.",
@@ -70,9 +69,11 @@
     "pristup_obracunskim_podacima": true,
     "napomene": "Regionalni kablovski operater sa obavezama za zakonito presretanje i pristup obračunskim podacima u skladu sa BiH zakonodavstvom."
   },
-  "kompletnost": 90,
   "datum_azuriranja": "2025-09-08",
-  "atlas_status": "Spreman za ATLAS (regionalni kablovski operater)",
-  "prioritet": "srednji",
-  "kontakt_osoba": ""
+  "kontakt_osoba": "",
+  "kategorija": "alternativni",
+  "tipovi": [
+    "isp",
+    "kablovski"
+  ]
 }

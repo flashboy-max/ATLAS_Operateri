@@ -2,7 +2,6 @@
   "id": 20,
   "naziv": "MEDIASAT d.o.o.",
   "komercijalni_naziv": "MEDIASAT",
-  "tip": "ISP",
   "status": "aktivan",
   "opis": "Specijalizovani satelitski operater koji pruža satelitsku televiziju, satelitski internet i povezane telekomunikacione usluge. Fokusiran na područja sa ograničenim pristupom tradicionalnim telekomunikacionim infrastrukturama.",
   "napomena": "Satelitski operater specijalizovan za satelitske tehnologije sa fokusom na ruralne i teško dostupne oblasti. VSAT i satelitska infrastruktura za pokrivenost Bosne i Hercegovine.",
@@ -76,9 +75,12 @@
     "pristup_podacima": "[potrebno dopuniti]",
     "napomena": "Satelitski operater sa specifičnim zakonskim obavezama za satelitske usluge."
   },
-  "atlas_status": "U pripremi za ATLAS",
-  "prioritet": "srednji",
   "kontakt_osoba": "[potrebno dopuniti]",
   "completion_percentage": 95,
-  "last_updated": "2025-09-08"
+  "last_updated": "2025-09-08",
+  "kategorija": "alternativni",
+  "tipovi": [
+    "isp",
+    "kablovski"
+  ]
 }

@@ -2,7 +2,6 @@
   "id": 29,
   "naziv": "haloo",
   "komercijalni_naziv": "haloo",
-  "tip": "MVNO",
   "status": "aktivan",
   "opis": "Flanker brend i podružnica HT Eroneta, pokrenut 2011. godine. Pozicionira se kao jednostavan i jeftin provajder mobilnih usluga sa fokusom na transparentnost, bez skrivenih troškova.",
   "napomena": "MVNO operater koji koristi mobilnu mrežu HT Eroneta. Flanker brend sa fokusom na cjenovno pristupačne i jednostavne mobilne tarife.",
@@ -66,9 +65,10 @@
     "pristup_obracunskim_podacima": true,
     "napomene": "Kao podružnica, zakonske obaveze se izvršavaju preko HT Eroneta."
   },
-  "kompletnost": 90,
   "datum_azuriranja": "2025-09-08",
-  "atlas_status": "Spreman za ATLAS (MVNO operater sa fokusom na mobilne usluge)",
-  "prioritet": "visok",
-  "kontakt_osoba": "HT Eronet korisnička podrška"
+  "kontakt_osoba": "HT Eronet korisnička podrška",
+  "kategorija": "alternativni",
+  "tipovi": [
+    "mobilni"
+  ]
 }

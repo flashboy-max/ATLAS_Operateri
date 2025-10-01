@@ -2,7 +2,6 @@
   "id": 14,
   "naziv": "GiNet d.o.o. Gornji Vakuf-Uskoplje",
   "komercijalni_naziv": "GiNet",
-  "tip": "ISP",
   "status": "aktivan",
   "opis": "Lokalni ISP u Gornjem Vakuf-Uskoplju fokusiran na bežični i optički internet za lokalne korisnike. Pokriva općinu Gornji Vakuf-Uskoplje i okolinu.",
   "napomena": "Regionalni ISP sa fokusom na srednjebosansku regiju, koristi fixed wireless i FTTH tehnologije. Aktivno prisutan na Facebook-u za lokalne korisnike.",
@@ -69,9 +68,11 @@
     "pristup_podacima": "Da",
     "napomena": "ISP operater sa standardnim obavezama."
   },
-  "atlas_status": "Spreman za ATLAS",
-  "prioritet": "srednji",
   "kontakt_osoba": "[potrebno dopuniti]",
   "completion_percentage": 95,
-  "last_updated": "2025-09-08"
+  "last_updated": "2025-09-08",
+  "kategorija": "alternativni",
+  "tipovi": [
+    "isp"
+  ]
 }

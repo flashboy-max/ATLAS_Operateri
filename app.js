@@ -775,19 +775,6 @@ class ATLASApp {
             if (this.elements.addTechnologyBtn) this.elements.addTechnologyBtn.disabled = false;
         }
 
-        // Real-time completeness calculation
-        const formFields = ['naziv', 'komercijalni_naziv', 'kategorija', 'tip', 'status', 'prioritet', 'opis', 'adresa', 'telefon', 'email', 'web', 'atlas_status', 'kontakt_osoba'];
-        formFields.forEach(fieldName => {
-            const field = document.getElementById(fieldName);
-            if (field) {
-                field.addEventListener('input', () => {
-                    const formData = new FormData(this.elements.operatorForm);
-                    const completeness = this.calculateCompleteness(formData);
-                    document.getElementById('kompletnost').value = completeness;
-                });
-            }
-        });
-
         // Dynamic tip filtering based on category
         const kategorijaField = document.getElementById('kategorija');
         if (kategorijaField) {
@@ -958,16 +945,18 @@ class ATLASApp {
             filtered = filtered.filter(op => op.status === statusFilter);
         }
         
-        // Category filter
+        // NOVA STRUKTURA: Kategorija filter (dominantni/alternativni)
         const categoryFilter = this.elements.categoryFilter.value;
         if (categoryFilter) {
-            filtered = filtered.filter(op => this.getCategoryClass(op) === categoryFilter);
+            filtered = filtered.filter(op => op.kategorija === categoryFilter);
         }
         
-        // Type filter
+        // NOVA STRUKTURA: Tip filter - pretraživanje kroz tipovi niz
         const typeFilter = this.elements.typeFilter.value;
         if (typeFilter) {
-            filtered = filtered.filter(op => op.tip.includes(typeFilter));
+            filtered = filtered.filter(op => 
+                op.tipovi && Array.isArray(op.tipovi) && op.tipovi.includes(typeFilter)
+            );
         }
         
         this.renderOperators(filtered);
@@ -991,8 +980,27 @@ class ATLASApp {
                 this.highlightText(operator.naziv, this.highlightSearchTerm) : operator.naziv;
             const komercijalni = this.highlightSearchTerm && operator.komercijalni_naziv ? 
                 this.highlightText(operator.komercijalni_naziv, this.highlightSearchTerm) : operator.komercijalni_naziv;
-            const tip = this.highlightSearchTerm ? 
-                this.highlightText(operator.tip, this.highlightSearchTerm) : operator.tip;
+            
+            // NOVA STRUKTURA: Pripremi kategoriju i tipove badges
+            const kategorija = operator.kategorija || 'N/A';
+            const kategorijaDisplay = kategorija === 'dominantni' ? '🏢 Dominantni' : 
+                                      kategorija === 'alternativni' ? '🔷 Alternativni' : kategorija;
+            
+            // Kreiraj badge za svaki tip iz niza
+            const tipoviHTML = operator.tipovi && operator.tipovi.length > 0 ?
+                operator.tipovi.map(tip => {
+                    // Mapiranje tip vrednosti na display text i ikone
+                    const tipMappings = {
+                        'mobilni': { icon: '📱', text: 'Mobilni', class: 'mobilni' },
+                        'mvno': { icon: '📡', text: 'MVNO', class: 'mvno' },
+                        'isp': { icon: '🌐', text: 'ISP', class: 'isp' },
+                        'kablovski': { icon: '📺', text: 'Kablovski', class: 'kablovski' },
+                        'enterprise': { icon: '💼', text: 'Enterprise', class: 'enterprise' },
+                        'ostali': { icon: '⚙️', text: 'Ostali', class: 'ostali' }
+                    };
+                    const tipInfo = tipMappings[tip] || { icon: '', text: tip, class: 'default' };
+                    return `<span class="tip-badge tip-${tipInfo.class}">${tipInfo.icon} ${tipInfo.text}</span>`;
+                }).join(' ') : '<span class="tip-badge tip-default">N/A</span>';
             
             return `
             <tr class="fade-in operator-row" data-id="${operator.id}" onclick="app.toggleOperatorDetails(${operator.id})">
@@ -1006,23 +1014,17 @@ class ATLASApp {
                     </div>
                 </td>
                 <td class="category-col">
-                    <span class="category-badge category-${this.getCategoryClass(operator)}">
-                        ${this.getCategoryDisplay(operator)}
+                    <span class="kategorija-badge kategorija-${kategorija}">
+                        ${kategorijaDisplay}
                     </span>
                 </td>
                 <td class="type-col">
-                    <span class="type-badge">${this.truncateText(tip, 25)}</span>
+                    <div class="tipovi-badges">
+                        ${tipoviHTML}
+                    </div>
                 </td>
                 <td class="status-col">
                     <span class="status-badge status-${operator.status}">${operator.status}</span>
-                </td>
-                <td class="completeness-col">
-                    <div class="progress-container">
-                        <div class="progress-bar">
-                            <div class="progress-fill" style="width: ${operator.kompletnost || 0}%"></div>
-                        </div>
-                        <small class="progress-text">${operator.kompletnost || 0}%</small>
-                    </div>
                 </td>
                 <td class="contact-col">
                     <div class="contact-info">
@@ -1055,7 +1057,7 @@ class ATLASApp {
                 </td>
             </tr>
             <tr class="operator-details" id="details-${operator.id}">
-                <td colspan="7">
+                <td colspan="6">
                     <div class="operator-details-content">
                         ${this.generateOperatorDetails(operator)}
                     </div>
@@ -1087,12 +1089,11 @@ class ATLASApp {
     }
     
     updateQuickFilterCounts() {
+        // NOVA STRUKTURA: Samo 2 kategorije + svi
         const counts = {
             all: this.operators.length,
-            dominantni: this.operators.filter(op => this.getCategoryClass(op) === 'dominantni').length,
-            mobilni: this.operators.filter(op => this.getCategoryClass(op) === 'mobilni').length,
-            isp: this.operators.filter(op => this.getCategoryClass(op) === 'isp').length,
-            b2b: this.operators.filter(op => this.getCategoryClass(op) === 'b2b').length
+            dominantni: this.operators.filter(op => op.kategorija === 'dominantni').length,
+            alternativni: this.operators.filter(op => op.kategorija === 'alternativni').length
         };
         
         Object.entries(counts).forEach(([category, count]) => {
@@ -1187,24 +1188,36 @@ class ATLASApp {
         form.elements.naziv.value = operator.naziv || '';
         form.elements.komercijalni_naziv.value = operator.komercijalni_naziv || '';
         
-        // Kategorija se izračunava dinamički
-        const kategorija = this.getCategoryClass(operator);
-        form.elements.kategorija.value = kategorija || '';
+        // NOVA STRUKTURA: Radio buttons za kategoriju
+        if (operator.kategorija) {
+            const kategorijaRadio = document.querySelector(`input[name="kategorija"][value="${operator.kategorija}"]`);
+            if (kategorijaRadio) {
+                kategorijaRadio.checked = true;
+            }
+        }
         
-        form.elements.tip.value = operator.tip || '';
+        // NOVA STRUKTURA: Checkboxes za tipove
+        // Prvo resetuj sve checkboxove
+        document.querySelectorAll('input[name="tipovi"]').forEach(cb => cb.checked = false);
+        // Onda označi samo one koji su u nizu tipovi
+        if (operator.tipovi && Array.isArray(operator.tipovi)) {
+            operator.tipovi.forEach(tip => {
+                const tipCheckbox = document.querySelector(`input[name="tipovi"][value="${tip}"]`);
+                if (tipCheckbox) {
+                    tipCheckbox.checked = true;
+                }
+            });
+        }
+        
         form.elements.status.value = operator.status || '';
         form.elements.opis.value = operator.opis || '';
-        
-        // Kontakt podaci su u nested strukturi
-        form.elements.adresa.value = operator.kontakt?.adresa || '';
-        form.elements.telefon.value = operator.kontakt?.telefon || '';
-        form.elements.email.value = operator.kontakt?.email || '';
-        form.elements.web.value = operator.kontakt?.web || '';
-        
-        form.elements.atlas_status.value = operator.atlas_status || '';
-        form.elements.prioritet.value = operator.prioritet || '';
-        form.elements.kompletnost.value = operator.kompletnost || 0;
         form.elements.kontakt_osoba.value = operator.kontakt_osoba || '';
+        
+        // Kontakt podaci mogu biti direktno ili u nested strukturi
+        form.elements.adresa.value = operator.kontakt?.adresa || operator.adresa || '';
+        form.elements.telefon.value = operator.kontakt?.telefon || operator.telefon || '';
+        form.elements.email.value = operator.kontakt?.email || operator.email || '';
+        form.elements.web.value = operator.kontakt?.web || operator.web || '';
         
         // Nova polja
         if (form.elements.napomena) {
@@ -1312,20 +1325,21 @@ class ATLASApp {
             return;
         }
         
+        // NOVA STRUKTURA: Prikupi kategoriju (checked radio button)
+        const kategorijaRadio = document.querySelector('input[name="kategorija"]:checked');
+        const kategorija = kategorijaRadio ? kategorijaRadio.value : '';
+        
+        // NOVA STRUKTURA: Prikupi tipove (checked checkboxes)
+        const tipoviCheckboxes = document.querySelectorAll('input[name="tipovi"]:checked');
+        const tipovi = Array.from(tipoviCheckboxes).map(cb => cb.value);
+        
         const operatorData = {
             naziv: formData.get('naziv').trim(),
             komercijalni_naziv: formData.get('komercijalni_naziv').trim(),
-            kategorija: formData.get('kategorija'),
-            tip: formData.get('tip'),
+            kategorija: kategorija,
+            tipovi: tipovi,
             status: formData.get('status'),
             opis: formData.get('opis').trim(),
-            adresa: formData.get('adresa').trim(),
-            telefon: formData.get('telefon').trim(),
-            email: formData.get('email').trim(),
-            web: formData.get('web').trim(),
-            atlas_status: formData.get('atlas_status'),
-            prioritet: formData.get('prioritet'),
-            kompletnost: parseInt(formData.get('kompletnost')) || this.calculateCompleteness(formData),
             kontakt_osoba: formData.get('kontakt_osoba').trim(),
             datum_azuriranja: new Date().toISOString().split('T')[0],
             
@@ -1413,14 +1427,27 @@ class ATLASApp {
             errors.push({ field: 'naziv', message: 'Naziv operatera je obavezan' });
         }
         
-        const kategorija = formData.get('kategorija');
-        if (!kategorija) {
+        // NOVA STRUKTURA: Validacija kategorije (radio button)
+        const kategorijaRadio = document.querySelector('input[name="kategorija"]:checked');
+        if (!kategorijaRadio) {
             errors.push({ field: 'kategorija', message: 'Kategorija operatera je obavezna' });
         }
         
-        const tip = formData.get('tip');
-        if (!tip) {
-            errors.push({ field: 'tip', message: 'Tip operatera je obavezan' });
+        // NOVA STRUKTURA: Validacija tipova (checkboxes - bar jedan)
+        const tipoviCheckboxes = document.querySelectorAll('input[name="tipovi"]:checked');
+        if (tipoviCheckboxes.length === 0) {
+            errors.push({ field: 'tipovi', message: 'Morate označiti bar jedan tip operatera' });
+            // Prikaži error poruku ispod checkboxa
+            const tipoviError = document.getElementById('tipoviError');
+            if (tipoviError) {
+                tipoviError.style.display = 'block';
+            }
+        } else {
+            // Sakrij error poruku ako je validno
+            const tipoviError = document.getElementById('tipoviError');
+            if (tipoviError) {
+                tipoviError.style.display = 'none';
+            }
         }
         
         const status = formData.get('status');
@@ -1446,13 +1473,9 @@ class ATLASApp {
             errors.push({ field: 'telefon', message: 'Broj telefona nije ispravan' });
         }
         
-        // Category-Type consistency check
-        if (kategorija && tip && !this.isCategoryTypeConsistent(kategorija, tip)) {
-            errors.push({
-                field: 'tip',
-                message: 'Tip operatera nije konzistentan sa izabranom kategorijom'
-            });
-        }
+        // NAPOMENA: isCategoryTypeConsistent() provera uklonjena jer nova struktura
+        // koristi kategorija (dominantni/alternativni) + tipovi (array)
+        // Validacija je sada jednostavnija - samo proveravamo da li su polja popunjena
         
         // Completeness validation
         const kompletnost = parseInt(formData.get('kompletnost'));
@@ -2646,67 +2669,19 @@ class ATLASApp {
     
     // NEW METHODS - Category Detection and Display
     getCategoryClass(operator) {
-        const naziv = operator.naziv.toLowerCase();
-        const komercijalni = (operator.komercijalni_naziv || '').toLowerCase();
-        const tip = operator.tip || '';
-        
-        // Eksplicitna prover sa tipom operatera
-        // Dominantni operateri - tačno ime prepoznavanje
-        if (naziv.includes('bh telecom') || komercijalni.includes('bh telecom') ||
-            naziv.includes('ht eronet') || komercijalni.includes('eronet') ||
-            naziv.includes('telekom srpske') || komercijalni.includes('m:tel') || komercijalni.includes('mtel') ||
-            tip === 'Dominantni operater') {
-            return 'dominantni';
-        }
-        
-        // Mobilni/MVNO operateri - proverava tip prvo, zatim naziv
-        if (tip.includes('MVNO') || tip.includes('ISP + MVNO') || 
-            tip.includes('Mobilni operater') ||
-            komercijalni.includes('zona.ba') || komercijalni.includes('haloo') ||
-            komercijalni.includes('one') || komercijalni.includes('logosoft') ||
-            komercijalni.includes('novotel')) {
-            return 'mobilni';
-        }
-        
-        // B2B/Enterprise operateri - proverava tip prvo
-        if (tip.includes('Enterprise/B2B') || 
-            tip.includes('IT provajder') || 
-            tip.includes('Sistemska integracija') ||
-            tip.includes('Veleprodajne') || 
-            tip.includes('carrier\'s carrier') ||
-            tip.includes('B2B') ||
-            naziv.includes('akton') || naziv.includes('lanaco') || naziv.includes('prointer')) {
-            return 'b2b';
-        }
-        
-        // ISP operateri (default za sve ostale) - eksplicitno proverava ISP tipove
-        if (tip.includes('ISP') || 
-            tip.includes('Internet servis provajder') ||
-            tip.includes('Regionalni ISP') ||
-            tip.includes('Kablovski operater') ||
-            tip.includes('IPTV') || 
-            tip.includes('MMDS')) {
-            return 'isp';
-        }
-        
-        // Fallback na osnovu naziva ako tip nije jasan
-        if (naziv.includes('telecom') || naziv.includes('net') || naziv.includes('tv')) {
-            return 'isp';
-        }
-        
-        // Default ISP
-        return 'isp';
+        // NOVA STRUKTURA: Jednostavno vraća kategoriju operatera direktno iz podataka
+        // 'dominantni' ili 'alternativni'
+        return operator.kategorija || 'alternativni'; // Default je alternativni ako nije postavljen
     }
     
     getCategoryDisplay(operator) {
-        const categoryClass = this.getCategoryClass(operator);
+        // NOVA STRUKTURA: Samo dve kategorije - dominantni i alternativni
+        const kategorija = operator.kategorija || 'alternativni';
         const categoryMap = {
             'dominantni': '🏢 Dominantni',
-            'mobilni': '📱 Mobilni/MVNO', 
-            'isp': '🌐 Regionalni ISP',
-            'b2b': '💼 Enterprise/B2B'
+            'alternativni': '� Alternativni'
         };
-        return categoryMap[categoryClass] || '❓ Ostalo';
+        return categoryMap[kategorija] || '❓ N/A';
     }
     
     // Toggle Operator Details - NEW METHOD

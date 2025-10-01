@@ -2,7 +2,6 @@
   "id": 7,
   "naziv": "ONE.Vip d.o.o.",
   "komercijalni_naziv": "ONE",
-  "tip": "MVNO",
   "status": "aktivan",
   "opis": "Jedan od vodećih mobilnih operatera u BiH sa fokusem na mobilne usluge. Dio A1 grupe (bivši Vip mobile) sa regionalnim pokrivanjem u Central i Eastern Europe.",
   "napomena": "Mobilni operater sa vlastitom GSM/UMTS/LTE infrastrukturom. Deo A1 Telekom Austria Group sa međunarodnim roaming partnerstvima.",
@@ -85,12 +84,9 @@
     "pristup_obracunskim_podacima": "Da",
     "napomene": "Kao veliki mobilni operater (A1 grupa), ONE.Vip ima sve zakonske obaveze implementirane u skladu sa BiH zakonodavstvom za elektronske komunikacije."
   },
-  "kompletnost": 77,
   "datum_azuriranja": "2025-10-01",
-  "atlas_status": "U pripremi za ATLAS",
-  "prioritet": "visok",
   "kontakt_osoba": "ZPT služba ONE - Zakonito presretanje telekomunikacija",
-  "kategorija": "regionalni_isp",
+  "kategorija": "alternativni",
   "adresa": "",
   "telefon": "",
   "email": "",
@@ -260,5 +256,10 @@
       "opis": "Content Delivery Network",
       "kapacitet": ""
     }
+  ],
+  "tipovi": [
+    "mobilni",
+    "isp",
+    "enterprise"
   ]
 }

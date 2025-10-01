@@ -2,7 +2,6 @@
   "id": 15,
   "naziv": "Global Internet d.o.o. Novi Travnik",
   "komercijalni_naziv": "Global Internet",
-  "tip": "ISP",
   "status": "aktivan",
   "opis": "ISP koji pruža usluge interneta, fiksne telefonije i televizije na području Novog Travnika i okoline. Koristi FTTH/FTTB i fixed wireless tehnologije sa VoIP i IPTV infrastrukturom.",
   "napomena": "Regionalni triple-play ISP sa naprednom infrastrukturom (optika, VoIP, IPTV) na području Novi Travnik. Upravljaju sa 10.240 IP adresa u upravljanju.",
@@ -78,9 +77,12 @@
     "pristup_podacima": "Da",
     "napomena": "Lokalni ISP operater sa obavezama za zakonito presretanje i pristup obračunskim podacima u skladu sa BiH zakonodavstvom."
   },
-  "atlas_status": "Spreman za ATLAS",
-  "prioritet": "srednji",
   "kontakt_osoba": "[potrebno dopuniti]",
   "completion_percentage": 95,
-  "last_updated": "2025-09-08"
+  "last_updated": "2025-09-08",
+  "kategorija": "alternativni",
+  "tipovi": [
+    "isp",
+    "kablovski"
+  ]
 }

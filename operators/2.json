@@ -2,7 +2,6 @@
   "id": 2,
   "naziv": "AKTON d.o.o. za inženjering i konsalting Sarajevo",
   "komercijalni_naziv": "AKTON",
-  "tip": "Enterprise/B2B",
   "status": "aktivan",
   "opis": "Dio međunarodne Akton grupe osnovane 1991. godine, koja posluje u više zemalja jugoistočne Evrope. Akton je B2B provajder koji nudi veleprodajne i korporativne usluge, uključujući prenos podataka, glasovne usluge i kolokaciju u data centrima.",
   "napomena": "Ključna uloga firme je \"carrier's carrier\" - operater za druge operatere i velike poslovne sisteme. Posjeduju nacionalnu licencu za pružanje veleprodajnih usluga u BiH.",
@@ -55,9 +54,11 @@
     "pristup_obracunskim_podacima": "Da",
     "napomene": "B2B operater sa nacionalnom licencom za veleprodajne usluge."
   },
-  "kompletnost": 100,
   "datum_azuriranja": "2025-09-08",
-  "atlas_status": "Spreman za ATLAS",
-  "prioritet": "visok",
-  "kontakt_osoba": "AKTON tehnicka podrska"
+  "kontakt_osoba": "AKTON tehnicka podrska",
+  "kategorija": "alternativni",
+  "tipovi": [
+    "isp",
+    "enterprise"
+  ]
 }

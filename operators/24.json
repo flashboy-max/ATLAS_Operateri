@@ -2,7 +2,6 @@
   "id": 24,
   "naziv": "Supernova (Blicnet d.o.o. Banja Luka)",
   "komercijalni_naziv": "",
-  "tip": "Regionalni ISP",
   "status": "aktivan",
   "opis": "",
   "napomena": "",
@@ -36,9 +35,10 @@
     "pristup_obracunskim_podacima": null,
     "napomene": "Potrebna provera zakonskih obaveza"
   },
-  "kompletnost": 20,
   "datum_azuriranja": "2025-09-08",
-  "atlas_status": "U pripremi za ATLAS",
-  "prioritet": "srednji",
-  "kontakt_osoba": ""
+  "kontakt_osoba": "",
+  "kategorija": "alternativni",
+  "tipovi": [
+    "ostali"
+  ]
 }

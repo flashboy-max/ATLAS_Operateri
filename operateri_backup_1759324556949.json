@@ -4,6 +4,7 @@
       "id": 1,
       "naziv": "ADRIA NET d.o.o.",
       "komercijalni_naziv": "ADRIA NET",
+      "tip": "Internet servis provajder (ISP), Bežični (Wi-Fi) širokopojasni internet provajder (ISP)",
       "status": "aktivan",
       "opis": "Osnovan 2017. godine sa vizijom osiguravanja najpouzdanijeg interneta u regiji. Specijalizovan za WiFi širokopojasnu infrastrukturu sa preko 6000 privatnih i poslovnih korisnika u Mostaru i okolini.",
       "napomena": "Tržišni i tehnološki lider u WiFi uslugama, afirmiše se kao prepoznatljiv brend u regiji.",
@@ -56,17 +57,17 @@
         "pristup_obracunskim_podacima": "Da",
         "napomene": "ISP operater sa obavezama za zakonito presretanje i pristup obračunskim podacima."
       },
+      "kompletnost": 100,
       "datum_azuriranja": "2025-09-08",
-      "kontakt_osoba": "Marko Džeba - Direktor",
-      "kategorija": "alternativni",
-      "tipovi": [
-        "isp"
-      ]
+      "atlas_status": "Spreman za ATLAS",
+      "prioritet": "visok",
+      "kontakt_osoba": "Marko Džeba - Direktor"
     },
     {
       "id": 2,
       "naziv": "AKTON d.o.o. za inženjering i konsalting Sarajevo",
       "komercijalni_naziv": "AKTON",
+      "tip": "Internet servis provajder (ISP), Veleprodajne telekomunikacione usluge (\"carrier's carrier\"), B2B",
       "status": "aktivan",
       "opis": "Dio međunarodne Akton grupe osnovane 1991. godine, koja posluje u više zemalja jugoistočne Evrope. Akton je B2B provajder koji nudi veleprodajne i korporativne usluge, uključujući prenos podataka, glasovne usluge i kolokaciju u data centrima.",
       "napomena": "Ključna uloga firme je \"carrier's carrier\" - operater za druge operatere i velike poslovne sisteme. Posjeduju nacionalnu licencu za pružanje veleprodajnih usluga u BiH.",
@@ -119,18 +120,17 @@
         "pristup_obracunskim_podacima": "Da",
         "napomene": "B2B operater sa nacionalnom licencom za veleprodajne usluge."
       },
+      "kompletnost": 100,
       "datum_azuriranja": "2025-09-08",
-      "kontakt_osoba": "AKTON tehnicka podrska",
-      "kategorija": "alternativni",
-      "tipovi": [
-        "isp",
-        "enterprise"
-      ]
+      "atlas_status": "Spreman za ATLAS",
+      "prioritet": "visok",
+      "kontakt_osoba": "AKTON tehnicka podrska"
     },
     {
       "id": 3,
       "naziv": "BH Telecom d.d. Sarajevo",
       "komercijalni_naziv": "BH Telecom",
+      "tip": "Dominantni operater",
       "status": "aktivan",
       "opis": "Najveći telekom operater u BiH sa kompletnom ponudom telekomunikacijskih usluga. Lider na tržištu mobilne i fiksne telefonije, interneta i digitalnih usluga.",
       "napomena": "",
@@ -244,19 +244,17 @@
         "pristup_obracunskim_podacima": true,
         "napomene": "Kao dominantni operater, BH Telecom ima sve zakonske obaveze implementirane i dostupne u skladu sa BiH zakonom. Vlastita medijacija za zakonito presretanje."
       },
+      "kompletnost": 100,
       "datum_azuriranja": "2025-09-08",
-      "kontakt_osoba": "Nedim Fazlibegović - Šef službe za ZPT i saradnju sa sudovima",
-      "kategorija": "dominantni",
-      "tipovi": [
-        "mobilni",
-        "isp",
-        "kablovski"
-      ]
+      "atlas_status": "Spreman za ATLAS",
+      "prioritet": "visok",
+      "kontakt_osoba": "Nedim Fazlibegović - Šef službe za ZPT i saradnju sa sudovima"
     },
     {
       "id": 4,
       "naziv": "Dasto Semtel d.o.o. Bijeljina",
       "komercijalni_naziv": "Zona.ba",
+      "tip": "MVNO",
       "status": "aktivan",
       "opis": "Jedinstveni hibridni operater koji kombinuje MVNO mobilne usluge sa ISP internet uslugama. Pruža usluge interneta, mobilne telefonije, satelitskog interneta i digitalne TV (IPTV).",
       "napomena": "Prvi hibridni MVNO/ISP u BiH sa RAK dozvolom broj 085PMUXD za Multiplex D digitalne zemaljske radiodifuzije. Unikatan portfolio usluga sa MVNO, ISP, IPTV i satelitskim uslugama.",
@@ -354,18 +352,17 @@
         "pristup_podacima": "Da",
         "napomena": "Hibridni operater sa podvojenim zakonskim obavezama (MVNO + ISP + radiodifuzija)."
       },
+      "atlas_status": "Prioritetan za ATLAS (inovativni hibridni model)",
+      "prioritet": "visok",
       "kontakt_osoba": "Suzana Simić",
       "completion_percentage": 95,
-      "last_updated": "2025-09-08",
-      "kategorija": "alternativni",
-      "tipovi": [
-        "mvno"
-      ]
+      "last_updated": "2025-09-08"
     },
     {
       "id": 5,
       "naziv": "JP Hrvatske telekomunikacije d.d. Mostar",
       "komercijalni_naziv": "HT Eronet",
+      "tip": "Dominantni operater",
       "status": "aktivan",
       "opis": "Treći najveći telekom operater u BiH, fokusiran na Hercegovačko-neretvansku županiju i šire područje FBiH. Dio Hrvatske telekomunikacije grupe.",
       "napomena": "Regionalno fokusiran dominantni operater sa MVNO partnerom (Haloo). Pripojen ArtNet d.o.o. Kiseljak.",
@@ -465,19 +462,17 @@
         "pristup_obracunskim_podacima": true,
         "napomene": "Kao dominantni operater, HT Eronet ima sve zakonske obaveze implementirane i dostupne u skladu sa BiH zakonom."
       },
+      "kompletnost": 100,
       "datum_azuriranja": "2025-09-08",
-      "kontakt_osoba": "Slaven Zelenika - Rukovoditelj Odjela za internu kontrolu i sigurnost",
-      "kategorija": "dominantni",
-      "tipovi": [
-        "mobilni",
-        "isp",
-        "kablovski"
-      ]
+      "atlas_status": "U pripremi za ATLAS",
+      "prioritet": "visok",
+      "kontakt_osoba": "Slaven Zelenika - Rukovoditelj Odjela za internu kontrolu i sigurnost"
     },
     {
       "id": 29,
       "naziv": "haloo",
       "komercijalni_naziv": "haloo",
+      "tip": "MVNO",
       "status": "aktivan",
       "opis": "Flanker brend i podružnica HT Eroneta, pokrenut 2011. godine. Pozicionira se kao jednostavan i jeftin provajder mobilnih usluga sa fokusom na transparentnost, bez skrivenih troškova.",
       "napomena": "MVNO operater koji koristi mobilnu mrežu HT Eroneta. Flanker brend sa fokusom na cjenovno pristupačne i jednostavne mobilne tarife.",
@@ -539,17 +534,17 @@
         "pristup_obracunskim_podacima": true,
         "napomene": "Kao podružnica, zakonske obaveze se izvršavaju preko HT Eroneta."
       },
+      "kompletnost": 90,
       "datum_azuriranja": "2025-09-08",
-      "kontakt_osoba": "HT Eronet korisnička podrška",
-      "kategorija": "alternativni",
-      "tipovi": [
-        "mvno"
-      ]
+      "atlas_status": "Spreman za ATLAS (MVNO operater sa fokusom na mobilne usluge)",
+      "prioritet": "visok",
+      "kontakt_osoba": "HT Eronet korisnička podrška"
     },
     {
       "id": 6,
       "naziv": "Telekom Srpske a.d. Banja Luka",
       "komercijalni_naziv": "m:tel",
+      "tip": "Dominantni operater",
       "status": "aktivan",
       "opis": "Drugi najveći telekom operater u BiH sa kompletnom ponudom usluga. Pokriva RS i značajan dio FBiH. Dio MTS grupe. Nacionalni operater sa vlastitom infrastrukturom. Aktivno pripaja manje ISP operatere (Logosoft, Supernova/Blicnet).",
       "napomena": "Grupno povezivanje: Dio MTS grupe (Telekom Srbija). Podružnice: Logosoft d.o.o., Supernova (Blicnet d.o.o.), Novotel. Međunarodni MTS partneri.",
@@ -664,19 +659,17 @@
         "pristup_obracunskim_podacima": true,
         "napomene": "Kao dominantni operater, m:tel ima sve zakonske obaveze implementirane i dostupne u skladu sa BiH zakonom."
       },
+      "kompletnost": 100,
       "datum_azuriranja": "2025-09-08",
-      "kontakt_osoba": "Zoran Sopka - Šef Službe za bezbjednost",
-      "kategorija": "dominantni",
-      "tipovi": [
-        "mobilni",
-        "isp",
-        "kablovski"
-      ]
+      "atlas_status": "U pripremi za ATLAS",
+      "prioritet": "visok",
+      "kontakt_osoba": "Zoran Sopka - Šef Službe za bezbjednost"
     },
     {
       "id": 7,
       "naziv": "ONE.Vip d.o.o.",
       "komercijalni_naziv": "ONE",
+      "tip": "Dominantni operater",
       "status": "aktivan",
       "opis": "Jedan od vodećih mobilnih operatera u BiH sa fokusem na mobilne usluge. Dio A1 grupe (bivši Vip mobile) sa regionalnim pokrivanjem u Central i Eastern Europe.",
       "napomena": "Mobilni operater sa vlastitom GSM/UMTS/LTE infrastrukturom. Deo A1 Telekom Austria Group sa međunarodnim roaming partnerstvima.",
@@ -760,17 +753,17 @@
         "pristup_obracunskim_podacima": "Da",
         "napomene": "Kao veliki mobilni operater (A1 grupa), ONE.Vip ima sve zakonske obaveze implementirane u skladu sa BiH zakonodavstvom za elektronske komunikacije."
       },
+      "kompletnost": 100,
       "datum_azuriranja": "2025-09-08",
-      "kontakt_osoba": "ZPT služba ONE - Zakonito presretanje telekomunikacija",
-      "kategorija": "alternativni",
-      "tipovi": [
-        "ostali"
-      ]
+      "atlas_status": "U pripremi za ATLAS",
+      "prioritet": "visok",
+      "kontakt_osoba": "ZPT služba ONE - Zakonito presretanje telekomunikacija"
     },
     {
       "id": 8,
       "naziv": "Telemach d.o.o. Sarajevo",
       "komercijalni_naziv": "Telemach",
+      "tip": "Kablovski operater (United Group)",
       "status": "aktivan",
       "opis": "Jedan od vodećih kablovskih operatera u BiH sa kompletnom ponudom triple-play usluga: optički internet (GIGA mreža), digitalna televizija (EON), fiksna telefonija (VoIP), plus cloud i poslovne usluge. Dio United Group.",
       "napomena": "Aktivno pripaja manje operatere (HS Kablovska TV, H&H Kable TV preko BHB Cable TV, BHB Cable TV). GIGA optička mreža pokriva 18+ gradova u BiH. Regionalni United Group partner.",
@@ -843,17 +836,17 @@
         "pristup_obracunskim_podacima": true,
         "napomene": "Kao veliki kablovski operater (United Group), Telemach ima sve zakonske obaveze implementirane u skladu sa BiH zakonodavstvom za elektronske komunikacije."
       },
+      "kompletnost": 95,
       "datum_azuriranja": "2025-09-08",
-      "kontakt_osoba": "Telemach korisnička podrška",
-      "kategorija": "alternativni",
-      "tipovi": [
-        "kablovski"
-      ]
+      "atlas_status": "Spreman za ATLAS (vodeći kablovski operater - United Group)",
+      "prioritet": "visok",
+      "kontakt_osoba": "Telemach korisnička podrška"
     },
     {
       "id": 9,
       "naziv": "Miss.Net d.o.o. Bihać",
       "komercijalni_naziv": "Miss.Net",
+      "tip": "Internet servis provajder (ISP)",
       "status": "aktivan",
       "opis": "Pružalac usluga bežičnog i optičkog interneta na području Unsko-sanskog kantona. Fokusirani isključivo na internet usluge. Vlastiti sistem sa nadprovajderom Blicnet.",
       "napomena": "Regionalni ISP fokusiran na USK sa optičkom i bežičnom infrastrukturom. Prešli na vlastiti sistem.",
@@ -905,17 +898,17 @@
         "pristup_obracunskim_podacima": "Da",
         "napomene": "Regionalni ISP operater sa obavezama za zakonito presretanje i pristup obračunskim podacima."
       },
+      "kompletnost": 100,
       "datum_azuriranja": "2025-09-08",
-      "kontakt_osoba": "Emir Pačić - Odgovorna osoba za tehničke usluge",
-      "kategorija": "alternativni",
-      "tipovi": [
-        "isp"
-      ]
+      "atlas_status": "Spreman za ATLAS",
+      "prioritet": "visok",
+      "kontakt_osoba": "Emir Pačić - Odgovorna osoba za tehničke usluge"
     },
     {
       "id": 10,
       "naziv": "LANACO d.o.o.",
       "komercijalni_naziv": "LANACO",
+      "tip": "IT provajder, Internet servis provajder (ISP), Sistemska integracija",
       "status": "aktivan",
       "opis": "Vodeći IT i telekomunikacioni operater u Bosni i Hercegovini specijalizovan za korporativne i poslovne korisnike. Pruža kompletna IT rešenja, internet usluge, cloud servise i sistemsku integraciju za velike organizacije i javni sektor.",
       "napomena": "Etabliran kao jedan od vodećih B2B operatera sa fokusom na enterprise rešenja i telekomunikacione usluge.",
@@ -976,18 +969,17 @@
         "pristup_obracunskim_podacima": "Da",
         "napomene": "IT i telekomunikacioni operater sa obavezama za zakonito presretanje i pristup obračunskim podacima."
       },
+      "kompletnost": 95,
       "datum_azuriranja": "2025-09-08",
-      "kontakt_osoba": "LANACO tehnicka podrska",
-      "kategorija": "alternativni",
-      "tipovi": [
-        "isp",
-        "enterprise"
-      ]
+      "atlas_status": "Prioritetan za ATLAS (vodeći B2B operater)",
+      "prioritet": "visok",
+      "kontakt_osoba": "LANACO tehnicka podrska"
     },
     {
       "id": 11,
       "naziv": "Logosoft d.o.o. Sarajevo",
       "komercijalni_naziv": "Logosoft",
+      "tip": "ISP + MVNO",
       "status": "aktivan",
       "opis": "Hibridni telekomunikacioni operater koji pruža internet, fiksne i mobilne usluge te IT rješenja. U vlasništvu m:tel-a Banjaluka, registrovan kao MVNO. Fokus na poslovne korisnike i Cloud usluge.",
       "napomena": "Hibridni operater (ISP + MVNO) u vlasništvu m:tel-a. Pripojen ST-Net d.o.o. Kakanj. Microsoft Partner. Tier certifikovani data centar.",
@@ -1080,18 +1072,17 @@
         "pristup_obracunskim_podacima": true,
         "napomene": "Kao MVNO i ISP operater, zakonske obaveze realizuje kroz m:tel infrastrukturu i vlastite sisteme."
       },
+      "kompletnost": 95,
       "datum_azuriranja": "2025-09-08",
-      "kontakt_osoba": "Fuad Trle",
-      "kategorija": "alternativni",
-      "tipovi": [
-        "mvno",
-        "isp"
-      ]
+      "atlas_status": "Spreman za ATLAS (hibridni operater sa kompletnim poslovnim fokusom)",
+      "prioritet": "visok",
+      "kontakt_osoba": "Fuad Trle"
     },
     {
       "id": 12,
       "naziv": "CRA TELECOM d.o.o.",
       "komercijalni_naziv": "CRA TELECOM",
+      "tip": "ISP",
       "status": "aktivan",
       "opis": "Telekomunikacioni operater registrovan u CRA (Komunikaciono regulatorna agencija) registru. Fokusiran na pružanje internet usluga i telekomunikacionih rešenja za poslovne i privatne korisnike u Bosni i Hercegovini.",
       "napomena": "Operater sa CRA licencom za telekomunikacione usluge, specijalizovan za VoIP, optička vlakna, kablovski internet i sistemsku integraciju sa IPv4/IPv6 podrškom.",
@@ -1167,18 +1158,17 @@
         "pristup_podacima": "Da",
         "napomena": "Telekomunikacioni operater sa CRA licencom, obaveze za zakonito presretanje i pristup obračunskim podacima."
       },
+      "atlas_status": "Spreman za ATLAS",
+      "prioritet": "srednji",
       "kontakt_osoba": "[potrebno dopuniti]",
       "completion_percentage": 95,
-      "last_updated": "2025-09-08",
-      "kategorija": "alternativni",
-      "tipovi": [
-        "isp"
-      ]
+      "last_updated": "2025-09-08"
     },
     {
       "id": 13,
       "naziv": "Elta-kabel d.o.o.",
       "komercijalni_naziv": "Elta-Kabel",
+      "tip": "ISP",
       "status": "neaktivan",
       "opis": "Bio je jedan od najvećih kablovskih operatera u Republici Srpskoj i Bosni i Hercegovini. Pružao je usluge interneta, digitalne televizije i fiksne telefonije. Nakon akvizicije od strane Mtel-a, uveo je i mobilnu telefoniju pod brendom MOVE.",
       "napomena": "❌ ARHIVIRAN - Mtel je 2019. godine postao stopostotni vlasnik Elta-Kabela. U julu 2022. godine, Mtel je zvanično spojio svoje tri kompanije - Elta-Kabel, Blicnet i Telrad Net - pod jedan zajednički brend Supernova. Operacije prebačene na Supernova.",
@@ -1254,18 +1244,17 @@
         "pristup_podacima": "[preneseno na Supernova]",
         "napomena": "Bivši kablovski operater, sve obaveze su prenesene na Supernova brend u okviru Mtel-a."
       },
+      "atlas_status": "❌ Arhiviran - Neaktivan (rebrendiran u Supernova)",
+      "prioritet": "arhiviran",
       "kontakt_osoba": "[prebačeno na Supernova]",
       "completion_percentage": 95,
-      "last_updated": "2025-09-08",
-      "kategorija": "alternativni",
-      "tipovi": [
-        "isp"
-      ]
+      "last_updated": "2025-09-08"
     },
     {
       "id": 14,
       "naziv": "GiNet d.o.o. Gornji Vakuf-Uskoplje",
       "komercijalni_naziv": "GiNet",
+      "tip": "ISP",
       "status": "aktivan",
       "opis": "Lokalni ISP u Gornjem Vakuf-Uskoplju fokusiran na bežični i optički internet za lokalne korisnike. Pokriva općinu Gornji Vakuf-Uskoplje i okolinu.",
       "napomena": "Regionalni ISP sa fokusom na srednjebosansku regiju, koristi fixed wireless i FTTH tehnologije. Aktivno prisutan na Facebook-u za lokalne korisnike.",
@@ -1330,18 +1319,17 @@
         "pristup_podacima": "Da",
         "napomena": "ISP operater sa standardnim obavezama."
       },
+      "atlas_status": "Spreman za ATLAS",
+      "prioritet": "srednji",
       "kontakt_osoba": "[potrebno dopuniti]",
       "completion_percentage": 95,
-      "last_updated": "2025-09-08",
-      "kategorija": "alternativni",
-      "tipovi": [
-        "isp"
-      ]
+      "last_updated": "2025-09-08"
     },
     {
       "id": 15,
       "naziv": "Global Internet d.o.o. Novi Travnik",
       "komercijalni_naziv": "Global Internet",
+      "tip": "ISP",
       "status": "aktivan",
       "opis": "ISP koji pruža usluge interneta, fiksne telefonije i televizije na području Novog Travnika i okoline. Koristi FTTH/FTTB i fixed wireless tehnologije sa VoIP i IPTV infrastrukturom.",
       "napomena": "Regionalni triple-play ISP sa naprednom infrastrukturom (optika, VoIP, IPTV) na području Novi Travnik. Upravljaju sa 10.240 IP adresa u upravljanju.",
@@ -1415,18 +1403,17 @@
         "pristup_podacima": "Da",
         "napomena": "Lokalni ISP operater sa obavezama za zakonito presretanje i pristup obračunskim podacima u skladu sa BiH zakonodavstvom."
       },
+      "atlas_status": "Spreman za ATLAS",
+      "prioritet": "srednji",
       "kontakt_osoba": "[potrebno dopuniti]",
       "completion_percentage": 95,
-      "last_updated": "2025-09-08",
-      "kategorija": "alternativni",
-      "tipovi": [
-        "isp"
-      ]
+      "last_updated": "2025-09-08"
     },
     {
       "id": 16,
       "naziv": "HKB Net d.o.o.",
       "komercijalni_naziv": "HKB Net",
+      "tip": "ISP",
       "status": "neaktivan",
       "opis": "Bivši pružalac internet usluga koji je pripojen operateru Telemach. Usluge se sada pružaju preko Telemach-a.",
       "napomena": "❌ ARHIVIRAN - Status potvrđen kao pripojen Telemachu. Dio grupe sa M&H Company i KATV HS (ista kontakt osoba Redžo Salihović). Operacije prebačene na Telemach.",
@@ -1488,18 +1475,17 @@
         "pristup_podacima": "Da",
         "napomena": "ISP operater sa nadprovajderom Telemach, obaveze za zakonito presretanje i pristup obračunskim podacima prebačene na Telemach."
       },
+      "atlas_status": "❌ Arhiviran - Neaktivan (pripojen Telemachu)",
+      "prioritet": "arhiviran",
       "kontakt_osoba": "Redžo Salihović (grupa M&H/KATV HS)",
       "completion_percentage": 95,
-      "last_updated": "2025-09-08",
-      "kategorija": "alternativni",
-      "tipovi": [
-        "isp"
-      ]
+      "last_updated": "2025-09-08"
     },
     {
       "id": 17,
       "naziv": "KATV HS d.o.o.",
       "komercijalni_naziv": "KATV HS",
+      "tip": "ISP",
       "status": "neaktivan",
       "opis": "Bivši sarajevski kablovski operater koji je bio deo M&H Company grupe. Pripojen operateru Telemach, sa kojim se sada pružaju sve usluge koje je prethodno pružao KATV HS.",
       "napomena": "❌ ARHIVIRAN - Status potvrđen kroz analizu kao pripojen Telemachu zajedno sa drugim operaterima iz M&H Company grupe. Web stranica usmjerava na telemach.ba.",
@@ -1566,18 +1552,17 @@
         "pristup_podacima": "[preneseno na Telemach]",
         "napomena": "Bivši kablovski operater, sve obaveze su prenesene na Telemach."
       },
+      "atlas_status": "❌ Arhiviran - Neaktivan (pripojen Telemachu)",
+      "prioritet": "arhiviran",
       "kontakt_osoba": "Redžo Salihović (M&H Company grupa)",
       "completion_percentage": 95,
-      "last_updated": "2025-09-08",
-      "kategorija": "alternativni",
-      "tipovi": [
-        "isp"
-      ]
+      "last_updated": "2025-09-08"
     },
     {
       "id": 18,
       "naziv": "M&H Company d.o.o",
       "komercijalni_naziv": "",
+      "tip": "Enterprise/B2B",
       "status": "aktivan",
       "opis": "",
       "napomena": "",
@@ -1624,17 +1609,17 @@
         "pristup_obracunskim_podacima": null,
         "napomene": "Potrebna provera zakonskih obaveza"
       },
+      "kompletnost": 70,
       "datum_azuriranja": "2025-09-08",
-      "kontakt_osoba": "",
-      "kategorija": "alternativni",
-      "tipovi": [
-        "enterprise"
-      ]
+      "atlas_status": "U pripremi za ATLAS",
+      "prioritet": "srednji",
+      "kontakt_osoba": ""
     },
     {
       "id": 19,
       "naziv": "MEDIA SKY d.o.o.",
       "komercijalni_naziv": "MEDIA SKY",
+      "tip": "ISP + IPTV",
       "status": "neaktivan",
       "opis": "Bivši ISP i IPTV operater sa fokusom na internet i medijske usluge. Koristio je BH Telecom kao nadprovajder. Završene testne procedure do kraja 2020. godine.",
       "napomena": "Pripojen Logosoft-u/m:tel grupi. Istorijski operater sa fokusom na internet i IPTV streaming. Korisnici preneti na Logosoft infrastrukturu.",
@@ -1694,18 +1679,17 @@
         "pristup_obracunskim_podacima": "",
         "napomene": "Bivši ISP operater sa BH Telecom nadprovajderom, sve obaveze su prenesene na Logosoft/m:tel grupu."
       },
+      "kompletnost": 85,
       "datum_azuriranja": "2025-09-08",
-      "kontakt_osoba": "Edis Bošnjaković (istorijski)",
-      "kategorija": "alternativni",
-      "tipovi": [
-        "isp",
-        "kablovski"
-      ]
+      "atlas_status": "Arhiviran - pripojen Logosoft-u/m:tel grupi",
+      "prioritet": "arhivirani",
+      "kontakt_osoba": "Edis Bošnjaković (istorijski)"
     },
     {
       "id": 20,
       "naziv": "MEDIASAT d.o.o.",
       "komercijalni_naziv": "MEDIASAT",
+      "tip": "ISP",
       "status": "aktivan",
       "opis": "Specijalizovani satelitski operater koji pruža satelitsku televiziju, satelitski internet i povezane telekomunikacione usluge. Fokusiran na područja sa ograničenim pristupom tradicionalnim telekomunikacionim infrastrukturama.",
       "napomena": "Satelitski operater specijalizovan za satelitske tehnologije sa fokusom na ruralne i teško dostupne oblasti. VSAT i satelitska infrastruktura za pokrivenost Bosne i Hercegovine.",
@@ -1777,18 +1761,17 @@
         "pristup_podacima": "[potrebno dopuniti]",
         "napomena": "Satelitski operater sa specifičnim zakonskim obavezama za satelitske usluge."
       },
+      "atlas_status": "U pripremi za ATLAS",
+      "prioritet": "srednji",
       "kontakt_osoba": "[potrebno dopuniti]",
       "completion_percentage": 95,
-      "last_updated": "2025-09-08",
-      "kategorija": "alternativni",
-      "tipovi": [
-        "isp"
-      ]
+      "last_updated": "2025-09-08"
     },
     {
       "id": 21,
       "naziv": "Novotel d.o.o. Sarajevo",
       "komercijalni_naziv": "Novotel",
+      "tip": "MVNO",
       "status": "neaktivan",
       "opis": "Bivši MVNO operater koji je preuzeo pozivni broj 067 od bivšeg IZI mobil-a. Bio je fokusiran na postpaid usluge i eSIM tehnologiju sa franšiznim partnerstvima.",
       "napomena": "Ugašen MVNO operater. Koristio je 067 pozivni broj (ex-IZI mobil). Imao franšizno partnerstvo sa Wirac.Net Pale. eSIM tehnologija. Dio m:tel grupe.",
@@ -1847,17 +1830,17 @@
         "pristup_obracunskim_podacima": "",
         "napomene": "Bivši MVNO operater - obaveze prenesene na host operatera."
       },
+      "kompletnost": 75,
       "datum_azuriranja": "2025-09-08",
-      "kontakt_osoba": "",
-      "kategorija": "alternativni",
-      "tipovi": [
-        "mvno"
-      ]
+      "atlas_status": "Arhiviran - neaktivan MVNO (ugašen)",
+      "prioritet": "arhivirani",
+      "kontakt_osoba": ""
     },
     {
       "id": 22,
       "naziv": "Ortak d.o.o. Šipovo",
       "komercijalni_naziv": "KDS Ortak",
+      "tip": "ISP",
       "status": "aktivan",
       "opis": "Etabliran lokalni kablovski i internet provajder na području općine Šipovo. Posluje od 2001. godine sa RAK licencom. Fokusiran na lokalne internet i kablove televizijske usluge u široj regiji Šipova.",
       "napomena": "Lokalni ISP sa dugom tradicijom (od 2001.), upravlja web-stranicom kdsortak.net, moguće povezanost sa ortak.ba domenом u Ljubuškom. m:tel nadprovajder za obračunske podatke.",
@@ -1927,18 +1910,17 @@
         "pristup_podacima": "Da",
         "napomena": "ISP operater sa m:tel nadprovajderom, aktivan u obračunskim podacima i zakonitom presretanju."
       },
+      "atlas_status": "Spreman za ATLAS",
+      "prioritet": "srednji",
       "kontakt_osoba": "Goran Vujković",
       "completion_percentage": 95,
-      "last_updated": "2025-09-08",
-      "kategorija": "alternativni",
-      "tipovi": [
-        "isp"
-      ]
+      "last_updated": "2025-09-08"
     },
     {
       "id": 23,
       "naziv": "PROINTER ITSS d.o.o.",
       "komercijalni_naziv": "PROINTER ITSS",
+      "tip": "ISP",
       "status": "aktivan",
       "opis": "Specijalizovani IT sistemski integrator koji pruža napredna IT rešenja, telekomunikacione usluge i sistemsku integraciju za korporativne klijente, javni sektor i organizacije. Fokusiran na kompleksne IT projekte i infrastrukturna rešenja.",
       "napomena": "ITSS (IT System Solutions) operater sa fokusom na enterprise segment, sistemsku integraciju, data centar usluge i kibernetičku bezbednost za korporativne klijente.",
@@ -2018,18 +2000,17 @@
         "pristup_podacima": "[potrebno dopuniti]",
         "napomena": "IT sistemski integrator sa specifičnim obavezama za korporativne IT usluge."
       },
+      "atlas_status": "U pripremi za ATLAS",
+      "prioritet": "srednji",
       "kontakt_osoba": "[potrebno dopuniti]",
       "completion_percentage": 95,
-      "last_updated": "2025-09-08",
-      "kategorija": "alternativni",
-      "tipovi": [
-        "isp"
-      ]
+      "last_updated": "2025-09-08"
     },
     {
       "id": 24,
       "naziv": "Supernova (Blicnet d.o.o. Banja Luka)",
       "komercijalni_naziv": "",
+      "tip": "Regionalni ISP",
       "status": "aktivan",
       "opis": "",
       "napomena": "",
@@ -2063,17 +2044,17 @@
         "pristup_obracunskim_podacima": null,
         "napomene": "Potrebna provera zakonskih obaveza"
       },
+      "kompletnost": 20,
       "datum_azuriranja": "2025-09-08",
-      "kontakt_osoba": "",
-      "kategorija": "alternativni",
-      "tipovi": [
-        "isp"
-      ]
+      "atlas_status": "U pripremi za ATLAS",
+      "prioritet": "srednji",
+      "kontakt_osoba": ""
     },
     {
       "id": 25,
       "naziv": "Telinea d.o.o. Bihać",
       "komercijalni_naziv": "Telinea",
+      "tip": "ISP + MMDS + IPTV",
       "status": "aktivan",
       "opis": "Regionalni ISP osnovan 2008. godine u Bihaću. Prema speedtest direktoriju, najbrži ISP u BiH sa prosekom od 264 Mbps. Specijalizovan za MMDS, IPTV, internet i fiksne usluge.",
       "napomena": "Speedtest lider u BiH (264 Mbps prosek). LIR registracija potvrđena. Aktivna web-stranica sa tarifama i korisničkim zonama. Fokus na Unsko-sanski kanton (USK).",
@@ -2139,18 +2120,17 @@
         "pristup_obracunskim_podacima": true,
         "napomene": "ISP operater sa BH Telecom nadprovajderom, obaveze za zakonito presretanje i pristup obračunskim podacima."
       },
+      "kompletnost": 85,
       "datum_azuriranja": "2025-09-08",
-      "kontakt_osoba": "Adi Vaizović",
-      "kategorija": "alternativni",
-      "tipovi": [
-        "isp",
-        "kablovski"
-      ]
+      "atlas_status": "Prioritetan za ATLAS (najbrži ISP u BiH)",
+      "prioritet": "visok",
+      "kontakt_osoba": "Adi Vaizović"
     },
     {
       "id": 26,
       "naziv": "TX TV d.o.o. Tuzla",
       "komercijalni_naziv": "TX TV",
+      "tip": "ISP + Kablovski operater",
       "status": "aktivan",
       "opis": "Regionalni kablovski operater koji pruža internet, kablovsku televiziju i fiksne usluge prvenstveno na području Tuzlanskog kantona. Prešli na nadprovajdera MisNet u martu 2025.",
       "napomena": "Kablovski operater fokusiran na Tuzlanski kanton sa DOCSIS tehnologijom. Promjena nadprovajdera na MisNet u 2025. godini.",
@@ -2233,18 +2213,17 @@
         "pristup_obracunskim_podacima": true,
         "napomene": "Regionalni ISP operater sa obavezama za zakonito presretanje i pristup obračunskim podacima."
       },
+      "kompletnost": 90,
       "datum_azuriranja": "2025-09-08",
-      "kontakt_osoba": "Admir Jaganjac",
-      "kategorija": "alternativni",
-      "tipovi": [
-        "isp",
-        "kablovski"
-      ]
+      "atlas_status": "Spreman za ATLAS (regionalni kablovski operater)",
+      "prioritet": "srednji",
+      "kontakt_osoba": "Admir Jaganjac"
     },
     {
       "id": 27,
       "naziv": "VKT-Net d.o.o. Bugojno",
       "komercijalni_naziv": "VKT-Net",
+      "tip": "Kablovski operater",
       "status": "aktivan",
       "opis": "Kablovski operater koji pruža triple-play usluge (internet, televizija, fiksna telefonija) na području Bugojna i okolnih gradova Srednjobosanskog kantona. Koristi FTTH i DOCSIS tehnologije.",
       "napomena": "Regionalni kablovski operater fokusiran na Srednjobosanski kanton sa kompletnom ponudom kablovskih usluga.",
@@ -2310,17 +2289,17 @@
         "pristup_obracunskim_podacima": true,
         "napomene": "Regionalni kablovski operater sa obavezama za zakonito presretanje i pristup obračunskim podacima u skladu sa BiH zakonodavstvom."
       },
+      "kompletnost": 90,
       "datum_azuriranja": "2025-09-08",
-      "kontakt_osoba": "",
-      "kategorija": "alternativni",
-      "tipovi": [
-        "kablovski"
-      ]
+      "atlas_status": "Spreman za ATLAS (regionalni kablovski operater)",
+      "prioritet": "srednji",
+      "kontakt_osoba": ""
     },
     {
       "id": 28,
       "naziv": "Wirac.Net d.o.o. Gračanica",
       "komercijalni_naziv": "Wirac.Net",
+      "tip": "Regionalni ISP (Novotel partner)",
       "status": "aktivan",
       "opis": "Regionalni ISP koji nudi WiFi i optički internet (FiBi), digitalnu televiziju i mobilnu telefoniju kao franšizni partner Novotela. Pokriva područje Gračanice, Pale i okolnih mjesta.",
       "napomena": "Lokalni ISP sa dugogodišnjim iskustvom, franšizni partner Novotel-a za 067 mobilne usluge. Omogućava preuzimanje 067 broja, potpisivanje ugovora i plaćanje za Novotel usluge. Aktivni operator prema CRA registru.",
@@ -2386,12 +2365,11 @@
         "pristup_obracunskim_podacima": true,
         "napomene": "Franšizni partner Novotel mobilnog operatera. Mobilne usluge regulisane preko Novotel-a. Lokalni ISP operater sa obavezama za zakonito presretanje i pristup obračunskim podacima."
       },
+      "kompletnost": 85,
       "datum_azuriranja": "2025-09-08",
-      "kontakt_osoba": "Potreban kontakt",
-      "kategorija": "alternativni",
-      "tipovi": [
-        "isp"
-      ]
+      "atlas_status": "Spreman za ATLAS (regionalni ISP + Novotel partner)",
+      "prioritet": "srednji",
+      "kontakt_osoba": "Potreban kontakt"
     }
   ],
   "version": "2.1",

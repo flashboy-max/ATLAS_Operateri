@@ -73,17 +73,16 @@
                 <select id="categoryFilter" class="filter-select">
                     <option value="">Sve kategorije</option>
                     <option value="dominantni">🏢 Dominantni operateri</option>
-                    <option value="mobilni">📱 Mobilni/MVNO</option>
-                    <option value="isp">🌐 ISP operateri</option>
-                    <option value="b2b">💼 B2B/Enterprise</option>
+                    <option value="alternativni">� Alternativni operateri</option>
                 </select>
                 <select id="typeFilter" class="filter-select">
                     <option value="">Svi tipovi</option>
-                    <option value="Dominantni operater">Dominantni operater</option>
-                    <option value="Mobilni operater">Mobilni operater</option>
-                    <option value="Internet servis provajder">Internet servis provajder</option>
-                    <option value="MVNO">MVNO</option>
-                    <option value="Kablovski operater">Kablovski operater</option>
+                    <option value="mobilni">📱 Mobilni operater</option>
+                    <option value="mvno">📡 MVNO</option>
+                    <option value="isp">🌐 Internet servis provajder (ISP)</option>
+                    <option value="kablovski">📺 Kablovski operater</option>
+                    <option value="enterprise">💼 Enterprise/B2B</option>
+                    <option value="ostali">⚙️ Ostali</option>
                 </select>
             </div>
         </div>
@@ -91,19 +90,13 @@
         <!-- Quick Category Filters -->
         <div class="quick-filters">
             <button class="filter-btn active" data-category="all" id="filterAll">
-                🔷 Svi (<span id="countAll">0</span>)
+                🔷 Svi Operateri (<span id="countAll">0</span>)
             </button>
             <button class="filter-btn" data-category="dominantni" id="filterDominantni">
                 🏢 Dominantni (<span id="countDominantni">0</span>)
             </button>
-            <button class="filter-btn" data-category="mobilni" id="filterMobilni">
-                📱 Mobilni/MVNO (<span id="countMobilni">0</span>)
-            </button>
-            <button class="filter-btn" data-category="isp" id="filterIsp">
-                🌐 Regionalni ISP (<span id="countIsp">0</span>)
-            </button>
-            <button class="filter-btn" data-category="b2b" id="filterB2b">
-                💼 Enterprise/B2B (<span id="countB2b">0</span>)
+            <button class="filter-btn" data-category="alternativni" id="filterAlternativni">
+                🔷 Alternativni (<span id="countAlternativni">0</span>)
             </button>
         </div>
 
@@ -147,7 +140,6 @@
                         <th class="category-col">Kategorija</th>
                         <th class="type-col">Tip</th>
                         <th class="status-col">Status</th>
-                        <th class="completeness-col">Kompletnost</th>
                         <th class="contact-col">Kontakt</th>
                         <th class="actions-col">Akcije</th>
                     </tr>
@@ -194,43 +186,70 @@
                         </div>
                     </div>
                     
-                    <div class="form-row">
+                    <!-- NOVA STRUKTURA: Kategorija -->
+                    <div class="form-row full-width">
                         <div class="form-group">
-                            <label for="kategorija">Kategorija Operatera *</label>
-                            <select id="kategorija" name="kategorija" required>
-                                <option value="">Izaberite kategoriju</option>
-                                <option value="dominantni">🏢 Dominantni operateri</option>
-                                <option value="mobilni">📱 Mobilni/MVNO</option>
-                                <option value="isp">🌐 Regionalni ISP</option>
-                                <option value="b2b">💼 Enterprise/B2B</option>
-                            </select>
+                            <label>Kategorija Operatera *</label>
+                            <div class="radio-group">
+                                <label class="radio-label">
+                                    <input type="radio" name="kategorija" value="dominantni" id="kategorijaDominantni" required>
+                                    <span class="radio-custom"></span>
+                                    <span class="radio-text">
+                                        <strong>🏢 Dominantni operater</strong>
+                                        <small>Nacionalno pokriće, vlastita infrastruktura, pružaju sve usluge (BH Telecom, m:tel, HT Eronet)</small>
+                                    </span>
+                                </label>
+                                <label class="radio-label">
+                                    <input type="radio" name="kategorija" value="alternativni" id="kategorijaAlternativni">
+                                    <span class="radio-custom"></span>
+                                    <span class="radio-text">
+                                        <strong>🔷 Alternativni operater</strong>
+                                        <small>Specijalizovani ili regionalni operateri, različite kombinacije usluga</small>
+                                    </span>
+                                </label>
+                            </div>
                         </div>
+                    </div>
+                    
+                    <!-- NOVA STRUKTURA: Tipovi -->
+                    <div class="form-row full-width">
                         <div class="form-group">
-                            <label for="tip">Tip Operatera *</label>
-                            <select id="tip" name="tip" required>
-                                <option value="">Izaberite tip operatera</option>
-                                <!-- Dominantni operateri -->
-                                <option value="Dominantni operater">Dominantni operater</option>
-                                <!-- Mobilni operateri -->
-                                <option value="MVNO">MVNO</option>
-                                <option value="ISP + MVNO">ISP + MVNO</option>
-                                <option value="Mobilni operater">Mobilni operater</option>
-                                <!-- ISP operateri -->
-                                <option value="ISP">ISP</option>
-                                <option value="Internet servis provajder (ISP)">Internet servis provajder (ISP)</option>
-                                <option value="Internet servis provajder (ISP), Bežični (Wi-Fi) širokopojasni internet provajder (ISP)">ISP + Wi-Fi</option>
-                                <option value="Regionalni ISP">Regionalni ISP</option>
-                                <option value="Regionalni ISP (Novotel partner)">Regionalni ISP (Novotel partner)</option>
-                                <option value="ISP + IPTV">ISP + IPTV</option>
-                                <option value="ISP + MMDS + IPTV">ISP + MMDS + IPTV</option>
-                                <option value="ISP + Kablovski operater">ISP + Kablovski operater</option>
-                                <option value="Kablovski operater">Kablovski operater</option>
-                                <option value="Kablovski operater (United Group)">Kablovski operater (United Group)</option>
-                                <!-- B2B operateri -->
-                                <option value="Enterprise/B2B">Enterprise/B2B</option>
-                                <option value="IT provajder, Internet servis provajder (ISP), Sistemska integracija">IT provajder + ISP + Sistemska integracija</option>
-                                <option value="Internet servis provajder (ISP), Veleprodajne telekomunikacione usluge (\"carrier's carrier\"), B2B">ISP + Veleprodajne + B2B</option>
-                            </select>
+                            <label>Tipovi Operatera * <small>(označite sve što se primenjuje)</small></label>
+                            <div class="checkbox-group">
+                                <label class="checkbox-label">
+                                    <input type="checkbox" name="tipovi" value="mobilni" class="tip-checkbox">
+                                    <span class="checkbox-custom"></span>
+                                    <span>📱 Mobilni operater <small>(vlastita infrastruktura)</small></span>
+                                </label>
+                                <label class="checkbox-label">
+                                    <input type="checkbox" name="tipovi" value="mvno" class="tip-checkbox">
+                                    <span class="checkbox-custom"></span>
+                                    <span>📡 MVNO <small>(Mobile Virtual Network Operator)</small></span>
+                                </label>
+                                <label class="checkbox-label">
+                                    <input type="checkbox" name="tipovi" value="isp" class="tip-checkbox">
+                                    <span class="checkbox-custom"></span>
+                                    <span>🌐 Internet servis provajder (ISP)</span>
+                                </label>
+                                <label class="checkbox-label">
+                                    <input type="checkbox" name="tipovi" value="kablovski" class="tip-checkbox">
+                                    <span class="checkbox-custom"></span>
+                                    <span>📺 Kablovski operater <small>(TV + Internet)</small></span>
+                                </label>
+                                <label class="checkbox-label">
+                                    <input type="checkbox" name="tipovi" value="enterprise" class="tip-checkbox">
+                                    <span class="checkbox-custom"></span>
+                                    <span>💼 Enterprise/B2B <small>(poslovni korisnici)</small></span>
+                                </label>
+                                <label class="checkbox-label">
+                                    <input type="checkbox" name="tipovi" value="ostali" class="tip-checkbox">
+                                    <span class="checkbox-custom"></span>
+                                    <span>⚙️ Ostali <small>(cloud, satelitski, wholesale, nedefinisano)</small></span>
+                                </label>
+                            </div>
+                            <div id="tipoviError" class="error-message" style="display: none;">
+                                ⚠️ Morate označiti bar jedan tip operatera
+                            </div>
                         </div>
                     </div>
                     
@@ -241,14 +260,6 @@
                                 <option value="">Izaberite status</option>
                                 <option value="aktivan">Aktivan</option>
                                 <option value="neaktivan">Neaktivan</option>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label for="prioritet">Prioritet</label>
-                            <select id="prioritet" name="prioritet">
-                                <option value="nizak">Nizak</option>
-                                <option value="srednji">Srednji</option>
-                                <option value="visok">Visok</option>
                             </select>
                         </div>
                     </div>
@@ -282,22 +293,6 @@
                         <div class="form-group">
                             <label for="web">Web stranica</label>
                             <input type="url" id="web" name="web">
-                        </div>
-                    </div>
-
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label for="atlas_status">ATLAS Status</label>
-                            <select id="atlas_status" name="atlas_status">
-                                <option value="U pripremi za ATLAS">U pripremi za ATLAS</option>
-                                <option value="Spreman za ATLAS">Spreman za ATLAS</option>
-                                <option value="Prioritetan za ATLAS">Prioritetan za ATLAS</option>
-                                <option value="Arhiviran">Arhiviran</option>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label for="kompletnost">Kompletnost (%)</label>
-                            <input type="number" id="kompletnost" name="kompletnost" min="0" max="100" value="0" readonly title="Vrednost se automatski izračunava na osnovu popunjenih polja.">
                         </div>
                     </div>
 
@@ -450,6 +445,7 @@
             <div class="modal-body help-content">
                 <div class="help-section">
                     <h3>🚀 Dobrodošli u ATLAS aplikaciju!</h3>
+                    <p><strong>ATLAS</strong> je akronim za: <em>Advanced Telecom Listing And Search</em> (Napredna telekomunikaciona lista i pretraga)</p>
                     <p>ATLAS je aplikacija za upravljanje bazom podataka telekomunikacionih operatera u Bosni i Hercegovini.</p>
                 </div>
                 
@@ -460,19 +456,20 @@
                         <p>Kliknite na dugme "Dodaj Operatera" da dodate novog operatera. Unesite osnovne informacije kao što su naziv, kategorija, tip i kontakt podatke.</p>
                     </div>
                     
-                    <div class="help-feature">
-                        <h4><i class="fas fa-upload text-success"></i> Uvoz JSON</h4>
-                        <p>Možete da uvezete veliki broj operatera odjednom putem JSON fajla. Aplikacija će automatski proveriti format i dodati nove operatere.</p>
-                    </div>
-                    
-                    <div class="help-feature">
-                        <h4><i class="fas fa-download text-secondary"></i> Izvoz</h4>
-                        <p>Izvezite kompletnu bazu podataka u JSON formatu za backup ili deljenje sa drugim korisnicima.</p>
+                    <div class="help-feature admin-only-notice">
+                        <h4><i class="fas fa-shield-alt text-warning"></i> Administratorske funkcije</h4>
+                        <p>Sledeće funkcije su dostupne <strong>samo administratorima</strong>:</p>
+                        <ul>
+                            <li><strong><i class="fas fa-upload"></i> Uvoz JSON:</strong> Uvoz većeg broja operatera odjednom putem JSON fajla.</li>
+                            <li><strong><i class="fas fa-download"></i> Izvoz:</strong> Izvoz kompletne baze podataka u JSON formatu za backup ili deljenje.</li>
+                            <li><strong><i class="fas fa-plus"></i> Dodaj Operatera:</strong> Dodavanje novih operatera u bazu.</li>
+                        </ul>
+                        <p class="admin-note">⚠️ Obični korisnici imaju pristup samo pregledu i pretragii operatera.</p>
                     </div>
                 </div>
                 
                 <div class="help-section">
-                    <h3>� Nova Backend/Frontend Arhitektura</h3>
+                    <h3>🔄 Nova Backend/Frontend Arhitektura</h3>
                     <div style="background: #e8f5e8; padding: 15px; border-radius: 8px; margin-bottom: 15px;">
                         <h4 style="color: #2d5016; margin-bottom: 10px;">✅ Ažurirana arhitektura</h4>
                         <ul style="color: #2d5016; margin: 0;">
@@ -494,10 +491,10 @@
                 </div>
                 
                 <div class="help-section">
-                    <h3>�🔍 Pretraga i filtriranje</h3>
+                    <h3>🔍 Pretraga i filtriranje</h3>
                     <ul>
                         <li><strong>Pretraga:</strong> Koristite search bar za pretragu po nazivu operatera</li>
-                        <li><strong>Kategorije:</strong> Filtrirajte po kategorijama (Dominantni, Mobilni/MVNO, Regionalni ISP, Enterprise/B2B)</li>
+                        <li><strong>Kategorije:</strong> Filtrirajte po kategorijama (Dominantni, Alternativni)</li>
                         <li><strong>Status:</strong> Filtrirajte aktivne ili neaktivne operatere</li>
                         <li><strong>Tip:</strong> Filtrirajte po tipu operatera</li>
                     </ul>
@@ -509,40 +506,35 @@
                         <div class="category-item">
                             <span class="category-icon">🏢</span>
                             <div>
-                                <strong>Dominantni operateri</strong>
-                                <p><em>Veliki nacionalni operateri sa kompletnom infrastrukturom</em></p>
-                                <p>Pružaju sve vrste telekomunikacionih usluga na nacionalnom nivou. Imaju vlastitu infrastrukturu i pokrivaju celu zemlju.</p>
-                                <small>Primeri: BH Telecom, m:tel, HT Eronet</small>
+                                <strong>Dominantni operater</strong>
+                                <p><em>Nacionalno pokriće, vlastita infrastruktura, pružaju sve usluge</em></p>
+                                <p>Veliki nacionalni operateri koji pružaju sve vrste telekomunikacionih usluga na nacionalnom nivou. Imaju vlastitu infrastrukturu i pokrivaju teritoriju BiH.</p>
+                                <small><strong>Primeri:</strong> BH Telecom, m:tel, HT Eronet</small>
                             </div>
                         </div>
                         <div class="category-item">
-                            <span class="category-icon">📱</span>
+                            <span class="category-icon">�</span>
                             <div>
-                                <strong>Mobilni/MVNO operateri</strong>
-                                <p><em>Operateri koji se fokusiraju na mobilne komunikacije</em></p>
-                                <p>MVNO (Mobile Virtual Network Operator) - koriste infrastrukturu drugih operatera. Pružaju mobilne usluge bez vlastite mreže.</p>
-                                <small>Primeri: ONE, Zona.ba, haloo, Novotel, Logosoft</small>
-                            </div>
-                        </div>
-                        <div class="category-item">
-                            <span class="category-icon">🌐</span>
-                            <div>
-                                <strong>Regionalni ISP operateri</strong>
-                                <p><em>Lokalni/provincijski internet servis provajderi</em></p>
-                                <p>Fokusirani na pružanje internet usluga u određenim regionima. Često nude i druge usluge kao TV i telefoniju.</p>
-                                <small>Primeri: Telemach, ADRIA NET, Miss.Net</small>
-                            </div>
-                        </div>
-                        <div class="category-item">
-                            <span class="category-icon">💼</span>
-                            <div>
-                                <strong>Enterprise/B2B operateri</strong>
-                                <p><em>Poslovni operateri specijalizovani za korporativne klijente</em></p>
-                                <p>Pružaju usluge namenjene preduzećima i velikim organizacijama. Fokus na B2B (Business-to-Business) rešenja.</p>
-                                <small>Primeri: AKTON, LANACO</small>
+                                <strong>Alternativni operater</strong>
+                                <p><em>Specijalizovani ili regionalni operateri, različite kombinacije usluga</em></p>
+                                <p>Operateri koji nude specijalizovane ili regionalne usluge. Mogu biti MVNO operateri (mobilne usluge bez vlastite mreže), ISP-ovi (internet provajderi), kablovski operateri ili poslovni (B2B) operateri.</p>
+                                <small><strong>Primeri:</strong> Telemach, LOGOSOFT, ONE, AKTON, Miss.Net</small>
                             </div>
                         </div>
                     </div>
+                </div>
+                
+                <div class="help-section">
+                    <h3>📱 Tipovi operatera</h3>
+                    <p>Prilikom dodavanja ili pregleda operatera, možete selektovati više tipova (ne odnosi se međusobno):</p>
+                    <ul>
+                        <li><strong>📱 Mobilni operater:</strong> Operator sa vlastom mobilnom infrastrukturom</li>
+                        <li><strong>📡 MVNO:</strong> Mobile Virtual Network Operator - koristi infrastrukturu drugih operatera</li>
+                        <li><strong>🌐 Internet servis provajder (ISP):</strong> Pruža internet usluge</li>
+                        <li><strong>📺 Kablovski operater:</strong> Televizijske i internet usluge + Internet)</li>
+                        <li><strong>💼 Enterprise/B2B:</strong> Poslovan operater specijalizovan za korporativne klijente (wholesale, nedefinisano)</li>
+                        <li><strong>⚙️ Ostali:</strong> Cloud, satelitske, wholesale, nedefinisano</li>
+                    </ul>
                 </div>
                 
                 <div class="help-section">
@@ -566,7 +558,7 @@
                     </ul>
                     
                     <h4>🔧 Reload dugme:</h4>
-                    <p>Reload dugme sada učitava podatke iz API-ja (individualni fajlovi) umesto iz starog JSON formata. Ovo osigurava najnovije podatke sa servera.</p>
+                    <p>Reload dugme učitava najnovije podatke iz API-ja (individualni fajlovi), osiguravajući uvek ažurne informacije sa servera.</p>
                 </div>
                 
                 <div class="help-section">

@@ -1055,6 +1055,10 @@ body {
     margin-bottom: 16px;
 }
 
+.form-row.full-width {
+    grid-template-columns: 1fr;
+}
+
 .form-group {
     margin-bottom: 16px;
 }
@@ -1089,6 +1093,287 @@ body {
 .form-group textarea {
     resize: vertical;
     font-family: inherit;
+}
+
+/* ===== RADIO BUTTONS (Kategorija) - ČISTO, BEZ CUSTOM ELEMENATA ===== */
+.radio-group {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    width: 100%;
+}
+
+.radio-label {
+    display: block;
+    padding: 20px 24px;
+    padding-right: 70px; /* Prostor za checkmark */
+    border: 3px solid #e2e8f0;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    background: #ffffff;
+    position: relative;
+}
+
+.radio-label:hover {
+    border-color: #93c5fd;
+    background: #f8fafc;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.1);
+}
+
+.radio-label input[type="radio"] {
+    display: none;
+}
+
+/* CHECKED STATE - SAMO KARTICA OZNAČENA */
+.radio-label:has(input[type="radio"]:checked) {
+    border-color: #3b82f6;
+    border-width: 4px;
+    background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%);
+    box-shadow: 0 6px 20px rgba(59, 130, 246, 0.25);
+    padding: 19px 23px;
+    padding-right: 70px; /* Prostor za checkmark */
+}
+
+/* Dodaj checkmark indikator u gornjem desnom uglu */
+.radio-label:has(input[type="radio"]:checked)::after {
+    content: '✓';
+    position: absolute;
+    top: 50%;
+    right: 18px;
+    transform: translateY(-50%);
+    width: 36px;
+    height: 36px;
+    background: #3b82f6;
+    color: white;
+    border-radius: 50%;
+    font-size: 20px;
+    font-weight: bold;
+    line-height: 36px;
+    text-align: center;
+    box-shadow: 0 2px 8px rgba(59, 130, 246, 0.4);
+    z-index: 10;
+}
+
+/* Sakrij custom radio element */
+.radio-custom {
+    display: none;
+}
+
+.radio-text {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    padding-right: 8px; /* Dodatni prostor od checkmark-a */
+}
+
+.radio-text strong {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: #334155;
+    transition: all 0.3s ease;
+}
+
+.radio-label:has(input[type="radio"]:checked) .radio-text strong {
+    color: #1e40af;
+    font-weight: 700;
+}
+
+.radio-text small {
+    color: #64748b;
+    font-size: 0.9rem;
+    line-height: 1.5;
+    transition: color 0.3s ease;
+}
+
+.radio-label:has(input[type="radio"]:checked) .radio-text small {
+    color: #475569;
+}
+
+/* ===== CHECKBOXES (Tipovi) - ČISTO, BEZ CUSTOM ELEMENATA ===== */
+.checkbox-group {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+    width: 100%;
+}
+
+@media (max-width: 768px) {
+    .checkbox-group {
+        grid-template-columns: 1fr;
+    }
+}
+
+.checkbox-label {
+    display: block;
+    padding: 16px 20px;
+    padding-right: 50px; /* Prostor za checkmark */
+    border: 3px solid #e2e8f0;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    background: white;
+    min-height: 60px;
+    position: relative;
+}
+
+.checkbox-label:hover {
+    background: #f0fdf4;
+    border-color: #6ee7b7;
+    transform: translateX(3px);
+    box-shadow: 0 4px 12px rgba(16, 185, 129, 0.12);
+}
+
+.checkbox-label input[type="checkbox"] {
+    display: none;
+}
+
+/* CHECKED STATE - SAMO KARTICA OZNAČENA */
+.checkbox-label:has(input[type="checkbox"]:checked) {
+    background: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%);
+    border-color: #10b981;
+    border-width: 4px;
+    box-shadow: 0 6px 16px rgba(16, 185, 129, 0.25);
+    padding: 15px 19px;
+    padding-right: 50px; /* Prostor za checkmark */
+}
+
+/* Dodaj checkmark indikator u gornjem desnom uglu */
+.checkbox-label:has(input[type="checkbox"]:checked)::after {
+    content: '✓';
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    width: 32px;
+    height: 32px;
+    background: #10b981;
+    color: white;
+    border-radius: 6px;
+    font-size: 18px;
+    font-weight: bold;
+    line-height: 32px;
+    text-align: center;
+    box-shadow: 0 2px 8px rgba(16, 185, 129, 0.4);
+    z-index: 10;
+}
+
+/* Sakrij custom checkbox element */
+.checkbox-custom {
+    display: none;
+}
+
+.checkbox-label span:not(.checkbox-custom) {
+    font-size: 1rem;
+    font-weight: 500;
+    color: #334155;
+    transition: all 0.3s ease;
+    display: block;
+    padding-right: 8px; /* Dodatni prostor od checkmark-a */
+}
+
+.checkbox-label:has(input[type="checkbox"]:checked) span:not(.checkbox-custom) {
+    color: #065f46;
+    font-weight: 700;
+}
+
+.checkbox-label small {
+    color: #94a3b8;
+    font-size: 0.85rem;
+    margin-left: 6px;
+    font-weight: 400;
+}
+
+/* ===== ERROR MESSAGE ===== */
+.error-message {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: #dc2626;
+    font-size: 0.85rem;
+    margin-top: 8px;
+    padding: 10px 14px;
+    background: #fee2e2;
+    border: 1px solid #fecaca;
+    border-radius: 8px;
+    font-weight: 500;
+}
+
+/* ===== KATEGORIJA BADGES ===== */
+.kategorija-badge {
+    display: inline-block;
+    padding: 6px 14px;
+    border-radius: 14px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+.kategorija-dominantni {
+    background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%);
+    color: white;
+    box-shadow: 0 2px 8px rgba(59, 130, 246, 0.3);
+}
+
+.kategorija-alternativni {
+    background: linear-gradient(135deg, #059669 0%, #10b981 100%);
+    color: white;
+    box-shadow: 0 2px 8px rgba(16, 185, 129, 0.3);
+}
+
+/* ===== TIP BADGES ===== */
+/* Tipovi Badges Container */
+.tipovi-badges {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+    align-items: center;
+}
+
+.tip-badge {
+    display: inline-block;
+    padding: 4px 10px;
+    margin: 0;
+    border-radius: 8px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+.tip-mobilni {
+    background: #dbeafe;
+    color: #1e40af;
+    border: 1px solid #93c5fd;
+}
+
+.tip-mvno {
+    background: #fef3c7;
+    color: #92400e;
+    border: 1px solid #fcd34d;
+}
+
+.tip-isp {
+    background: #d1fae5;
+    color: #065f46;
+    border: 1px solid #6ee7b7;
+}
+
+.tip-kablovski {
+    background: #fce7f3;
+    color: #9f1239;
+    border: 1px solid #fbcfe8;
+}
+
+.tip-enterprise {
+    background: #e0e7ff;
+    color: #3730a3;
+    border: 1px solid #c7d2fe;
+}
+
+.tip-ostali {
+    background: #f1f5f9;
+    color: #475569;
+    border: 1px solid #cbd5e1;
 }
 
 /* Form Sections */
@@ -1372,6 +1657,46 @@ body {
 .text-primary { color: #3b82f6; }
 .text-success { color: #22c55e; }
 .text-secondary { color: #64748b; }
+.text-warning { color: #f59e0b; }
+
+/* Admin-only notice in help modal */
+.admin-only-notice {
+    background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+    border: 2px solid #f59e0b;
+    border-radius: 12px;
+    padding: 16px;
+    margin: 16px 0;
+}
+
+.admin-only-notice h4 {
+    color: #92400e;
+    margin-bottom: 10px;
+}
+
+.admin-only-notice p {
+    color: #78350f;
+}
+
+.admin-only-notice ul {
+    margin: 12px 0;
+    padding-left: 20px;
+}
+
+.admin-only-notice li {
+    color: #78350f;
+    margin-bottom: 8px;
+    line-height: 1.5;
+}
+
+.admin-note {
+    background: #fef3c7;
+    border-left: 4px solid #f59e0b;
+    padding: 8px 12px;
+    margin-top: 12px;
+    border-radius: 4px;
+    font-weight: 600;
+    color: #92400e;
+}
 /* Expandable Row Styles */
 .operator-row {
     cursor: pointer;

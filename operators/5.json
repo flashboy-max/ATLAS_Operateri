@@ -2,7 +2,6 @@
   "id": 5,
   "naziv": "JP Hrvatske telekomunikacije d.d. Mostar",
   "komercijalni_naziv": "HT Eronet",
-  "tip": "Dominantni operater",
   "status": "aktivan",
   "opis": "Treći najveći telekom operater u BiH, fokusiran na Hercegovačko-neretvansku županiju i šire područje FBiH. Dio Hrvatske telekomunikacije grupe.",
   "napomena": "Regionalno fokusiran dominantni operater sa MVNO partnerom (Haloo). Pripojen ArtNet d.o.o. Kiseljak.",
@@ -102,9 +101,13 @@
     "pristup_obracunskim_podacima": true,
     "napomene": "Kao dominantni operater, HT Eronet ima sve zakonske obaveze implementirane i dostupne u skladu sa BiH zakonom."
   },
-  "kompletnost": 100,
   "datum_azuriranja": "2025-09-08",
-  "atlas_status": "U pripremi za ATLAS",
-  "prioritet": "visok",
-  "kontakt_osoba": "Slaven Zelenika - Rukovoditelj Odjela za internu kontrolu i sigurnost"
+  "kontakt_osoba": "Slaven Zelenika - Rukovoditelj Odjela za internu kontrolu i sigurnost",
+  "kategorija": "dominantni",
+  "tipovi": [
+    "mobilni",
+    "isp",
+    "kablovski",
+    "enterprise"
+  ]
 }

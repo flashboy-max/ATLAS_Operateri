@@ -2,7 +2,6 @@
   "id": 9,
   "naziv": "Miss.Net d.o.o. Bihać",
   "komercijalni_naziv": "Miss.Net",
-  "tip": "ISP",
   "status": "aktivan",
   "opis": "Pružalac usluga bežičnog i optičkog interneta na području Unsko-sanskog kantona. Fokusirani isključivo na internet usluge. Vlastiti sistem sa nadprovajderom Blicnet.",
   "napomena": "Regionalni ISP fokusiran na USK sa optičkom i bežičnom infrastrukturom. Prešli na vlastiti sistem.",
@@ -54,9 +53,10 @@
     "pristup_obracunskim_podacima": "Da",
     "napomene": "Regionalni ISP operater sa obavezama za zakonito presretanje i pristup obračunskim podacima."
   },
-  "kompletnost": 100,
   "datum_azuriranja": "2025-09-08",
-  "atlas_status": "Spreman za ATLAS",
-  "prioritet": "visok",
-  "kontakt_osoba": "Emir Pačić - Odgovorna osoba za tehničke usluge"
+  "kontakt_osoba": "Emir Pačić - Odgovorna osoba za tehničke usluge",
+  "kategorija": "alternativni",
+  "tipovi": [
+    "isp"
+  ]
 }

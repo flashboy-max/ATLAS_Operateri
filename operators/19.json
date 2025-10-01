@@ -2,7 +2,6 @@
   "id": 19,
   "naziv": "MEDIA SKY d.o.o.",
   "komercijalni_naziv": "MEDIA SKY",
-  "tip": "ISP + IPTV",
   "status": "neaktivan",
   "opis": "Bivši ISP i IPTV operater sa fokusom na internet i medijske usluge. Koristio je BH Telecom kao nadprovajder. Završene testne procedure do kraja 2020. godine.",
   "napomena": "Pripojen Logosoft-u/m:tel grupi. Istorijski operater sa fokusom na internet i IPTV streaming. Korisnici preneti na Logosoft infrastrukturu.",
@@ -64,9 +63,11 @@
     "pristup_obracunskim_podacima": "",
     "napomene": "Bivši ISP operater sa BH Telecom nadprovajderom, sve obaveze su prenesene na Logosoft/m:tel grupu."
   },
-  "kompletnost": 85,
   "datum_azuriranja": "2025-09-08",
-  "atlas_status": "Arhiviran - pripojen Logosoft-u/m:tel grupi",
-  "prioritet": "arhivirani",
-  "kontakt_osoba": "Edis Bošnjaković (istorijski)"
+  "kontakt_osoba": "Edis Bošnjaković (istorijski)",
+  "kategorija": "alternativni",
+  "tipovi": [
+    "isp",
+    "kablovski"
+  ]
 }

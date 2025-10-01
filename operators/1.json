@@ -2,7 +2,6 @@
   "id": 1,
   "naziv": "ADRIA NET d.o.o.",
   "komercijalni_naziv": "ADRIA NET",
-  "tip": "ISP",
   "status": "aktivan",
   "opis": "Osnovan 2017. godine sa vizijom osiguravanja najpouzdanijeg interneta u regiji. Specijalizovan za WiFi širokopojasnu infrastrukturu sa preko 6000 privatnih i poslovnih korisnika u Mostaru i okolini.",
   "napomena": "Tržišni i tehnološki lider u WiFi uslugama, afirmiše se kao prepoznatljiv brend u regiji.",
@@ -55,10 +54,7 @@
     "pristup_obracunskim_podacima": "Da",
     "napomene": "ISP operater sa obavezama za zakonito presretanje i pristup obračunskim podacima."
   },
-  "kompletnost": 100,
   "datum_azuriranja": "2025-09-08",
-  "atlas_status": "Spreman za ATLAS",
-  "prioritet": "visok",
   "kontakt_osoba": "Marko Džeba - Direktor",
   "usluge": [
     {
@@ -159,5 +155,9 @@
       "opis": "Digital Subscriber Line family",
       "kapacitet": "100 Mbps"
     }
+  ],
+  "kategorija": "alternativni",
+  "tipovi": [
+    "isp"
   ]
 }

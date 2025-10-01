@@ -2,7 +2,6 @@
   "id": 23,
   "naziv": "PROINTER ITSS d.o.o.",
   "komercijalni_naziv": "PROINTER ITSS",
-  "tip": "Enterprise/B2B",
   "status": "aktivan",
   "opis": "Specijalizovani IT sistemski integrator koji pruža napredna IT rešenja, telekomunikacione usluge i sistemsku integraciju za korporativne klijente, javni sektor i organizacije. Fokusiran na kompleksne IT projekte i infrastrukturna rešenja.",
   "napomena": "ITSS (IT System Solutions) operater sa fokusom na enterprise segment, sistemsku integraciju, data centar usluge i kibernetičku bezbednost za korporativne klijente.",
@@ -84,9 +83,11 @@
     "pristup_podacima": "[potrebno dopuniti]",
     "napomena": "IT sistemski integrator sa specifičnim obavezama za korporativne IT usluge."
   },
-  "atlas_status": "U pripremi za ATLAS",
-  "prioritet": "srednji",
   "kontakt_osoba": "[potrebno dopuniti]",
   "completion_percentage": 95,
-  "last_updated": "2025-09-08"
+  "last_updated": "2025-09-08",
+  "kategorija": "alternativni",
+  "tipovi": [
+    "isp"
+  ]
 }

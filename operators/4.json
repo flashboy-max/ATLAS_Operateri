@@ -2,7 +2,6 @@
   "id": 4,
   "naziv": "Dasto Semtel d.o.o. Bijeljina",
   "komercijalni_naziv": "Zona.ba",
-  "tip": "MVNO",
   "status": "aktivan",
   "opis": "Jedinstveni hibridni operater koji kombinuje MVNO mobilne usluge sa ISP internet uslugama. Pruža usluge interneta, mobilne telefonije, satelitskog interneta i digitalne TV (IPTV).",
   "napomena": "Prvi hibridni MVNO/ISP u BiH sa RAK dozvolom broj 085PMUXD za Multiplex D digitalne zemaljske radiodifuzije. Unikatan portfolio usluga sa MVNO, ISP, IPTV i satelitskim uslugama.",
@@ -102,9 +101,13 @@
     "pristup_podacima": "Da",
     "napomena": "Hibridni operater sa podvojenim zakonskim obavezama (MVNO + ISP + radiodifuzija)."
   },
-  "atlas_status": "Prioritetan za ATLAS (inovativni hibridni model)",
-  "prioritet": "visok",
   "kontakt_osoba": "Suzana Simić",
   "completion_percentage": 95,
-  "last_updated": "2025-09-08"
+  "last_updated": "2025-09-08",
+  "kategorija": "alternativni",
+  "tipovi": [
+    "mobilni",
+    "isp",
+    "kablovski"
+  ]
 }

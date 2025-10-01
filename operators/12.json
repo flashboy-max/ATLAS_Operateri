@@ -2,7 +2,6 @@
   "id": 12,
   "naziv": "CRA TELECOM d.o.o.",
   "komercijalni_naziv": "CRA TELECOM",
-  "tip": "ISP",
   "status": "aktivan",
   "opis": "Telekomunikacioni operater registrovan u CRA (Komunikaciono regulatorna agencija) registru. Fokusiran na pružanje internet usluga i telekomunikacionih rešenja za poslovne i privatne korisnike u Bosni i Hercegovini.",
   "napomena": "Operater sa CRA licencom za telekomunikacione usluge, specijalizovan za VoIP, optička vlakna, kablovski internet i sistemsku integraciju sa IPv4/IPv6 podrškom.",
@@ -80,9 +79,11 @@
     "pristup_podacima": "Da",
     "napomena": "Telekomunikacioni operater sa CRA licencom, obaveze za zakonito presretanje i pristup obračunskim podacima."
   },
-  "atlas_status": "Spreman za ATLAS",
-  "prioritet": "srednji",
   "kontakt_osoba": "[potrebno dopuniti]",
   "completion_percentage": 95,
-  "last_updated": "2025-09-08"
+  "last_updated": "2025-09-08",
+  "kategorija": "alternativni",
+  "tipovi": [
+    "isp"
+  ]
 }

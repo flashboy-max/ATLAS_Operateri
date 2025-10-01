@@ -2,7 +2,6 @@
   "id": 28,
   "naziv": "Wirac.Net d.o.o. Gračanica",
   "komercijalni_naziv": "Wirac.Net",
-  "tip": "Regionalni ISP (Novotel partner)",
   "status": "aktivan",
   "opis": "Regionalni ISP koji nudi WiFi i optički internet (FiBi), digitalnu televiziju i mobilnu telefoniju kao franšizni partner Novotela. Pokriva područje Gračanice, Pale i okolnih mjesta.",
   "napomena": "Lokalni ISP sa dugogodišnjim iskustvom, franšizni partner Novotel-a za 067 mobilne usluge. Omogućava preuzimanje 067 broja, potpisivanje ugovora i plaćanje za Novotel usluge. Aktivni operator prema CRA registru.",
@@ -70,9 +69,11 @@
     "pristup_obracunskim_podacima": true,
     "napomene": "Franšizni partner Novotel mobilnog operatera. Mobilne usluge regulisane preko Novotel-a. Lokalni ISP operater sa obavezama za zakonito presretanje i pristup obračunskim podacima."
   },
-  "kompletnost": 85,
   "datum_azuriranja": "2025-09-08",
-  "atlas_status": "Spreman za ATLAS (regionalni ISP + Novotel partner)",
-  "prioritet": "srednji",
-  "kontakt_osoba": "Potreban kontakt"
+  "kontakt_osoba": "Potreban kontakt",
+  "kategorija": "alternativni",
+  "tipovi": [
+    "mobilni",
+    "isp"
+  ]
 }
