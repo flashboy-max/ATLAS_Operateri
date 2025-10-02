@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="bs">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ATLAS - Dashboard</title>
+    <link rel="stylesheet" href="auth.css">
+    <link rel="stylesheet" href="dashboard.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="dashboard-body">
+    <!-- Main Content -->
+    <main class="dashboard-main">
+        <!-- Header -->
+        <header class="dashboard-header">
+            <div class="header-left">
+                <div class="logo-small">
+                    <i class="fas fa-satellite-dish"></i>
+                    <span>ATLAS</span>
+                </div>
+            </div>
+            
+            <div class="header-right">
+                <div class="user-menu">
+                <div class="user-avatar" id="userAvatar">
+                    <i class="fas fa-user"></i>
+                </div>
+                <div class="user-info" id="userInfo">
+                    <span class="user-name">Loading...</span>
+                    <span class="user-role">...</span>
+                </div>
+                <div class="dropdown-icon">
+                    <i class="fas fa-chevron-down"></i>
+                </div>
+                
+                <!-- Dropdown Menu -->
+                <div class="user-dropdown" id="userDropdown">
+                    <div class="dropdown-header">
+                        <div class="dropdown-user-info">
+                            <strong id="dropdownUserName">Ime Prezime</strong>
+                            <small id="dropdownUserEmail">email@example.com</small>
+                            <span class="dropdown-agency" id="dropdownAgency">Agencija</span>
+                        </div>
+                    </div>
+                    <div class="dropdown-divider"></div>
+                    <a href="#" class="dropdown-item">
+                        <i class="fas fa-user-circle"></i>
+                        <span>Moj profil</span>
+                    </a>
+                    <a href="#" class="dropdown-item">
+                        <i class="fas fa-cog"></i>
+                        <span>Postavke</span>
+                    </a>
+                    <div class="dropdown-divider"></div>
+                    <a href="#" class="dropdown-item logout-item" id="logoutBtn">
+                        <i class="fas fa-sign-out-alt"></i>
+                        <span>Odjavi se</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </header>
+
+        <!-- Welcome Section -->
+        <section class="welcome-section" id="welcomeSection">
+            <div class="welcome-content">
+                <h1 id="welcomeTitle">Dobrodošli nazad!</h1>
+                <p id="welcomeSubtitle">Evo pregleda vaših aktivnosti</p>
+            </div>
+            <div class="welcome-icon">
+                <i class="fas fa-chart-line"></i>
+            </div>
+        </section>
+
+        <!-- Stats Cards -->
+        <section class="stats-section" id="statsSection">
+            <!-- Stats će biti dinamički ubačene -->
+        </section>
+
+        <!-- Quick Actions -->
+        <section class="actions-section" id="actionsSection">
+            <h2 class="section-title">Brze akcije</h2>
+            <div class="actions-grid" id="actionsGrid">
+                <!-- Actions će biti dinamički ubačene -->
+            </div>
+        </section>
+
+        <!-- Recent Activity (samo za ADMIN i SUPERADMIN) -->
+        <section class="activity-section" id="activitySection" style="display: none;">
+            <h2 class="section-title">Nedavne aktivnosti</h2>
+            <div class="activity-list" id="activityList">
+                <!-- Activities će biti dinamički ubačene -->
+            </div>
+        </section>
+
+        <!-- Back to ATLAS Button -->
+        <section class="back-section">
+            <a href="../index.html" class="btn-back">
+                <i class="fas fa-arrow-left"></i>
+                <span>Povratak na ATLAS aplikaciju</span>
+            </a>
+        </section>
+    </main>
+
+    <script src="mock-data.js"></script>
+    <script src="auth.js"></script>
+    <script src="dashboard.js"></script>
+</body>
+</html>

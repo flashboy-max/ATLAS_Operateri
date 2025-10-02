@@ -1280,3 +1280,573 @@ Ovaj sistem autentikacije i autorizacije obezbeđuje:
 *Autor: ATLAS Development Team*  
 *Ažurirano: Dodato svih 15 policijskih agencija BiH, ažurirane forme sa validacijom lozinke, ispravljeni tipovi agencija
 
+
+---
+
+## 🔄 **AKTUELNI STATUS - AUTH PROTOTYPE IMPLEMENTIRAN**
+
+### ✅ **Šta smo pripremili (Oktobar 2025):**
+
+#### **Kompletan auth-prototype sistem:**
+- **6 HTML stranica** sa potpunom funkcionalnošću
+- **5 CSS fajlova** sa standardizovanim dizajnom (common.css sa CSS varijablama)
+- **7 JavaScript fajlova** sa svom logikom
+- **Role-based access control** (SUPERADMIN, ADMIN, KORISNIK)
+- **Mock autentikacija** sa JWT simulacijom
+- **Kompletnan CRUD** za korisnike
+- **System logs** sa filtriranjem i paginacijom
+- **Responsive dizajn** za sve uređaje
+
+#### **Implementirane stranice:**
+1. `login.html` - Login stranica sa test nalozima
+2. `dashboard.html` - Dashboard sa statistikama i brzim akcijama
+3. `user-management.html` - Upravljanje korisnicima (CRUD operacije)
+4. `system-logs.html` - Sistemski logovi sa filterima i exportom
+5. `moj-profil.html` - Korisnički profil (read-only)
+6. `postavke.html` - Postavke sistema (placeholder)
+
+#### **Ključne komponente:**
+- **common.css** - Centralizovani stilovi sa CSS varijablama
+- **mock-data.js** - Test podaci (4 korisnika, 15 agencija, 20 logova)
+- **auth.js** - Mock JWT autentikacija i session management
+- **Role-based UI** - Različit prikaz za svaku rolu
+
+---
+
+## 🚀 **PLAN INTEGRACIJE SA GLAVNOM APLIKACIJOM**
+
+### **FAZA 1: Backend Integracija (Prioritet 1)**
+
+#### **API Endpoints za kreiranje:**
+```javascript
+// Autentikacija
+POST /api/auth/login
+POST /api/auth/logout
+GET  /api/auth/me
+
+// Korisnici
+GET    /api/users
+POST   /api/users
+PUT    /api/users/:id
+DELETE /api/users/:id
+
+// Agencije
+GET /api/agencies
+
+// Logovi
+GET  /api/logs
+POST /api/logs
+```
+
+#### **Baza podataka - Tablice:**
+```sql
+CREATE TABLE users (
+    id SERIAL PRIMARY KEY,
+    username VARCHAR(50) UNIQUE NOT NULL,
+    email VARCHAR(100) UNIQUE NOT NULL,
+    password_hash VARCHAR(255) NOT NULL,
+    role VARCHAR(20) NOT NULL CHECK (role IN ('SUPERADMIN', 'ADMIN', 'KORISNIK')),
+    agencija_id INTEGER REFERENCES agencije(id),
+    ime VARCHAR(100) NOT NULL,
+    prezime VARCHAR(100) NOT NULL,
+    telefon VARCHAR(20),
+    aktivan BOOLEAN DEFAULT true,
+    kreiran_od INTEGER REFERENCES users(id),
+    kreiran_datum TIMESTAMP DEFAULT NOW(),
+    poslednji_login TIMESTAMP
+);
+
+CREATE TABLE agencije (
+    id SERIAL PRIMARY KEY,
+    naziv VARCHAR(200) NOT NULL,
+    skracenica VARCHAR(20) UNIQUE NOT NULL,
+    tip VARCHAR(20) NOT NULL,
+    adresa TEXT,
+    telefon VARCHAR(20),
+    email VARCHAR(100),
+    aktivan BOOLEAN DEFAULT true
+);
+
+CREATE TABLE system_logs (
+    id SERIAL PRIMARY KEY,
+    korisnik_id INTEGER REFERENCES users(id),
+    akcija VARCHAR(50) NOT NULL,
+    tip VARCHAR(30) NOT NULL,
+    target TEXT,
+    detalji JSONB,
+    ip_adresa INET,
+    user_agent TEXT,
+    timestamp TIMESTAMP DEFAULT NOW(),
+    status VARCHAR(20) DEFAULT 'SUCCESS'
+);
+```
+
+---
+
+## ⚠️ **IZAZOVI KOD MIGRACIJE - PREPORUKE**
+
+### **1. Fajl Konflikti i Optimizacija:**
+
+#### **Problem:** Isti nazivi fajlova (.css, .js, .html)
+**Rešenje:** Prefiks strategija
+```
+ATLAS html/
+├── index.html (glavna aplikacija)
+├── styles.css (glavni stilovi)
+├── app.js (glavna aplikacija)
+│
+├── auth-prototype/ (zaseban modul)
+│   ├── auth-login.html
+│   ├── auth-dashboard.html
+│   ├── auth-user-management.html
+│   ├── auth-system-logs.html
+│   ├── auth-moj-profil.html
+│   ├── auth-postavke.html
+│   ├── auth-styles.css
+│   ├── auth-common.css
+│   ├── auth-script.js
+│   └── auth-mock-data.js
+```
+
+#### **CSS Optimizacija - Izbegavanje konflikata:**
+```css
+/* Glavni styles.css - postojeći stilovi */
+.operator-table { /* postojeći stilovi */ }
+.search-form { /* postojeći stilovi */ }
+
+/* auth-styles.css - novi stilovi sa prefiksom */
+.auth-container { /* novi stilovi */ }
+.auth-dashboard { /* novi stilovi */ }
+.auth-user-table { /* novi stilovi */ }
+.auth-form-control { /* novi stilovi */ }
+```
+
+### **2. Modularna Integracija:**
+
+#### **HTML Integracija - Include metoda:**
+```html
+<!-- Glavni index.html -->
+<header>
+  <div id="main-header">
+    <!-- Postojeći header -->
+  </div>
+  
+  <!-- Auth header (dinamički) -->
+  <div id="auth-header" style="display: none;">
+    <!-- Učitava se samo za autentifikovane korisnike -->
+  </div>
+</header>
+
+<main>
+  <!-- Postojeći sadržaj -->
+  <div id="operators-section">
+    <!-- Glavna aplikacija -->
+  </div>
+  
+  <!-- Auth sekcije (dinamičke) -->
+  <div id="auth-dashboard" style="display: none;">
+    <!-- Učitava se kao modul -->
+  </div>
+</main>
+
+<!-- Script integracija -->
+<script src="app.js"></script>
+<script src="auth-prototype/auth-script.js"></script>
+```
+
+#### **JavaScript Modularna Struktura:**
+```javascript
+// app.js (glavna aplikacija)
+const ATLAS = {
+  operators: { /* postojeći kod */ },
+  search: { /* postojeći kod */ },
+  
+  // Auth integracija
+  auth: {
+    init: function() {
+      if (this.isAuthenticated()) {
+        this.loadAuthModule();
+      }
+    },
+    
+    loadAuthModule: function() {
+      // Učitaj auth-prototype modul
+      return import('./auth-prototype/auth-module.js');
+    },
+    
+    isAuthenticated: function() {
+      return localStorage.getItem('atlas_auth_token') !== null;
+    }
+  }
+};
+
+// Inicijalizacija
+document.addEventListener('DOMContentLoaded', () => {
+  ATLAS.auth.init();
+  ATLAS.operators.init();
+});
+```
+
+### **3. CSS Konflikti - Rešenja:**
+
+#### **CSS Scope sa prefiksima:**
+```css
+/* auth-common.css */
+:root {
+  --auth-primary-color: #4169E1;
+  --auth-success-color: #22C55E;
+  --auth-spacing-sm: 1rem;
+}
+
+.auth-dashboard {
+  /* Scoped stilovi za dashboard */
+}
+
+.auth-user-management {
+  /* Scoped stilovi za user management */
+}
+
+/* Izbegavanje konflikata sa postojećim klasama */
+.auth-table {
+  /* Umesto .table koji možda postoji */
+}
+
+.auth-btn-primary {
+  /* Umesto .btn-primary */
+}
+```
+
+#### **Dynamic CSS Loading:**
+```javascript
+// Dinamičko učitavanje CSS-a
+function loadAuthStyles() {
+  if (!document.getElementById('auth-styles')) {
+    const link = document.createElement('link');
+    link.id = 'auth-styles';
+    link.rel = 'stylesheet';
+    link.href = 'auth-prototype/auth-styles.css';
+    document.head.appendChild(link);
+  }
+}
+```
+
+### **4. Baza Podataka - Integracija:**
+
+#### **Separate Database Schema:**
+```sql
+-- Postojeće tablice (operateri)
+CREATE TABLE operators (
+    id SERIAL PRIMARY KEY,
+    naziv VARCHAR(200) NOT NULL,
+    -- postojeće kolone
+);
+
+-- Nove auth tablice (zasebno)
+CREATE TABLE auth_users (
+    id SERIAL PRIMARY KEY,
+    username VARCHAR(50) UNIQUE NOT NULL,
+    email VARCHAR(100) UNIQUE NOT NULL,
+    password_hash VARCHAR(255) NOT NULL,
+    role VARCHAR(20) NOT NULL,
+    agencija_id INTEGER REFERENCES auth_agencije(id),
+    -- ostale kolone
+);
+
+CREATE TABLE auth_agencije (
+    id SERIAL PRIMARY KEY,
+    naziv VARCHAR(200) NOT NULL,
+    skracenica VARCHAR(20) UNIQUE NOT NULL,
+    -- ostale kolone
+);
+
+CREATE TABLE auth_system_logs (
+    id SERIAL PRIMARY KEY,
+    korisnik_id INTEGER REFERENCES auth_users(id),
+    akcija VARCHAR(50) NOT NULL,
+    -- ostale kolone
+);
+```
+
+---
+
+## 🔧 **TEHNIČKE PREPORUKE**
+
+### **1. Lazy Loading za Auth Module:**
+```javascript
+// Učitaj auth module samo kad je potreban
+const authModule = {
+  load: async function() {
+    if (!this.loaded) {
+      const module = await import('./auth-prototype/auth-module.js');
+      this.instance = new module.AuthSystem();
+      this.loaded = true;
+    }
+    return this.instance;
+  }
+};
+```
+
+### **2. Event Bus za Komunikaciju:**
+```javascript
+// Komunikacija između glavne aplikacije i auth modula
+const eventBus = new EventTarget();
+
+// Glavna aplikacija sluša auth događaje
+eventBus.addEventListener('userLoggedIn', (e) => {
+  // Ažuriraj UI
+});
+
+// Auth module emituje događaje
+eventBus.dispatchEvent(new CustomEvent('userLoggedIn', {
+  detail: { user: currentUser }
+}));
+```
+
+### **3. API Service Layer:**
+```javascript
+// Centralizovani API service
+class AtlasApiService {
+  constructor() {
+    this.baseURL = '/api';
+    this.token = localStorage.getItem('atlas_auth_token');
+  }
+
+  // Postojeći API pozivi
+  async getOperators() {
+    return this.request('/operators');
+  }
+
+  // Novi auth API pozivi
+  async login(credentials) {
+    return this.request('/auth/login', {
+      method: 'POST',
+      body: JSON.stringify(credentials)
+    });
+  }
+
+  async getUsers() {
+    return this.request('/users');
+  }
+}
+```
+
+---
+
+## 🎯 **PREDVIĐENI PROBLEMI I REŠENJA**
+
+### **Problem 1: CSS Konflikti**
+- **Simptomi:** Stilovi se preklapaju, neispravan prikaz
+- **Rešenje:** CSS prefiksi, scoped stilovi, modularni CSS
+
+### **Problem 2: JavaScript Konflikti**
+- **Simptomi:** Funkcije se preklapaju, globalne varijable
+- **Rešenje:** Module pattern, namespace-ovi, event bus
+
+### **Problem 3: Rute i Navigacija**
+- **Simptomi:** Konflikt ruta, neispravna navigacija
+- **Rešenje:** Client-side routing, hash rute, dinamički content
+
+### **Problem 4: Session Management**
+- **Simptomi:** Više sesija, konflikt tokena
+- **Rešenje:** Centralizovani session manager, cookie naming
+
+### **Problem 5: Backend API Konflikti**
+- **Simptomi:** Endpoint konflikti, verzioniranje API-ja
+- **Rešenje:** API verzioniranje (/api/v1/auth), namespace-ovi
+
+---
+
+## 🔧 **TROUBLESHOOTING - Rešenja za uobičajene probleme**
+
+### **Problem 1: CSS se ne učitava pravilno**
+**Simptomi:** Stilovi se ne primjenjuju, izgled je neispravan
+
+**Rešenja:**
+```javascript
+// Provjeri da li se CSS učitao
+console.log(document.styleSheets);
+
+// Ručno učitaj CSS ako je potrebno
+const link = document.createElement('link');
+link.rel = 'stylesheet';
+link.href = 'auth-prototype/auth-styles.css';
+document.head.appendChild(link);
+```
+
+**Provjera:** Otvori Developer Tools → Network tab → vidi da li se CSS fajlovi učitavaju
+
+### **Problem 2: API pozivi ne rade**
+**Simptomi:** Login ne radi, greška "Network Error"
+
+**Rešenja:**
+```javascript
+// Provjeri API endpoint
+fetch('/api/auth/login', {
+  method: 'POST',
+  headers: { 'Content-Type': 'application/json' },
+  body: JSON.stringify({ username: 'test', password: 'test' })
+})
+.then(res => res.json())
+.then(data => console.log(data))
+.catch(err => console.error('API Error:', err));
+```
+
+**Provjera:** Otvori Developer Tools → Console → Network tab → provjeri HTTP status kodove
+
+### **Problem 3: Sesija se ne čuva**
+**Simptomi:** Nakon refresh-a korisnik je odjavljen
+
+**Rešenja:**
+```javascript
+// Provjeri localStorage
+console.log('Token:', localStorage.getItem('atlas_auth_token'));
+console.log('User:', localStorage.getItem('atlas_user'));
+
+// Ručno postavi test sesiju
+localStorage.setItem('atlas_auth_token', 'test-token');
+localStorage.setItem('atlas_user', JSON.stringify({
+  id: 1,
+  username: 'test',
+  role: 'ADMIN',
+  ime: 'Test',
+  prezime: 'User'
+}));
+```
+
+**Provjera:** Otvori Developer Tools → Application → Local Storage
+
+### **Problem 4: Role-based pristup ne radi**
+**Simptomi:** Korisnik vidi funkcionalnosti koje ne bi trebao
+
+**Rešenja:**
+```javascript
+// Provjeri trenutnog korisnika
+const user = JSON.parse(localStorage.getItem('atlas_user'));
+console.log('Current user:', user);
+console.log('User role:', user.role);
+
+// Testiraj role-based funkcije
+console.log('Can edit users:', user.role === 'SUPERADMIN' || user.role === 'ADMIN');
+console.log('Can view logs:', user.role === 'SUPERADMIN' || user.role === 'ADMIN');
+```
+
+**Provjera:** Otvori Developer Tools → Console → testiraj role-based logiku
+
+### **Problem 5: JavaScript greške**
+**Simptomi:** "Uncaught ReferenceError" ili "TypeError"
+
+**Rešenja:**
+```javascript
+// Provjeri da li su svi fajlovi učitani
+console.log('AuthSystem loaded:', typeof AuthSystem);
+console.log('Mock data loaded:', typeof MOCK_USERS);
+
+// Provjeri redoslijed učitavanja script-ova
+// Treba biti: mock-data.js → auth.js → dashboard.js
+```
+
+### **Problem 6: Database konekcija**
+**Simptomi:** "Connection refused" ili "Table doesn't exist"
+
+**Rešenja:**
+```sql
+-- Provjeri konekciju
+SELECT NOW();
+
+-- Kreiraj auth tablice ako nedostaju
+CREATE TABLE IF NOT EXISTS auth_users (...);
+CREATE TABLE IF NOT EXISTS auth_agencije (...);
+CREATE TABLE IF NOT EXISTS auth_system_logs (...);
+```
+
+---
+
+## 📋 **MIGRATION CHECKLIST - Korak po korak**
+
+### **FAZA 1: Priprema (Prije migracije)**
+- [ ] **Backup postojeće aplikacije** - Kreiraj puni backup svih fajlova
+- [ ] **Database backup** - Export postojeće baze podataka
+- [ ] **Test environment** - Pripremi staging/test server
+- [ ] **Performance baseline** - Mjeri trenutne performanse aplikacije
+- [ ] **Code review** - Pregledaj auth-prototype kod sa timom
+
+### **FAZA 2: Backend Setup**
+- [ ] **Kreiraj auth tablice** - Pokreni SQL skriptu za auth_users, auth_agencije, auth_system_logs
+- [ ] **Dodaj API endpoint-e** - Implementiraj /api/auth/*, /api/users/*, /api/logs/*
+- [ ] **JWT konfiguracija** - Postavi JWT secret i expiration
+- [ ] **Password hashing** - Implementiraj bcrypt za lozinke
+- [ ] **Rate limiting** - Dodaj express-rate-limit za login endpoint
+- [ ] **CORS setup** - Konfiguriši Cross-Origin Resource Sharing
+
+### **FAZA 3: Frontend Integration**
+- [ ] **CSS prefiksi** - Dodaj `.auth-` prefikse na sve auth stilove
+- [ ] **JavaScript namespace** - Kreiraj `ATLAS.auth` namespace
+- [ ] **HTML integracija** - Dodaj auth header u index.html
+- [ ] **Event bus** - Implementiraj komunikaciju između modula
+- [ ] **Lazy loading** - Dodaj dinamičko učitavanje auth modula
+
+### **FAZA 4: Testing & Validation**
+- [ ] **Testiraj login/logout** - Provjeri autentikaciju sa svim rolama
+- [ ] **Testiraj role-based pristup** - SUPERADMIN, ADMIN, KORISNIK funkcionalnosti
+- [ ] **Testiraj user management** - CRUD operacije za korisnike
+- [ ] **Testiraj system logs** - Filtriranje, paginacija, export
+- [ ] **Performance test** - Usporedi performanse prije/poslije migracije
+- [ ] **Security audit** - Provjeri za ranjivosti (XSS, CSRF, SQL injection)
+
+### **FAZA 5: Deployment & Monitoring**
+- [ ] **Staging deployment** - Deploy na test server
+- [ ] **User acceptance testing** - Testiranje sa krajnjim korisnicima
+- [ ] **Production deployment** - Postepeni rollout
+- [ ] **Monitoring setup** - Dodaj logging i error tracking
+- [ ] **Documentation update** - Ažuriraj korisničku dokumentaciju
+- [ ] **Training** - Obuči korisnike za nove funkcionalnosti
+
+### **FAZA 6: Post-Migration**
+- [ ] **Rollback plan** - Pripremi plan za vraćanje ako nešto pođe po zlu
+- [ ] **Data migration** - Migriraj postojeće korisnike u auth sistem
+- [ ] **Feature flags** - Koristi feature flags za postepeno uvođenje
+- [ ] **Support monitoring** - Prati support tikete prvih nedjelja
+- [ ] **Performance monitoring** - Kontinuirano praćenje performansi
+
+---
+
+## 🚀 **SLEDEĆI KORACI**
+
+### **Prioritet 1 (Odmah):**
+1. **Kreiraj backend API** za autentikaciju
+2. **Implementiraj bazu podataka** sa auth tablicama
+3. **Dodaj CSS prefikse** za izbegavanje konflikata
+4. **Testiraj modularno učitavanje** auth komponenti
+
+### **Prioritet 2 (Sljedeće):**
+1. **Integriši auth header** u glavnu aplikaciju
+2. **Implementiraj role-based pristup** za operatere
+3. **Dodaj audit logging** za operater akcije
+4. **Optimiziraj performanse** i cache
+
+### **Prioritet 3 (Kasnije):**
+1. **Security hardening** (bcrypt, rate limiting)
+2. **Advanced features** (2FA, SSO)
+3. **Monitoring i analytics**
+4. **Mobile optimization**
+
+---
+
+## 📝 **ZAKLJUČAK**
+
+Auth-prototype sistem je **100% spreman za integraciju** sa glavnom ATLAS aplikacijom. Ključni uspjeh će zavisiti od:
+
+1. **Pažljive planiranja migracije** - izbegavanje konflikata
+2. **Modularne arhitekture** - zasebno održavanje
+3. **Postepene integracije** - testiranje po fazama
+4. **Performance optimizacije** - brzo učitavanje
+5. **Security fokusa** - zaštita podataka
+
+Sistem je dizajniran da bude **neinvazivan** i da se može integrisati bez poremećaja postojeće funkcionalnosti.
+
+---
+
+*Verzija: 3.0*  
+*Datum: 02.10.2025*  
+*Autor: ATLAS Development Team*  
+*Ažurirano: Dodat aktuelni status auth-prototype sistema, plan integracije, izazovi migracije i tehničke preporuke*

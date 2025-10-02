@@ -4,7 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ATLAS - Upravljanje korisnicima</title>
-    <link rel="stylesheet" href="common.css">
+    <link rel="stylesheet" href="auth.css">
+    <link rel="stylesheet" href="dashboard.css">
     <link rel="stylesheet" href="user-management.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
@@ -13,30 +14,23 @@
     <main class="dashboard-main">
         <!-- Header -->
         <header class="dashboard-header">
-            <div class="header-container">
-                <div class="header-left">
-                    <div class="logo-full">
-                        <i class="fas fa-satellite-dish"></i>
-                        <div class="title-group">
-                            <h1>ATLAS</h1>
-                            <span class="subtitle">Telekomunikacioni operateri BiH</span>
-                        </div>
-                    </div>
+            <div class="header-left">
+                <div class="logo-small">
+                    <i class="fas fa-satellite-dish"></i>
+                    <span>ATLAS</span>
                 </div>
-                
-                <div class="header-center">
-                    <div class="breadcrumb">
-                        <a href="dashboard.html">Dashboard</a>
-                        <i class="fas fa-chevron-right"></i>
-                        <span>Upravljanje korisnicima</span>
-                    </div>
+                <div class="breadcrumb">
+                    <a href="dashboard.html">Dashboard</a>
+                    <i class="fas fa-chevron-right"></i>
+                    <span>Upravljanje korisnicima</span>
                 </div>
-                
-                <div class="header-right">
-                    <div class="user-menu">
-                        <div class="user-avatar" id="userAvatar">
-                            <i class="fas fa-user"></i>
-                        </div>
+            </div>
+            
+            <div class="header-right">
+                <div class="user-menu">
+                    <div class="user-avatar" id="userAvatar">
+                        <i class="fas fa-user"></i>
+                    </div>
                     <div class="user-info" id="userInfo">
                         <span class="user-name">Loading...</span>
                         <span class="user-role">...</span>
@@ -47,8 +41,31 @@
                     
                     <!-- Dropdown Menu -->
                     <div class="user-dropdown" id="userDropdown">
-                        <!-- Dropdown sadržaj će biti generisan dinamički u JavaScript-u -->
-                    </div>
+                        <div class="dropdown-header">
+                            <div class="dropdown-user-info">
+                                <strong id="dropdownUserName">Ime Prezime</strong>
+                                <small id="dropdownUserEmail">email@example.com</small>
+                                <span class="dropdown-agency" id="dropdownAgency">Agencija</span>
+                            </div>
+                        </div>
+                        <div class="dropdown-divider"></div>
+                        <a href="dashboard.html" class="dropdown-item">
+                            <i class="fas fa-tachometer-alt"></i>
+                            <span>Dashboard</span>
+                        </a>
+                        <a href="#" class="dropdown-item" id="myProfileBtn">
+                            <i class="fas fa-user-circle"></i>
+                            <span>Moj profil</span>
+                        </a>
+                        <a href="#" class="dropdown-item" id="settingsBtn">
+                            <i class="fas fa-cog"></i>
+                            <span>Postavke</span>
+                        </a>
+                        <div class="dropdown-divider"></div>
+                        <a href="#" class="dropdown-item logout-item" id="logoutBtn">
+                            <i class="fas fa-sign-out-alt"></i>
+                            <span>Odjavi se</span>
+                        </a>
                     </div>
                 </div>
             </div>
@@ -294,7 +311,7 @@
     </div>
 
     <!-- Delete Confirmation Modal -->
-    <div class="modal modal-small" id="deleteModal">
+    <div class="modal modal-small" id="deleteModal" style="display: none;">
         <div class="modal-overlay" id="deleteModalOverlay"></div>
         <div class="modal-content">
             <div class="modal-header danger">

@@ -1,7 +1,27 @@
 // ================================================
 // USER MANAGEMENT JS
-// ================================================
-
+// ===========================        // Crea                // Create filter dropdown optgroup
+                const filterOptgroup = document.createElement('optgroup');
+                filterOptgroup.label = tip === 'državni' ? 'Državni nivo' : 
+                                      tip === 'entitetski' ? 'Entitetski nivo' : 
+                                      tip === 'brčko' ? 'Policija Brčko distrikta' :
+                                      'Kantonalni MUP-ovi u Federaciji BiH';
+                
+                // Create form dropdown optgroup
+                const formOptgroup = document.createElement('optgroup');
+                formOptgroup.label = filterOptgroup.label;ps for BOTH dropdowns separately (prevents duplication)
+        ['državni', 'entitetski', 'brčko', 'kantonalni'].forEach(tip => {
+            if (groupedAgencies[tip].length > 0) {
+                // Create filter dropdown optgroup
+                const filterOptgroup = document.createElement('optgroup');
+                filterOptgroup.label = tip === 'državni' ? 'Državni nivo' : 
+                                      tip === 'entitetski' ? 'Entitetski nivo' : 
+                                      tip === 'brčko' ? 'Policija Brčko distrikta' :
+                                      'Kantonalni MUP-ovi u Federaciji BiH';
+                
+                // Create form dropdown optgroup
+                const formOptgroup = document.createElement('optgroup');
+                formOptgroup.label = filterOptgroup.label;========
 
 class UserManagement {
     constructor() {
@@ -48,10 +68,10 @@ class UserManagement {
         // Load from mock data
         this.users = [...MOCK_USERS];
         
-        // Ako je ADMIN, filtriraj samo korisnike njegove agencije (bez SUPERADMIN-a)
+        // Ako je ADMIN, filtriraj samo korisnike njegove agencije
         if (this.currentUser.role === 'ADMIN') {
             this.users = this.users.filter(u => 
-                u.agencija === this.currentUser.agencija && u.role !== 'SUPERADMIN'
+                u.agencija === this.currentUser.agencija || u.role === 'SUPERADMIN'
             );
         }
         
@@ -61,134 +81,20 @@ class UserManagement {
     setupUserMenu() {
         const { ime, prezime, role, agencija_naziv, email } = this.currentUser;
         
-        // Header user info
-        const userNameElement = document.querySelector('.user-name');
-        const userRoleElement = document.querySelector('.user-role');
+        document.querySelector('.user-name').textContent = `${ime} ${prezime}`;
+        document.querySelector('.user-role').textContent = this.getRoleDisplay(role);
+        document.getElementById('dropdownUserName').textContent = `${ime} ${prezime}`;
+        document.getElementById('dropdownUserEmail').textContent = email;
+        document.getElementById('dropdownAgency').textContent = agencija_naziv;
         
-        if (userNameElement) {
-            userNameElement.textContent = `${ime} ${prezime}`;
-        }
-        if (userRoleElement) {
-            userRoleElement.textContent = this.getRoleDisplay(role);
-        }
-        
-        // Update page title and subtitle based on role
-        const pageTitle = document.querySelector('.page-title');
-        const pageSubtitle = document.getElementById('pageSubtitle');
-        
+        // Update page subtitle
         if (role === 'SUPERADMIN') {
-            if (pageTitle) {
-                pageTitle.innerHTML = `
-                    <i class="fas fa-users"></i>
-                    Upravljanje korisnicima
-                `;
-            }
-            if (pageSubtitle) {
-                pageSubtitle.textContent = 'Upravljaj svim korisnicima sistema i agencijama';
-            }
-        } else if (role === 'ADMIN') {
-            if (pageTitle) {
-                pageTitle.innerHTML = `
-                    <i class="fas fa-users"></i>
-                    Korisnici agencije
-                `;
-            }
-            if (pageSubtitle) {
-                pageSubtitle.textContent = `Upravljaj korisnicima tvoje agencije`;
-            }
+            document.getElementById('pageSubtitle').textContent = 
+                'Upravljaj svim korisnicima sistema i agencijama';
+        } else {
+            document.getElementById('pageSubtitle').textContent = 
+                `Upravljaj korisnicima agencije: ${agencija_naziv}`;
         }
-        
-        // Generate role-based dropdown menu
-        this.generateDropdownMenu(role);
-    }
-
-    generateDropdownMenu(role) {
-        const dropdown = document.getElementById('userDropdown');
-        
-        // Header ostaje isti
-        const header = `
-            <div class="dropdown-header">
-                <div class="dropdown-user-info">
-                    <strong id="dropdownUserName">${this.currentUser.ime} ${this.currentUser.prezime}</strong>
-                    <small id="dropdownUserEmail">${this.currentUser.email}</small>
-                    <span class="dropdown-agency" id="dropdownAgency">${this.currentUser.agencija_naziv}</span>
-                </div>
-            </div>
-        `;
-
-        let menuItems = '';
-        
-        if (role === 'SUPERADMIN') {
-            menuItems = `
-                <div class="dropdown-divider"></div>
-                <a href="dashboard.html" class="dropdown-item">
-                    <i class="fas fa-tachometer-alt"></i>
-                    <span>Dashboard</span>
-                </a>
-                <a href="user-management.html" class="dropdown-item">
-                    <i class="fas fa-users-cog"></i>
-                    <span>Upravljanje korisnicima</span>
-                </a>
-                <a href="system-logs.html" class="dropdown-item">
-                    <i class="fas fa-clipboard-list"></i>
-                    <span>Sistemski logovi</span>
-                </a>
-            `;
-        } else if (role === 'ADMIN') {
-            menuItems = `
-                <div class="dropdown-divider"></div>
-                <a href="dashboard.html" class="dropdown-item">
-                    <i class="fas fa-tachometer-alt"></i>
-                    <span>Dashboard</span>
-                </a>
-                <a href="user-management.html" class="dropdown-item">
-                    <i class="fas fa-users"></i>
-                    <span>Upravljanje korisnicima</span>
-                </a>
-                <a href="system-logs.html" class="dropdown-item">
-                    <i class="fas fa-clipboard-list"></i>
-                    <span>Sistemski logovi</span>
-                </a>
-            `;
-        } else if (role === 'KORISNIK') {
-            menuItems = `
-                <div class="dropdown-divider"></div>
-                <a href="dashboard.html" class="dropdown-item">
-                    <i class="fas fa-tachometer-alt"></i>
-                    <span>Dashboard</span>
-                </a>
-                <a href="system-logs.html?tab=my" class="dropdown-item">
-                    <i class="fas fa-user-check"></i>
-                    <span>Moje aktivnosti</span>
-                </a>
-            `;
-        }
-
-        // Zajednički dio - profil, postavke, odjava
-        const footer = `
-            <div class="dropdown-divider"></div>
-            <a href="moj-profil.html" class="dropdown-item">
-                <i class="fas fa-user-circle"></i>
-                <span>Moj profil</span>
-            </a>
-            <a href="postavke.html" class="dropdown-item">
-                <i class="fas fa-cog"></i>
-                <span>Postavke</span>
-            </a>
-            <div class="dropdown-divider"></div>
-            <a href="#" class="dropdown-item logout-item" id="logoutBtn">
-                <i class="fas fa-sign-out-alt"></i>
-                <span>Odjavi se</span>
-            </a>
-        `;
-
-        dropdown.innerHTML = header + menuItems + footer;
-        
-        // Re-attach logout event listener
-        document.getElementById('logoutBtn').addEventListener('click', (e) => {
-            e.preventDefault();
-            this.handleLogout();
-        });
     }
 
     setupStats() {
@@ -207,24 +113,6 @@ class UserManagement {
         const filterAgency = document.getElementById('filterAgency');
         const formAgency = document.getElementById('agencija');
         
-        // Ako je ADMIN, sakrij filter za agenciju (vidi samo svoju)
-        if (this.currentUser.role === 'ADMIN') {
-            const agencyFilterGroup = filterAgency.closest('.filter-group');
-            if (agencyFilterGroup) {
-                agencyFilterGroup.style.display = 'none';
-            }
-            
-            // Postavi naziv njegove agencije u filter dropdown (za korištenje u filteru)
-            filterAgency.innerHTML = `<option value="${this.currentUser.agencija}">${this.currentUser.agencija_naziv}</option>`;
-            filterAgency.value = this.currentUser.agencija;
-            
-            // Popuni i form dropdown sa njegovom agencijom
-            if (formAgency) {
-                formAgency.innerHTML = `<option value="${this.currentUser.agencija}">${this.currentUser.agencija_naziv}</option>`;
-            }
-            return; // Ne treba dalje popunjavati dropdowns
-        }
-        
         // Group agencies by type
         const groupedAgencies = {
             'državni': [],
@@ -238,47 +126,39 @@ class UserManagement {
         });
         
         // Create optgroups for BOTH dropdowns separately (prevents duplication)
-        // Za ADMIN, ovo ide samo u form dropdown
-        if (this.currentUser.role === 'SUPERADMIN') {
-            ['državni', 'entitetski', 'brčko', 'kantonalni'].forEach(tip => {
-                if (groupedAgencies[tip].length > 0) {
-                    // Create filter dropdown optgroup
-                    const filterOptgroup = document.createElement('optgroup');
-                    if (tip === 'državni') {
-                        filterOptgroup.label = 'Državni nivo';
-                    } else if (tip === 'entitetski') {
-                        filterOptgroup.label = 'Entitetski nivo';
-                    } else if (tip === 'brčko') {
-                        filterOptgroup.label = 'Policija Brčko distrikta';
-                    } else {
-                        filterOptgroup.label = 'Kantonalni MUP-ovi u Federaciji BiH';
-                    }
+        ['državni', 'entitetski', 'brčko', 'kantonalni'].forEach(tip => {
+            if (groupedAgencies[tip].length > 0) {
+                // Create filter dropdown optgroup
+                const filterOptgroup = document.createElement('optgroup');
+                filterOptgroup.label = tip === 'državni' ? '🇧🇦 Državni nivo' : 
+                                      tip === 'entitetski' ? '🏛️ Entitetski nivo' : 
+                                      tip === 'brčko' ? '�️ Policija Brčko distrikta' :
+                                      '�🏢 Kantonalni MUP-ovi u Federaciji BiH';
+                
+                // Create form dropdown optgroup
+                const formOptgroup = document.createElement('optgroup');
+                formOptgroup.label = filterOptgroup.label;
+                
+                // Add options to BOTH optgroups
+                groupedAgencies[tip].forEach(agency => {
+                    const filterOption = document.createElement('option');
+                    filterOption.value = agency.id;
+                    filterOption.textContent = agency.naziv;
+                    filterOptgroup.appendChild(filterOption);
                     
-                    // Create form dropdown optgroup
-                    const formOptgroup = document.createElement('optgroup');
-                    formOptgroup.label = filterOptgroup.label;
-                    
-                    // Add options to BOTH optgroups
-                    groupedAgencies[tip].forEach(agency => {
-                        const filterOption = document.createElement('option');
-                        filterOption.value = agency.id;
-                        filterOption.textContent = agency.naziv;
-                        filterOptgroup.appendChild(filterOption);
-                        
-                        const formOption = document.createElement('option');
-                        formOption.value = agency.id;
-                        formOption.textContent = agency.naziv;
-                        formOptgroup.appendChild(formOption);
-                    });
-                    
-                    // Append to respective dropdowns
-                    filterAgency.appendChild(filterOptgroup);
-                    if (formAgency) {
-                        formAgency.appendChild(formOptgroup);
-                    }
+                    const formOption = document.createElement('option');
+                    formOption.value = agency.id;
+                    formOption.textContent = agency.naziv;
+                    formOptgroup.appendChild(formOption);
+                });
+                
+                // Append to respective dropdowns
+                filterAgency.appendChild(filterOptgroup);
+                if (formAgency) {
+                    formAgency.appendChild(formOptgroup);
                 }
-            });
-        }
+            }
+        });
     }
 
     renderUsersTable() {
@@ -374,25 +254,26 @@ class UserManagement {
     setupEventListeners() {
         // User menu toggle
         const userMenu = document.querySelector('.user-menu');
-        const userDropdown = document.getElementById('userDropdown');
-        
-        if (userMenu && userDropdown) {
-            userMenu.addEventListener('click', (e) => {
-                e.stopPropagation();
-                userDropdown.classList.toggle('active');
-            });
+        userMenu.addEventListener('click', (e) => {
+            e.stopPropagation();
+            userMenu.classList.toggle('active');
+        });
 
-            document.addEventListener('click', () => {
-                userDropdown.classList.remove('active');
-            });
-        }
+        document.addEventListener('click', () => {
+            userMenu.classList.remove('active');
+        });
 
-        // Dropdown items - linkovi sada rade normalno
-        document.querySelectorAll('.user-dropdown .dropdown-item:not(#logoutBtn)').forEach(item => {
-            item.addEventListener('click', () => {
-                userDropdown.classList.remove('active');
-                // Dozvoli da link radi normalno
-            });
+        // Dropdown items
+        document.getElementById('myProfileBtn')?.addEventListener('click', (e) => {
+            e.preventDefault();
+            userMenu.classList.remove('active');
+            alert('Moj profil - U razvoju\n\nOvdje će biti stranica za uređivanje vašeg profila.');
+        });
+
+        document.getElementById('settingsBtn')?.addEventListener('click', (e) => {
+            e.preventDefault();
+            userMenu.classList.remove('active');
+            alert('Postavke - U razvoju\n\nOvdje će biti postavke aplikacije.');
         });
 
         // Logout
@@ -524,20 +405,6 @@ class UserManagement {
         // Limit roles for ADMIN
         this.setupRoleOptions();
         
-        // Ako je ADMIN, automatski postavi njegovu agenciju i onemogući promjenu
-        if (this.currentUser.role === 'ADMIN') {
-            const agencySelect = document.getElementById('agencija');
-            agencySelect.value = this.currentUser.agencija;
-            agencySelect.disabled = true;
-            
-            // Prikaži agenciju grupu odmah za ADMIN-a
-            document.getElementById('agencyGroup').style.display = 'block';
-            agencySelect.required = true;
-        } else {
-            // Za SUPERADMIN omogući izbor agencije
-            document.getElementById('agencija').disabled = false;
-        }
-        
         document.getElementById('userModal').classList.add('active');
     }
 
@@ -545,11 +412,7 @@ class UserManagement {
         this.editingUserId = userId;
         const user = this.users.find(u => u.id === userId);
         
-        if (!user) {
-            console.error('Korisnik nije pronađen:', userId);
-            console.log('Dostupni korisnici:', this.users);
-            return;
-        }
+        if (!user) return;
         
         document.getElementById('modalTitle').textContent = 'Uredi korisnika';
         document.getElementById('submitBtnText').textContent = 'Sačuvaj izmjene';
@@ -571,13 +434,6 @@ class UserManagement {
         
         this.handleRoleChange(user.role);
         this.setupRoleOptions();
-        
-        // Ako je ADMIN, onemogući promjenu agencije
-        if (this.currentUser.role === 'ADMIN') {
-            document.getElementById('agencija').disabled = true;
-        } else {
-            document.getElementById('agencija').disabled = false;
-        }
         
         document.getElementById('userModal').classList.add('active');
     }
@@ -634,11 +490,6 @@ class UserManagement {
             agencija: formData.get('agencija') || null,
             aktivan: formData.get('aktivan') === 'on'
         };
-        
-        // Ako je ADMIN, automatski postavi njegovu agenciju
-        if (this.currentUser.role === 'ADMIN') {
-            userData.agencija = this.currentUser.agencija;
-        }
         
         // Validation
         const validation = this.validateUserData(userData, !this.editingUserId);
@@ -761,11 +612,7 @@ class UserManagement {
 
     openDeleteModal(userId) {
         const user = this.users.find(u => u.id === userId);
-        if (!user) {
-            console.error('Korisnik za brisanje nije pronađen:', userId);
-            console.log('Dostupni korisnici:', this.users);
-            return;
-        }
+        if (!user) return;
         
         this.userToDelete = user;
         
@@ -830,25 +677,21 @@ class UserManagement {
 }
 
 // Initialize
-let userManagement;
-window.addEventListener('DOMContentLoaded', () => {
-    userManagement = new UserManagement();
-    window.userManagement = userManagement;
-    
-    // Event listeners for delete modal
-    document.getElementById('closeDeleteModal').addEventListener('click', () => {
-        userManagement.closeDeleteModal();
-    });
+const userManagement = new UserManagement();
 
-    document.getElementById('cancelDeleteBtn').addEventListener('click', () => {
-        userManagement.closeDeleteModal();
-    });
+// Event listeners for delete modal
+document.getElementById('closeDeleteModal').addEventListener('click', () => {
+    userManagement.closeDeleteModal();
+});
 
-    document.getElementById('confirmDeleteBtn').addEventListener('click', () => {
-        userManagement.confirmDelete();
-    });
+document.getElementById('cancelDeleteBtn').addEventListener('click', () => {
+    userManagement.closeDeleteModal();
+});
 
-    document.getElementById('deleteModalOverlay').addEventListener('click', () => {
-        userManagement.closeDeleteModal();
-    });
+document.getElementById('confirmDeleteBtn').addEventListener('click', () => {
+    userManagement.confirmDelete();
+});
+
+document.getElementById('deleteModalOverlay').addEventListener('click', () => {
+    userManagement.closeDeleteModal();
 });

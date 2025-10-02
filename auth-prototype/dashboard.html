@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ATLAS - Dashboard</title>
-    <link rel="stylesheet" href="auth.css">
+    <link rel="stylesheet" href="common.css">
     <link rel="stylesheet" href="dashboard.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
@@ -13,69 +13,42 @@
     <main class="dashboard-main">
         <!-- Header -->
         <header class="dashboard-header">
-            <div class="header-left">
-                <div class="logo-small">
-                    <i class="fas fa-satellite-dish"></i>
-                    <span>ATLAS</span>
-                </div>
-            </div>
-            
-            <div class="header-right">
-                <div class="user-menu">
-                <div class="user-avatar" id="userAvatar">
-                    <i class="fas fa-user"></i>
-                </div>
-                <div class="user-info" id="userInfo">
-                    <span class="user-name">Loading...</span>
-                    <span class="user-role">...</span>
-                </div>
-                <div class="dropdown-icon">
-                    <i class="fas fa-chevron-down"></i>
-                </div>
-                
-                <!-- Dropdown Menu -->
-                <div class="user-dropdown" id="userDropdown">
-                    <div class="dropdown-header">
-                        <div class="dropdown-user-info">
-                            <strong id="dropdownUserName">Ime Prezime</strong>
-                            <small id="dropdownUserEmail">email@example.com</small>
-                            <span class="dropdown-agency" id="dropdownAgency">Agencija</span>
+            <div class="header-container">
+                <div class="header-left">
+                    <div class="logo-full">
+                        <i class="fas fa-satellite-dish"></i>
+                        <div class="title-group">
+                            <h1>ATLAS</h1>
+                            <span class="subtitle">Telekomunikacioni operateri BiH</span>
                         </div>
                     </div>
-                    <div class="dropdown-divider"></div>
-                    <a href="system-logs.html" class="dropdown-item">
-                        <i class="fas fa-clipboard-list"></i>
-                        <span>Sistemski logovi</span>
-                    </a>
-                    <div class="dropdown-divider"></div>
-                    <a href="moj-profil.html" class="dropdown-item">
-                        <i class="fas fa-user-circle"></i>
-                        <span>Moj profil</span>
-                    </a>
-                    <a href="postavke.html" class="dropdown-item">
-                        <i class="fas fa-cog"></i>
-                        <span>Postavke</span>
-                    </a>
-                    <div class="dropdown-divider"></div>
-                    <a href="#" class="dropdown-item logout-item" id="logoutBtn">
-                        <i class="fas fa-sign-out-alt"></i>
-                        <span>Odjavi se</span>
-                    </a>
+                </div>
+                
+                <div class="header-center">
+                    <!-- Prazan za dashboard - nema breadcrumb -->
+                </div>
+                
+                <div class="header-right">
+                    <div class="user-menu">
+                        <div class="user-avatar" id="userAvatar">
+                            <i class="fas fa-user"></i>
+                        </div>
+                        <div class="user-info" id="userInfo">
+                            <span class="user-name">Loading...</span>
+                            <span class="user-role">...</span>
+                        </div>
+                        <div class="dropdown-icon">
+                            <i class="fas fa-chevron-down"></i>
+                        </div>
+                        
+                        <!-- Dropdown Menu -->
+                        <div class="user-dropdown" id="userDropdown">
+                            <!-- Dropdown sadržaj će biti generisan dinamički u JavaScript-u -->
+                        </div>
+                    </div>
                 </div>
             </div>
-        </div>
-    </header>
-
-        <!-- Welcome Section -->
-        <section class="welcome-section" id="welcomeSection">
-            <div class="welcome-content">
-                <h1 id="welcomeTitle">Dobrodošli nazad!</h1>
-                <p id="welcomeSubtitle">Evo pregleda vaših aktivnosti</p>
-            </div>
-            <div class="welcome-icon">
-                <i class="fas fa-chart-line"></i>
-            </div>
-        </section>
+        </header>
 
         <!-- Stats Cards -->
         <section class="stats-section" id="statsSection">

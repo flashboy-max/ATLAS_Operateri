@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="bs">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ATLAS - Prijava</title>
+    <link rel="stylesheet" href="auth.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="login-container">
+        <!-- Left Side - Branding -->
+        <div class="login-left">
+            <div class="branding">
+                <div class="logo">
+                    <i class="fas fa-tower-broadcast"></i>
+                    <h1>ATLAS</h1>
+                </div>
+                <p class="tagline">Telekomunikacioni operateri BiH</p>
+                <div class="features">
+                    <div class="feature-item">
+                        <i class="fas fa-shield-halved"></i>
+                        <span>Sigurna autentikacija</span>
+                    </div>
+                    <div class="feature-item">
+                        <i class="fas fa-users"></i>
+                        <span>Role-based pristup</span>
+                    </div>
+                    <div class="feature-item">
+                        <i class="fas fa-chart-line"></i>
+                        <span>Real-time statistika</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Right Side - Login Form -->
+        <div class="login-right">
+            <div class="login-box">
+                <div class="login-header">
+                    <h2>Dobrodošli nazad</h2>
+                    <p>Prijavite se na vaš nalog</p>
+                </div>
+
+                <form id="loginForm" class="login-form">
+                    <!-- Alert poruke -->
+                    <div id="alertMessage" class="alert" style="display: none;"></div>
+
+                    <!-- Username -->
+                    <div class="form-group">
+                        <label for="username">
+                            <i class="fas fa-user"></i>
+                            Korisničko ime
+                        </label>
+                        <input 
+                            type="text" 
+                            id="username" 
+                            name="username" 
+                            placeholder="Unesite korisničko ime"
+                            autocomplete="username"
+                            required
+                        >
+                    </div>
+
+                    <!-- Password -->
+                    <div class="form-group">
+                        <label for="password">
+                            <i class="fas fa-lock"></i>
+                            Lozinka
+                        </label>
+                        <div class="password-input">
+                            <input 
+                                type="password" 
+                                id="password" 
+                                name="password" 
+                                placeholder="Unesite lozinku"
+                                autocomplete="current-password"
+                                required
+                            >
+                            <button type="button" class="toggle-password" id="togglePassword">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Remember Me & Forgot Password -->
+                    <div class="form-options">
+                        <label class="checkbox-label">
+                            <input type="checkbox" id="rememberMe" name="rememberMe">
+                            <span>Zapamti me</span>
+                        </label>
+                        <a href="#" class="forgot-password">Zaboravljena lozinka?</a>
+                    </div>
+
+                    <!-- Submit Button -->
+                    <button type="submit" class="btn-login">
+                        <span class="btn-text">Prijavi se</span>
+                        <i class="fas fa-arrow-right"></i>
+                    </button>
+                </form>
+
+                <!-- Test Accounts Info -->
+                <div class="test-accounts">
+                    <div class="test-header">
+                        <i class="fas fa-info-circle"></i>
+                        <span>Test nalozi za prototip:</span>
+                    </div>
+                    <div class="test-list">
+                        <div class="test-account">
+                            <span class="test-role superadmin">SUPERADMIN</span>
+                            <code>admin / admin123</code>
+                        </div>
+                        <div class="test-account">
+                            <span class="test-role admin">ADMIN</span>
+                            <code>admin_ks / admin123</code>
+                        </div>
+                        <div class="test-account">
+                            <span class="test-role korisnik">KORISNIK</span>
+                            <code>korisnik_ks / korisnik123</code>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Footer -->
+            <div class="login-footer">
+                <p>&copy; 2025 ATLAS. Sva prava zadržana.</p>
+            </div>
+        </div>
+    </div>
+
+    <script src="mock-data.js"></script>
+    <script src="auth.js"></script>
+</body>
+</html>

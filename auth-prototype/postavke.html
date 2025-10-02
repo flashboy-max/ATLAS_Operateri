@@ -4,81 +4,62 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Postavke - ATLAS</title>
+    
+    <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Custom Styles -->
     <link rel="stylesheet" href="common.css">
-    <link rel="stylesheet" href="dashboard.css">
-    <link rel="stylesheet" href="user-management.css">
+    <link rel="stylesheet" href="postavke.css">
 </head>
-<body>
-    <div class="dashboard-container">
+<body class="dashboard-body">
+    <!-- Main Content -->
+    <main class="dashboard-main">
+        <!-- Header -->
         <header class="dashboard-header">
-            <div class="header-left">
-                <div class="logo">
-                    <i class="fas fa-satellite-dish"></i>
-                    <span>ATLAS</span>
-                </div>
-                <nav class="nav-menu">
-                    <a href="dashboard.html" class="nav-link">
-                        <i class="fas fa-tachometer-alt"></i>
-                        <span>Dashboard</span>
-                    </a>
-                    <a href="user-management.html" class="nav-link">
-                        <i class="fas fa-users"></i>
-                        <span>Korisnici</span>
-                    </a>
-                </nav>
-            </div>
-            <div class="header-right">
-                <div class="user-info" id="userInfoBtn">
-                    <div class="user-avatar">
-                        <i class="fas fa-user"></i>
-                    </div>
-                    <div class="user-details">
-                        <span class="user-name" id="headerUserName">Ime Prezime</span>
-                        <span class="user-role">Super Administrator</span>
-                    </div>
-                    <div class="dropdown-icon">
-                        <i class="fas fa-chevron-down"></i>
-                    </div>
-                    
-                    <!-- Dropdown Menu -->
-                    <div class="user-dropdown" id="userDropdown">
-                        <div class="dropdown-header">
-                            <div class="dropdown-user-info">
-                                <strong id="dropdownUserName">Ime Prezime</strong>
-                                <small id="dropdownUserEmail">email@example.com</small>
-                                <span class="dropdown-agency" id="dropdownAgency">Agencija</span>
-                            </div>
+            <div class="header-container">
+                <div class="header-left">
+                    <div class="logo-full">
+                        <i class="fas fa-satellite-dish"></i>
+                        <div class="title-group">
+                            <h1>ATLAS</h1>
+                            <span class="subtitle">Telekomunikacioni operateri BiH</span>
                         </div>
-                        <div class="dropdown-divider"></div>
-                        <a href="dashboard.html" class="dropdown-item">
-                            <i class="fas fa-tachometer-alt"></i>
-                            <span>Dashboard</span>
-                        </a>
-                        <a href="system-logs.html" class="dropdown-item">
-                            <i class="fas fa-clipboard-list"></i>
-                            <span>Sistemski logovi</span>
-                        </a>
-                        <div class="dropdown-divider"></div>
-                        <a href="moj-profil.html" class="dropdown-item">
-                            <i class="fas fa-user-circle"></i>
-                            <span>Moj profil</span>
-                        </a>
-                        <a href="postavke.html" class="dropdown-item active">
-                            <i class="fas fa-cog"></i>
-                            <span>Postavke</span>
-                        </a>
-                        <div class="dropdown-divider"></div>
-                        <a href="#" class="dropdown-item logout-item" id="logoutBtn">
-                            <i class="fas fa-sign-out-alt"></i>
-                            <span>Odjavi se</span>
-                        </a>
+                    </div>
+                </div>
+                
+                <div class="header-center">
+                    <div class="breadcrumb">
+                        <a href="dashboard.html">Dashboard</a>
+                        <i class="fas fa-chevron-right"></i>
+                        <span>Postavke</span>
+                    </div>
+                </div>
+            
+                <div class="header-right">
+                    <div class="user-menu">
+                        <div class="user-avatar" id="userAvatar">
+                            <i class="fas fa-user"></i>
+                        </div>
+                        <div class="user-info" id="userInfo">
+                            <span class="user-name">Loading...</span>
+                            <span class="user-role">...</span>
+                        </div>
+                        <div class="dropdown-icon">
+                            <i class="fas fa-chevron-down"></i>
+                        </div>
+                        
+                        <!-- Dropdown Menu -->
+                        <div class="user-dropdown" id="userDropdown">
+                            <!-- Dropdown sadržaj će biti generisan dinamički u JavaScript-u -->
+                        </div>
                     </div>
                 </div>
             </div>
         </header>
 
-        <div class="content-container">
+        <!-- Page Content -->
+        <div class="page-container">
             <!-- Page Header -->
             <div class="page-header">
                 <div>
@@ -138,8 +119,9 @@
                 </div>
             </div>
         </div>
-    </div>
+    </main>
 
+    <!-- Scripts -->
     <script src="mock-data.js"></script>
     <script src="auth.js"></script>
     <script src="postavke.js"></script>

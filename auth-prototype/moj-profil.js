@@ -1,4 +1,7 @@
-// Moj Profil JavaScript
+// ================================================
+// MOJ PROFIL JS
+// ================================================
+
 class MojProfil {
     constructor() {
         this.currentUser = null;
@@ -6,97 +9,213 @@ class MojProfil {
     }
 
     init() {
-        // Check authentication
-        if (!auth.checkAuth()) {
+        // Provjeri autentikaciju
+        if (!AuthSystem.requireAuth()) {
             return;
         }
 
-        this.currentUser = auth.getCurrentUser();
+        this.currentUser = AuthSystem.getCurrentUser();
+        
+        // Setup UI
+        this.setupUserMenu();
         this.loadProfileData();
         this.setupEventListeners();
+    }
+
+    setupUserMenu() {
+        const { ime, prezime, role, agencija_naziv, email } = this.currentUser;
+        
+        // Header user info
+        const userNameElement = document.querySelector('.user-name');
+        const userRoleElement = document.querySelector('.user-role');
+        
+        if (userNameElement) {
+            userNameElement.textContent = `${ime} ${prezime}`;
+        }
+        if (userRoleElement) {
+            userRoleElement.textContent = this.getRoleDisplay(role);
+        }
+        
+        // Generate role-based dropdown menu
+        this.generateDropdownMenu(role);
+    }
+
+    generateDropdownMenu(role) {
+        const dropdown = document.getElementById('userDropdown');
+        
+        // Header ostaje isti
+        const header = `
+            <div class="dropdown-header">
+                <div class="dropdown-user-info">
+                    <strong id="dropdownUserName">${this.currentUser.ime} ${this.currentUser.prezime}</strong>
+                    <small id="dropdownUserEmail">${this.currentUser.email}</small>
+                    <span class="dropdown-agency" id="dropdownAgency">${this.currentUser.agencija_naziv}</span>
+                </div>
+            </div>
+        `;
+
+        let menuItems = '';
+        
+        if (role === 'SUPERADMIN') {
+            menuItems = `
+                <div class="dropdown-divider"></div>
+                <a href="dashboard.html" class="dropdown-item">
+                    <i class="fas fa-tachometer-alt"></i>
+                    <span>Dashboard</span>
+                </a>
+                <a href="user-management.html" class="dropdown-item">
+                    <i class="fas fa-users-cog"></i>
+                    <span>Upravljanje korisnicima</span>
+                </a>
+                <a href="system-logs.html" class="dropdown-item">
+                    <i class="fas fa-clipboard-list"></i>
+                    <span>Sistemski logovi</span>
+                </a>
+            `;
+        } else if (role === 'ADMIN') {
+            menuItems = `
+                <div class="dropdown-divider"></div>
+                <a href="dashboard.html" class="dropdown-item">
+                    <i class="fas fa-tachometer-alt"></i>
+                    <span>Dashboard</span>
+                </a>
+                <a href="user-management.html" class="dropdown-item">
+                    <i class="fas fa-users"></i>
+                    <span>Upravljanje korisnicima</span>
+                </a>
+                <a href="system-logs.html" class="dropdown-item">
+                    <i class="fas fa-clipboard-list"></i>
+                    <span>Sistemski logovi</span>
+                </a>
+            `;
+        } else if (role === 'KORISNIK') {
+            menuItems = `
+                <div class="dropdown-divider"></div>
+                <a href="dashboard.html" class="dropdown-item">
+                    <i class="fas fa-tachometer-alt"></i>
+                    <span>Dashboard</span>
+                </a>
+                <a href="system-logs.html?tab=my" class="dropdown-item">
+                    <i class="fas fa-user-check"></i>
+                    <span>Moje aktivnosti</span>
+                </a>
+            `;
+        }
+
+        // Zajednički dio - profil, postavke, odjava
+        const footer = `
+            <div class="dropdown-divider"></div>
+            <a href="moj-profil.html" class="dropdown-item">
+                <i class="fas fa-user-circle"></i>
+                <span>Moj profil</span>
+            </a>
+            <a href="postavke.html" class="dropdown-item">
+                <i class="fas fa-cog"></i>
+                <span>Postavke</span>
+            </a>
+            <div class="dropdown-divider"></div>
+            <a href="#" class="dropdown-item logout-item" id="logoutBtn">
+                <i class="fas fa-sign-out-alt"></i>
+                <span>Odjavi se</span>
+            </a>
+        `;
+
+        dropdown.innerHTML = header + menuItems + footer;
+        
+        // Re-attach logout event listener
+        document.getElementById('logoutBtn').addEventListener('click', (e) => {
+            e.preventDefault();
+            this.handleLogout();
+        });
     }
 
     loadProfileData() {
         if (!this.currentUser) return;
 
-        // Update header
-        document.getElementById('headerUserName').textContent = this.currentUser.ime_prezime;
-        document.getElementById('dropdownUserName').textContent = this.currentUser.ime_prezime;
-        document.getElementById('dropdownUserEmail').textContent = this.currentUser.email;
-        document.getElementById('dropdownAgency').textContent = this.currentUser.agencija;
+        // Check if profile elements exist (they might not on placeholder page)
+        const profileName = document.getElementById('profileName');
+        const profileRole = document.getElementById('profileRole');
+        const firstName = document.getElementById('firstName');
+        const lastName = document.getElementById('lastName');
+        const emailInput = document.getElementById('email');
+        const agencyInput = document.getElementById('agency');
+        
+        if (profileName && profileRole) {
+            profileName.textContent = `${this.currentUser.ime} ${this.currentUser.prezime}`;
+            profileRole.textContent = this.getRoleDisplay(this.currentUser.role);
+        }
 
-        // Update profile info
-        document.getElementById('profileName').textContent = this.currentUser.ime_prezime;
-        document.getElementById('profileRole').textContent = this.getRoleDisplay(this.currentUser.role);
-
-        // Split name into first and last name
-        const nameParts = this.currentUser.ime_prezime.split(' ');
-        const firstName = nameParts[0] || '';
-        const lastName = nameParts.slice(1).join(' ') || '';
-
-        document.getElementById('firstName').value = firstName;
-        document.getElementById('lastName').value = lastName;
-        document.getElementById('email').value = this.currentUser.email;
-        document.getElementById('agency').value = this.currentUser.agencija;
+        if (firstName && lastName && emailInput && agencyInput) {
+            firstName.value = this.currentUser.ime;
+            lastName.value = this.currentUser.prezime;
+            emailInput.value = this.currentUser.email;
+            agencyInput.value = this.currentUser.agencija_naziv || '';
+        }
 
         // Set avatar background
         const avatar = document.querySelector('.profile-avatar-large');
         if (avatar) {
-            avatar.style.background = this.getAvatarColor(this.currentUser.ime_prezime);
+            const colors = [
+                'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+                'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)',
+                'linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)',
+                'linear-gradient(135deg, #43e97b 0%, #38f9d7 100%)',
+                'linear-gradient(135deg, #fa709a 0%, #fee140 100%)'
+            ];
+            const name = `${this.currentUser.ime} ${this.currentUser.prezime}`;
+            const index = name.charCodeAt(0) % colors.length;
+            avatar.style.background = colors[index];
         }
-    }
-
-    getRoleDisplay(role) {
-        const roleMap = {
-            'SUPERADMIN': 'Super Administrator',
-            'ADMIN': 'Administrator',
-            'KORISNIK': 'Korisnik'
-        };
-        return roleMap[role] || role;
-    }
-
-    getAvatarColor(name) {
-        const colors = [
-            'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-            'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)',
-            'linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)',
-            'linear-gradient(135deg, #43e97b 0%, #38f9d7 100%)',
-            'linear-gradient(135deg, #fa709a 0%, #fee140 100%)'
-        ];
-        const index = name.charCodeAt(0) % colors.length;
-        return colors[index];
     }
 
     setupEventListeners() {
-        // Logout
-        const logoutBtn = document.getElementById('logoutBtn');
-        if (logoutBtn) {
-            logoutBtn.addEventListener('click', (e) => {
-                e.preventDefault();
-                auth.logout();
-            });
-        }
-
-        // User dropdown toggle
-        const userInfoBtn = document.getElementById('userInfoBtn');
+        // User menu toggle
+        const userMenu = document.querySelector('.user-menu');
         const userDropdown = document.getElementById('userDropdown');
         
-        if (userInfoBtn && userDropdown) {
-            userInfoBtn.addEventListener('click', (e) => {
+        if (userMenu && userDropdown) {
+            userMenu.addEventListener('click', (e) => {
                 e.stopPropagation();
                 userDropdown.classList.toggle('active');
             });
 
-            document.addEventListener('click', (e) => {
-                if (!userInfoBtn.contains(e.target)) {
+            document.addEventListener('click', () => {
+                userDropdown.classList.remove('active');
+            });
+        }
+
+        // Dropdown items - linkovi sada rade normalno (already attached in generateDropdownMenu)
+        const dropdownItems = document.querySelectorAll('.user-dropdown .dropdown-item:not(#logoutBtn)');
+        dropdownItems.forEach(item => {
+            item.addEventListener('click', () => {
+                if (userDropdown) {
                     userDropdown.classList.remove('active');
                 }
             });
+        });
+    }
+
+    handleLogout() {
+        if (confirm('Da li ste sigurni da želite da se odjavite?')) {
+            const authSystem = new AuthSystem();
+            authSystem.logout();
+            window.location.href = 'login.html';
         }
+    }
+
+    getRoleDisplay(role) {
+        const roles = {
+            'SUPERADMIN': 'Super Administrator',
+            'ADMIN': 'Administrator',
+            'KORISNIK': 'Korisnik'
+        };
+        return roles[role] || role;
     }
 }
 
 // Initialize
-document.addEventListener('DOMContentLoaded', () => {
-    new MojProfil();
+let mojProfil;
+window.addEventListener('DOMContentLoaded', () => {
+    mojProfil = new MojProfil();
+    window.mojProfil = mojProfil;
 });

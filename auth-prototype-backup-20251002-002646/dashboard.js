@@ -26,6 +26,7 @@ class Dashboard {
 
         // Setup UI
         this.setupUserMenu();
+        this.setupWelcomeSection();
         this.setupStats();
         this.setupActions();
         this.setupActivity();
@@ -36,107 +37,37 @@ class Dashboard {
         const { ime, prezime, role, agencija_naziv, email } = this.currentUser;
         
         // Header user info
-        const userNameElement = document.querySelector('.user-name');
-        const userRoleElement = document.querySelector('.user-role');
+        document.querySelector('.user-name').textContent = `${ime} ${prezime}`;
+        document.querySelector('.user-role').textContent = this.getRoleDisplay(role);
         
-        if (userNameElement) {
-            userNameElement.textContent = `${ime} ${prezime}`;
-        }
-        if (userRoleElement) {
-            userRoleElement.textContent = this.getRoleDisplay(role);
-        }
-        
-        // Generate role-based dropdown menu
-        this.generateDropdownMenu(role);
+        // Dropdown info
+        document.getElementById('dropdownUserName').textContent = `${ime} ${prezime}`;
+        document.getElementById('dropdownUserEmail').textContent = email;
+        document.getElementById('dropdownAgency').textContent = agencija_naziv;
     }
 
-    generateDropdownMenu(role) {
-        const dropdown = document.getElementById('userDropdown');
+    setupWelcomeSection() {
+        const { ime, role } = this.currentUser;
+        const time = new Date().getHours();
+        let greeting = 'Dobro jutro';
         
-        // Header ostaje isti
-        const header = `
-            <div class="dropdown-header">
-                <div class="dropdown-user-info">
-                    <strong id="dropdownUserName">${this.currentUser.ime} ${this.currentUser.prezime}</strong>
-                    <small id="dropdownUserEmail">${this.currentUser.email}</small>
-                    <span class="dropdown-agency" id="dropdownAgency">${this.currentUser.agencija_naziv}</span>
-                </div>
-            </div>
-        `;
-
-        let menuItems = '';
+        if (time >= 12 && time < 18) greeting = 'Dobar dan';
+        if (time >= 18) greeting = 'Dobro veče';
         
-        if (role === 'SUPERADMIN') {
-            menuItems = `
-                <div class="dropdown-divider"></div>
-                <a href="dashboard.html" class="dropdown-item">
-                    <i class="fas fa-tachometer-alt"></i>
-                    <span>Dashboard</span>
-                </a>
-                <a href="user-management.html" class="dropdown-item">
-                    <i class="fas fa-users-cog"></i>
-                    <span>Upravljanje korisnicima</span>
-                </a>
-                <a href="system-logs.html" class="dropdown-item">
-                    <i class="fas fa-clipboard-list"></i>
-                    <span>Sistemski logovi</span>
-                </a>
-            `;
-        } else if (role === 'ADMIN') {
-            menuItems = `
-                <div class="dropdown-divider"></div>
-                <a href="dashboard.html" class="dropdown-item">
-                    <i class="fas fa-tachometer-alt"></i>
-                    <span>Dashboard</span>
-                </a>
-                <a href="user-management.html" class="dropdown-item">
-                    <i class="fas fa-users"></i>
-                    <span>Upravljanje korisnicima</span>
-                </a>
-                <a href="system-logs.html" class="dropdown-item">
-                    <i class="fas fa-clipboard-list"></i>
-                    <span>Sistemski logovi</span>
-                </a>
-            `;
-        } else if (role === 'KORISNIK') {
-            menuItems = `
-                <div class="dropdown-divider"></div>
-                <a href="dashboard.html" class="dropdown-item">
-                    <i class="fas fa-tachometer-alt"></i>
-                    <span>Dashboard</span>
-                </a>
-                <a href="system-logs.html?tab=my" class="dropdown-item">
-                    <i class="fas fa-user-check"></i>
-                    <span>Moje aktivnosti</span>
-                </a>
-            `;
-        }
-
-        // Zajednički dio - profil, postavke, odjava
-        const footer = `
-            <div class="dropdown-divider"></div>
-            <a href="moj-profil.html" class="dropdown-item">
-                <i class="fas fa-user-circle"></i>
-                <span>Moj profil</span>
-            </a>
-            <a href="postavke.html" class="dropdown-item">
-                <i class="fas fa-cog"></i>
-                <span>Postavke</span>
-            </a>
-            <div class="dropdown-divider"></div>
-            <a href="#" class="dropdown-item logout-item" id="logoutBtn">
-                <i class="fas fa-sign-out-alt"></i>
-                <span>Odjavi se</span>
-            </a>
-        `;
-
-        dropdown.innerHTML = header + menuItems + footer;
+        document.getElementById('welcomeTitle').textContent = 
+            `${greeting}, ${ime}!`;
         
-        // Re-attach logout event listener
-        document.getElementById('logoutBtn').addEventListener('click', (e) => {
-            e.preventDefault();
-            AuthSystem.logout();
-        });
+        document.getElementById('welcomeSubtitle').textContent = 
+            this.getWelcomeMessage(role);
+    }
+
+    getWelcomeMessage(role) {
+        const messages = {
+            'SUPERADMIN': 'Potpuna kontrola nad sistemom na raspolaganju',
+            'ADMIN': 'Upravljanje korisnicima i operaterima vaše agencije',
+            'KORISNIK': 'Pregled operatera i statistike vaše agencije'
+        };
+        return messages[role] || 'Dobrodošli u ATLAS sistem';
     }
 
     setupStats() {
@@ -319,12 +250,12 @@ class Dashboard {
 
         document.getElementById('activitySection').style.display = 'block';
         
-        const activities = this.getRecentActivities(5);
+        const activities = this.getMockActivities(role);
         const activityList = document.getElementById('activityList');
         
         activityList.innerHTML = activities.map(activity => `
             <div class="activity-item">
-                <div class="activity-icon ${activity.iconClass}">
+                <div class="activity-icon">
                     <i class="${activity.icon}"></i>
                 </div>
                 <div class="activity-content">
@@ -333,79 +264,6 @@ class Dashboard {
                 </div>
             </div>
         `).join('');
-    }
-
-    getRecentActivities(limit = 5) {
-        // Load from SYSTEM_LOGS if available
-        if (typeof SYSTEM_LOGS === 'undefined') {
-            return this.getMockActivities();
-        }
-
-        let filteredLogs = [...SYSTEM_LOGS];
-
-        // 🔒 ROLE-BASED FILTERING
-        if (this.currentUser.role === 'KORISNIK') {
-            // KORISNIK vidi SAMO svoje aktivnosti
-            const currentUserName = `${this.currentUser.ime} ${this.currentUser.prezime}`;
-            filteredLogs = SYSTEM_LOGS.filter(log => log.user_name === currentUserName);
-        } else if (this.currentUser.role === 'ADMIN') {
-            // ADMIN vidi samo aktivnosti korisnika svoje agencije (bez SUPERADMIN-a)
-            const currentAgency = this.currentUser.agencija;
-            
-            // Filtriraj logove - prikaži samo one od korisnika iste agencije, ali ne SUPERADMIN-a
-            filteredLogs = SYSTEM_LOGS.filter(log => {
-                // Pronađi korisnika koji je napravio log
-                const logUser = MOCK_USERS.find(u => 
-                    `${u.ime} ${u.prezime}` === log.user_name
-                );
-                
-                // Prikaži log samo ako je korisnik iz iste agencije I NIJE SUPERADMIN
-                return logUser && 
-                       logUser.agencija === currentAgency && 
-                       logUser.role !== 'SUPERADMIN';
-            });
-        }
-        // SUPERADMIN vidi sve logove (bez filtera)
-
-        const recentLogs = filteredLogs.slice(0, limit);
-        
-        return recentLogs.map(log => {
-            const icon = this.getActivityIcon(log.action);
-            return {
-                icon: icon.icon,
-                iconClass: icon.class,
-                text: `${log.user_name}: ${log.target}`,
-                time: this.getTimeAgo(log.timestamp)
-            };
-        });
-    }
-
-    getActivityIcon(action) {
-        const icons = {
-            'LOGIN': { icon: 'fas fa-sign-in-alt', class: 'icon-success' },
-            'LOGOUT': { icon: 'fas fa-sign-out-alt', class: 'icon-muted' },
-            'CREATE_USER': { icon: 'fas fa-user-plus', class: 'icon-primary' },
-            'UPDATE_USER': { icon: 'fas fa-user-edit', class: 'icon-warning' },
-            'DELETE_USER': { icon: 'fas fa-user-minus', class: 'icon-danger' },
-            'CREATE_OPERATOR': { icon: 'fas fa-plus-circle', class: 'icon-primary' },
-            'UPDATE_OPERATOR': { icon: 'fas fa-edit', class: 'icon-warning' },
-            'DELETE_OPERATOR': { icon: 'fas fa-trash-alt', class: 'icon-danger' },
-            'SEARCH': { icon: 'fas fa-search', class: 'icon-info' },
-            'EXPORT': { icon: 'fas fa-file-export', class: 'icon-success' }
-        };
-        return icons[action] || { icon: 'fas fa-info-circle', class: '' };
-    }
-
-    getTimeAgo(timestamp) {
-        const now = new Date();
-        const logTime = new Date(timestamp);
-        const diff = Math.floor((now - logTime) / 1000); // seconds
-
-        if (diff < 60) return 'Upravo sada';
-        if (diff < 3600) return `Prije ${Math.floor(diff / 60)} min`;
-        if (diff < 86400) return `Prije ${Math.floor(diff / 3600)} sati`;
-        if (diff < 172800) return 'Juče';
-        return `Prije ${Math.floor(diff / 86400)} dana`;
     }
 
     getMockActivities(role) {
@@ -449,30 +307,28 @@ class Dashboard {
     setupEventListeners() {
         // User menu toggle
         const userMenu = document.querySelector('.user-menu');
-        const userDropdown = document.getElementById('userDropdown');
-        
-        if (!userMenu || !userDropdown) {
-            console.error('User menu or dropdown not found!');
-            return;
-        }
-        
         userMenu.addEventListener('click', (e) => {
             e.stopPropagation();
-            userDropdown.classList.toggle('active');
-            console.log('Dropdown toggled, active:', userDropdown.classList.contains('active'));
+            userMenu.classList.toggle('active');
         });
 
         // Close dropdown when clicking outside
         document.addEventListener('click', () => {
-            userDropdown.classList.remove('active');
+            userMenu.classList.remove('active');
         });
 
-        // Dropdown items - linkovi sada rade normalno
-        // Samo zatvaramo dropdown, bez preventDefault() da bi linkovi radili
+        // Dropdown items - close on click
         document.querySelectorAll('.user-dropdown .dropdown-item:not(#logoutBtn)').forEach(item => {
-            item.addEventListener('click', () => {
-                userDropdown.classList.remove('active');
-                // Dozvoli da link radi normalno (navigacija na href)
+            item.addEventListener('click', (e) => {
+                e.preventDefault();
+                userMenu.classList.remove('active');
+                
+                const text = item.querySelector('span').textContent;
+                if (text === 'Moj profil') {
+                    alert('Moj profil - U razvoju\n\nOvdje će biti stranica za uređivanje vašeg profila.');
+                } else if (text === 'Postavke') {
+                    alert('Postavke - U razvoju\n\nOvdje će biti postavke aplikacije.');
+                }
             });
         });
 
@@ -489,7 +345,6 @@ class Dashboard {
         // Navigate to appropriate pages
         switch(actionId) {
             case 'manage-users':
-            case 'manage-agency-users':
                 window.location.href = 'user-management.html';
                 break;
             case 'manage-agencies':
@@ -505,11 +360,10 @@ class Dashboard {
                 alert('Pretraga operatera - Vodi na glavni ATLAS sistem');
                 break;
             case 'system-logs':
-                window.location.href = 'system-logs.html';
+                alert('Sistem logovi - U razvoju');
                 break;
             case 'my-activity':
-                // Idi na system logs sa my tab aktivnim
-                window.location.href = 'system-logs.html?tab=my';
+                alert('Moja aktivnost - U razvoju');
                 break;
             case 'export-data':
                 alert('Eksport podataka - U razvoju');
@@ -540,9 +394,5 @@ class Dashboard {
     }
 }
 
-// Initialize dashboard and make it globally accessible
-let dashboard;
-window.addEventListener('DOMContentLoaded', () => {
-    dashboard = new Dashboard();
-    window.dashboard = dashboard; // Make it globally accessible for onclick handlers
-});
+// Initialize dashboard
+const dashboard = new Dashboard();

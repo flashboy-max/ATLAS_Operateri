@@ -21,6 +21,19 @@ class SystemLogs {
 
         this.currentUser = AuthSystem.getCurrentUser();
         
+        // Za KORISNIK rolu, automatski postavi na "my" tab i sakrij "Sve aktivnosti"
+        if (this.currentUser.role === 'KORISNIK') {
+            this.currentTab = 'my';
+            this.hideAllActivitiesTab();
+        } else {
+            // Check URL params for tab selection
+            const urlParams = new URLSearchParams(window.location.search);
+            const tabParam = urlParams.get('tab');
+            if (tabParam === 'my') {
+                this.currentTab = 'my';
+            }
+        }
+        
         // Load logs
         this.loadLogs();
         
@@ -28,26 +41,183 @@ class SystemLogs {
         this.setupUserMenu();
         this.setupStats();
         this.setupEventListeners();
+        
+        // Set active tab based on URL param or role
+        if (this.currentTab === 'my') {
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                if (btn.dataset.tab === 'my') {
+                    btn.classList.add('active');
+                } else {
+                    btn.classList.remove('active');
+                }
+            });
+            this.updateUserFilterVisibility();
+        }
+        
         this.renderLogsTable();
+    }
+
+    hideAllActivitiesTab() {
+        // Sakrij "Sve aktivnosti" tab za KORISNIK
+        const allActivitiesTab = document.querySelector('.tab-btn[data-tab="all"]');
+        if (allActivitiesTab) {
+            allActivitiesTab.style.display = 'none';
+        }
+        
+        // Promijeni naslov stranice
+        document.querySelector('.page-title').innerHTML = `
+            <i class="fas fa-user-check"></i>
+            Moje aktivnosti
+        `;
+        document.getElementById('pageSubtitle').textContent = 'Pregled Vaših aktivnosti u sistemu';
     }
 
     loadLogs() {
         // Load from mock data
-        this.allLogs = [...SYSTEM_LOGS].sort((a, b) => 
+        let logs = [...SYSTEM_LOGS].sort((a, b) => 
             new Date(b.timestamp) - new Date(a.timestamp)
         );
+
+        // 🔒 ROLE-BASED FILTERING
+        if (this.currentUser.role === 'KORISNIK') {
+            // KORISNIK vidi SAMO svoje logove
+            const currentUserName = `${this.currentUser.ime} ${this.currentUser.prezime}`;
+            logs = logs.filter(log => log.user_name === currentUserName);
+        } else if (this.currentUser.role === 'ADMIN') {
+            // ADMIN vidi samo logove korisnika svoje agencije (bez SUPERADMIN-a)
+            const currentAgency = this.currentUser.agencija;
+            
+            logs = logs.filter(log => {
+                // Pronađi korisnika koji je napravio log
+                const logUser = MOCK_USERS.find(u => 
+                    `${u.ime} ${u.prezime}` === log.user_name
+                );
+                
+                // Prikaži log samo ako je korisnik iz iste agencije I NIJE SUPERADMIN
+                return logUser && 
+                       logUser.agencija === currentAgency && 
+                       logUser.role !== 'SUPERADMIN';
+            });
+        }
+        // SUPERADMIN vidi sve logove (bez filtera)
         
+        this.allLogs = logs;
         this.filteredLogs = [...this.allLogs];
     }
 
     setupUserMenu() {
         const { ime, prezime, role, agencija_naziv, email } = this.currentUser;
         
-        document.querySelector('.user-name').textContent = `${ime} ${prezime}`;
-        document.querySelector('.user-role').textContent = this.getRoleDisplay(role);
-        document.getElementById('dropdownUserName').textContent = `${ime} ${prezime}`;
-        document.getElementById('dropdownUserEmail').textContent = email;
-        document.getElementById('dropdownAgency').textContent = agencija_naziv;
+        // Header user info
+        const userNameElement = document.querySelector('.user-name');
+        const userRoleElement = document.querySelector('.user-role');
+        
+        if (userNameElement) {
+            userNameElement.textContent = `${ime} ${prezime}`;
+        }
+        if (userRoleElement) {
+            userRoleElement.textContent = this.getRoleDisplay(role);
+        }
+
+        // Generate role-based dropdown menu
+        this.generateDropdownMenu(role);
+
+        // Ažuriraj subtitle za ADMINa
+        if (role === 'ADMIN') {
+            const pageSubtitle = document.getElementById('pageSubtitle');
+            if (pageSubtitle) {
+                pageSubtitle.textContent = `Pregled aktivnosti korisnika agencije: ${agencija_naziv}`;
+            }
+        }
+    }
+
+    generateDropdownMenu(role) {
+        const dropdown = document.getElementById('userDropdown');
+        
+        // Header ostaje isti
+        const header = `
+            <div class="dropdown-header">
+                <div class="dropdown-user-info">
+                    <strong id="dropdownUserName">${this.currentUser.ime} ${this.currentUser.prezime}</strong>
+                    <small id="dropdownUserEmail">${this.currentUser.email}</small>
+                    <span class="dropdown-agency" id="dropdownAgency">${this.currentUser.agencija_naziv}</span>
+                </div>
+            </div>
+        `;
+
+        let menuItems = '';
+        
+        if (role === 'SUPERADMIN') {
+            menuItems = `
+                <div class="dropdown-divider"></div>
+                <a href="dashboard.html" class="dropdown-item">
+                    <i class="fas fa-tachometer-alt"></i>
+                    <span>Dashboard</span>
+                </a>
+                <a href="user-management.html" class="dropdown-item">
+                    <i class="fas fa-users-cog"></i>
+                    <span>Upravljanje korisnicima</span>
+                </a>
+                <a href="system-logs.html" class="dropdown-item">
+                    <i class="fas fa-clipboard-list"></i>
+                    <span>Sistemski logovi</span>
+                </a>
+            `;
+        } else if (role === 'ADMIN') {
+            menuItems = `
+                <div class="dropdown-divider"></div>
+                <a href="dashboard.html" class="dropdown-item">
+                    <i class="fas fa-tachometer-alt"></i>
+                    <span>Dashboard</span>
+                </a>
+                <a href="user-management.html" class="dropdown-item">
+                    <i class="fas fa-users"></i>
+                    <span>Upravljanje korisnicima</span>
+                </a>
+                <a href="system-logs.html" class="dropdown-item">
+                    <i class="fas fa-clipboard-list"></i>
+                    <span>Sistemski logovi</span>
+                </a>
+            `;
+        } else if (role === 'KORISNIK') {
+            menuItems = `
+                <div class="dropdown-divider"></div>
+                <a href="dashboard.html" class="dropdown-item">
+                    <i class="fas fa-tachometer-alt"></i>
+                    <span>Dashboard</span>
+                </a>
+                <a href="system-logs.html?tab=my" class="dropdown-item">
+                    <i class="fas fa-user-check"></i>
+                    <span>Moje aktivnosti</span>
+                </a>
+            `;
+        }
+
+        // Zajednički dio - profil, postavke, odjava
+        const footer = `
+            <div class="dropdown-divider"></div>
+            <a href="moj-profil.html" class="dropdown-item">
+                <i class="fas fa-user-circle"></i>
+                <span>Moj profil</span>
+            </a>
+            <a href="postavke.html" class="dropdown-item">
+                <i class="fas fa-cog"></i>
+                <span>Postavke</span>
+            </a>
+            <div class="dropdown-divider"></div>
+            <a href="#" class="dropdown-item logout-item" id="logoutBtn">
+                <i class="fas fa-sign-out-alt"></i>
+                <span>Odjavi se</span>
+            </a>
+        `;
+
+        dropdown.innerHTML = header + menuItems + footer;
+        
+        // Re-attach logout event listener
+        document.getElementById('logoutBtn').addEventListener('click', (e) => {
+            e.preventDefault();
+            AuthSystem.logout();
+        });
     }
 
     setupStats() {
@@ -73,6 +243,7 @@ class SystemLogs {
                 btn.classList.add('active');
                 this.currentTab = btn.dataset.tab;
                 this.currentPage = 1;
+                this.updateUserFilterVisibility();
                 this.applyFilters();
             });
         });
@@ -97,17 +268,17 @@ class SystemLogs {
         
         userMenu.addEventListener('click', (e) => {
             e.stopPropagation();
-            userDropdown.classList.toggle('show');
+            userDropdown.classList.toggle('active');
         });
         
         document.addEventListener('click', () => {
-            userDropdown.classList.remove('show');
+            userDropdown.classList.remove('active');
         });
         
         // Dropdown items - linkovi sada rade normalno
         document.querySelectorAll('.user-dropdown .dropdown-item:not(#logoutBtn)').forEach(item => {
             item.addEventListener('click', () => {
-                userDropdown.classList.remove('show');
+                userDropdown.classList.remove('active');
                 // Dozvoli da link radi normalno
             });
         });
@@ -119,6 +290,7 @@ class SystemLogs {
 
         // Populate user filter
         this.populateUserFilter();
+        this.updateUserFilterVisibility();
     }
 
     populateUserFilter() {
@@ -131,6 +303,31 @@ class SystemLogs {
             option.textContent = userName;
             filterUser.appendChild(option);
         });
+    }
+
+    updateUserFilterVisibility() {
+        const filterUserGroup = document.getElementById('filterUser').closest('.filter-group');
+        const myActivitiesBanner = document.getElementById('myActivitiesBanner');
+        const pageSubtitle = document.getElementById('pageSubtitle');
+        
+        if (this.currentTab === 'my') {
+            // Sakrij filter korisnika kada gledaš samo svoje aktivnosti
+            filterUserGroup.style.display = 'none';
+            document.getElementById('filterUser').value = ''; // Reset filter
+            
+            // Prikaži banner sa info o trenutnom korisniku
+            myActivitiesBanner.style.display = 'flex';
+            document.getElementById('currentUserName').textContent = 
+                `${this.currentUser.ime} ${this.currentUser.prezime}`;
+            
+            // Promijeni subtitle
+            pageSubtitle.textContent = 'Pregled Vaših aktivnosti u sistemu';
+        } else {
+            // Prikaži filter kada gledaš sve aktivnosti
+            filterUserGroup.style.display = 'flex';
+            myActivitiesBanner.style.display = 'none';
+            pageSubtitle.textContent = 'Pregled svih aktivnosti u sistemu';
+        }
     }
 
     applyFilters() {
@@ -407,4 +604,8 @@ class SystemLogs {
 }
 
 // Initialize
-const systemLogs = new SystemLogs();
+let systemLogs;
+window.addEventListener('DOMContentLoaded', () => {
+    systemLogs = new SystemLogs();
+    window.systemLogs = systemLogs;
+});
