@@ -221,20 +221,13 @@ class Dashboard {
     }
 
     getActionsForRole(role) {
-        const commonActions = [
-            {
-                id: 'view-operators',
-                icon: 'fas fa-list',
-                title: 'Pregled operatera',
-                description: 'Pogledaj listu svih telekom operatera'
-            },
-            {
-                id: 'search-operators',
-                icon: 'fas fa-search',
-                title: 'Pretraži operatere',
-                description: 'Napredna pretraga po kriterijumima'
-            }
-        ];
+        // Zajednička kartica za sve - pristup glavnoj ATLAS aplikaciji
+        const operatorsCard = {
+            id: 'operators-main',
+            icon: 'fas fa-building',
+            title: 'Operateri',
+            description: 'Pregled, pretraga i upravljanje telekom operaterima'
+        };
 
         if (role === 'SUPERADMIN') {
             return [
@@ -250,13 +243,7 @@ class Dashboard {
                     title: 'Upravljanje agencijama',
                     description: 'Postavke policijskih agencija'
                 },
-                {
-                    id: 'add-operator',
-                    icon: 'fas fa-plus-circle',
-                    title: 'Dodaj operatera',
-                    description: 'Registruj novog telekom operatera'
-                },
-                ...commonActions,
+                operatorsCard,
                 {
                     id: 'system-logs',
                     icon: 'fas fa-clipboard-list',
@@ -274,37 +261,13 @@ class Dashboard {
                     title: 'Korisnici agencije',
                     description: 'Upravljaj korisnicima tvoje agencije'
                 },
-                {
-                    id: 'add-operator',
-                    icon: 'fas fa-plus-circle',
-                    title: 'Dodaj operatera',
-                    description: 'Registruj novog telekom operatera'
-                },
-                ...commonActions,
-                {
-                    id: 'agency-reports',
-                    icon: 'fas fa-chart-bar',
-                    title: 'Izvještaji',
-                    description: 'Generiši izvještaje za agenciju'
-                }
+                operatorsCard
             ];
         }
 
         // KORISNIK role
         return [
-            ...commonActions,
-            {
-                id: 'export-data',
-                icon: 'fas fa-download',
-                title: 'Izvoz podataka',
-                description: 'Preuzmi podatke o operaterima'
-            },
-            {
-                id: 'my-activity',
-                icon: 'fas fa-history',
-                title: 'Moje aktivnosti',
-                description: 'Pregled tvojih nedavnih akcija'
-            }
+            operatorsCard
         ];
     }
 
@@ -495,27 +458,12 @@ class Dashboard {
             case 'manage-agencies':
                 alert('Upravljanje agencijama - U razvoju');
                 break;
-            case 'add-operator':
-                alert('Dodavanje operatera - Vodi na glavni ATLAS sistem');
-                break;
-            case 'view-operators':
-                alert('Pregled operatera - Vodi na glavni ATLAS sistem');
-                break;
-            case 'search-operators':
-                alert('Pretraga operatera - Vodi na glavni ATLAS sistem');
+            case 'operators-main':
+                // Vodi na glavnu ATLAS aplikaciju (index.html u root folderu)
+                window.location.href = '../index.html';
                 break;
             case 'system-logs':
                 window.location.href = 'system-logs.html';
-                break;
-            case 'my-activity':
-                // Idi na system logs sa my tab aktivnim
-                window.location.href = 'system-logs.html?tab=my';
-                break;
-            case 'export-data':
-                alert('Eksport podataka - U razvoju');
-                break;
-            case 'reports':
-                alert('Izvještaji - U razvoju');
                 break;
             default:
                 alert(`Action: ${actionId}\n\nOvo je prototip. U pravoj aplikaciji bi ovo otvorilo odgovarajući modul.`);
