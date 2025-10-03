@@ -105,17 +105,6 @@ class SystemLogs {
         this.filteredLogs = [...this.allLogs];
     }
 
-        try {
-            SharedHeader.mount();
-            SharedHeader.renderHeaderUser(this.currentUser);
-            SharedHeader.onAction('add-operator', () => {
-                window.location.href = 'index.html#add-operator';
-            });
-        } catch (error) {
-            console.error('Greska pri inicijalizaciji SharedHeadera na System Logs stranici:', error);
-        }
-    }
-
     updatePageHeading() {
         if (!this.currentUser) {
             return;

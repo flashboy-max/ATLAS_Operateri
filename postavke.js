@@ -25,8 +25,6 @@ class PostavkeManager {
         console.log('⚙️ Postavke učitane za:', this.currentUser);
     }
 
-    }
-
     loadPostavkeData() {
         // Placeholder za buduće funkcionalnosti
         console.log('⚙️ Postavke podatci učitani');

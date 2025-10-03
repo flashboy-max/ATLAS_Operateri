@@ -24,8 +24,6 @@ class MojProfil {
         console.log('📄 Moj profil ucitan za:', this.currentUser);
     }
 
-    }
-
     loadProfileData() {
         if (!this.currentUser) return;
 

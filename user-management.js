@@ -82,15 +82,6 @@ class UserManagement {
         this.filteredUsers = [...this.users];
     }
 
-        
-
-        try {
-            SharedHeader.renderHeaderUser(this.currentUser);
-        } catch (error) {
-            console.error('Greska pri osvjezavanju SharedHeader korisnika:', error);
-        }
-    }
-
     updatePageHeading() {
         if (!this.currentUser) {
             return;

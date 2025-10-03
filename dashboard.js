@@ -54,15 +54,6 @@ class Dashboard {
     }
 
 
-        try {
-            SharedHeader.mount();
-            SharedHeader.renderHeaderUser(this.currentUser);
-        } catch (error) {
-            console.error('Greska pri inicijalizaciji SharedHeadera na dashboardu:', error);
-        }
-    }
-
-
 
 
     setupStats() {
