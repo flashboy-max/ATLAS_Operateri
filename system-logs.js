@@ -72,34 +72,61 @@ class SystemLogs {
         document.getElementById('pageSubtitle').textContent = 'Pregled Vaših aktivnosti u sistemu';
     }
 
-    loadLogs() {
-        // Load from mock data
+    async loadLogs() {
+        this.isLoading = true;
+        
+        try {
+            const response = await fetch('/api/system/logs?limit=100', {
+                headers: {
+                    'Authorization': `Bearer ${AuthSystem.getToken()}`
+                }
+            });
+
+            if (response.ok) {
+                const data = await response.json();
+                console.log('📊 Loaded logs from API:', data.logs.length);
+                this.allLogs = data.logs;
+                this.filteredLogs = [...this.allLogs];
+                this.totalLogs = data.total;
+            } else {
+                throw new Error('Failed to load logs');
+            }
+        } catch (error) {
+            console.error('Error loading logs:', error);
+            if (typeof ErrorTracker !== 'undefined') {
+                ErrorTracker.logError(error, { context: 'loadLogs' });
+            }
+            
+            // Fallback to mock data
+            this.loadMockLogs();
+        } finally {
+            this.isLoading = false;
+        }
+    }
+
+    loadMockLogs() {
+        // Fallback to mock data if API fails
         let logs = [...SYSTEM_LOGS].sort((a, b) => 
             new Date(b.timestamp) - new Date(a.timestamp)
         );
 
-        // 🔒 ROLE-BASED FILTERING
+        // 🔒 ROLE-BASED FILTERING for mock data
         if (this.currentUser.role === 'KORISNIK') {
-            // KORISNIK vidi SAMO svoje logove
             const currentUserName = `${this.currentUser.ime} ${this.currentUser.prezime}`;
             logs = logs.filter(log => log.user_name === currentUserName);
         } else if (this.currentUser.role === 'ADMIN') {
-            // ADMIN vidi samo logove korisnika svoje agencije (bez SUPERADMIN-a)
             const currentAgency = this.currentUser.agencija;
             
             logs = logs.filter(log => {
-                // Pronađi korisnika koji je napravio log
                 const logUser = MOCK_USERS.find(u => 
                     `${u.ime} ${u.prezime}` === log.user_name
                 );
                 
-                // Prikaži log samo ako je korisnik iz iste agencije I NIJE SUPERADMIN
                 return logUser && 
                        logUser.agencija === currentAgency && 
                        logUser.role !== 'SUPERADMIN';
             });
         }
-        // SUPERADMIN vidi sve logove (bez filtera)
         
         this.allLogs = logs;
         this.filteredLogs = [...this.allLogs];

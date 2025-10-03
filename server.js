@@ -17,6 +17,98 @@ const TOKEN_EXPIRY = process.env.AUTH_JWT_EXPIRES_IN || '24h';
 
 const operatorsDir = path.join(__dirname, 'operators');
 const authDataPath = path.join(__dirname, 'data', 'auth-users.json');
+const logsDir = path.join(__dirname, 'data', 'logs');
+
+// Ensure logs directory exists
+if (!fs.existsSync(logsDir)) {
+    fs.mkdirSync(logsDir, { recursive: true });
+}
+
+// Logger utility
+class Logger {
+    static logTypes = {
+        LOGIN: 'login',
+        LOGOUT: 'logout',
+        CREATE_USER: 'create_user',
+        UPDATE_USER: 'update_user',
+        DELETE_USER: 'delete_user',
+        UPDATE_PROFILE: 'update_profile',
+        CHANGE_PASSWORD: 'change_password',
+        CREATE_OPERATOR: 'create_operator',
+        UPDATE_OPERATOR: 'update_operator',
+        DELETE_OPERATOR: 'delete_operator',
+        ERROR: 'error',
+        SECURITY: 'security',
+        SYSTEM: 'system'
+    };
+
+    static log(type, message, userId = null, metadata = {}) {
+        const timestamp = new Date().toISOString();
+        const logEntry = {
+            timestamp,
+            type,
+            message,
+            userId,
+            metadata,
+            ip: metadata.ip || 'unknown',
+            userAgent: metadata.userAgent || 'unknown'
+        };
+
+        // Write to daily log file
+        const dateStr = new Date().toISOString().split('T')[0];
+        const logFile = path.join(logsDir, `${dateStr}.json`);
+        
+        try {
+            let logs = [];
+            if (fs.existsSync(logFile)) {
+                const content = fs.readFileSync(logFile, 'utf8');
+                logs = content ? JSON.parse(content) : [];
+            }
+            
+            logs.push(logEntry);
+            fs.writeFileSync(logFile, JSON.stringify(logs, null, 2), 'utf8');
+        } catch (error) {
+            console.error('Failed to write log:', error);
+        }
+
+        // Also log to console for development
+        console.log(`[${timestamp}] ${type.toUpperCase()}: ${message}`, metadata);
+    }
+
+    static async getLogs(startDate = null, endDate = null, type = null, userId = null) {
+        try {
+            const logs = [];
+            const files = fs.readdirSync(logsDir).filter(f => f.endsWith('.json'));
+            
+            for (const file of files) {
+                const filePath = path.join(logsDir, file);
+                const content = fs.readFileSync(filePath, 'utf8');
+                const fileLogs = content ? JSON.parse(content) : [];
+                logs.push(...fileLogs);
+            }
+
+            let filteredLogs = logs;
+
+            if (startDate) {
+                filteredLogs = filteredLogs.filter(log => new Date(log.timestamp) >= new Date(startDate));
+            }
+            if (endDate) {
+                filteredLogs = filteredLogs.filter(log => new Date(log.timestamp) <= new Date(endDate));
+            }
+            if (type) {
+                filteredLogs = filteredLogs.filter(log => log.type === type);
+            }
+            if (userId) {
+                filteredLogs = filteredLogs.filter(log => log.userId === userId);
+            }
+
+            return filteredLogs.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+        } catch (error) {
+            console.error('Failed to read logs:', error);
+            return [];
+        }
+    }
+}
 
 app.use(cors({
     origin: true,
@@ -24,6 +116,29 @@ app.use(cors({
 }));
 app.use(express.json({ limit: '10mb' }));
 app.use(express.static(__dirname));
+
+// Request logging middleware
+app.use((req, res, next) => {
+    const startTime = Date.now();
+    
+    res.on('finish', () => {
+        const duration = Date.now() - startTime;
+        const logLevel = res.statusCode >= 400 ? 'ERROR' : 'INFO';
+        
+        Logger.log(Logger.logTypes.SYSTEM, `${req.method} ${req.path} - ${res.statusCode}`, 
+            req.authUser?.id, {
+                method: req.method,
+                path: req.path,
+                statusCode: res.statusCode,
+                duration: `${duration}ms`,
+                ip: req.ip || req.connection.remoteAddress,
+                userAgent: req.get('User-Agent')
+            }
+        );
+    });
+    
+    next();
+});
 
 const loginLimiter = rateLimit({
     windowMs: 15 * 60 * 1000,
@@ -112,6 +227,10 @@ app.post('/api/auth/login', loginLimiter, (req, res) => {
         const { username, password } = req.body || {};
 
         if (!username || !password) {
+            Logger.log(Logger.logTypes.SECURITY, 'Login attempt with missing credentials', null, {
+                ip: req.ip,
+                userAgent: req.get('User-Agent')
+            });
             return res.status(400).json({ error: 'Missing username or password' });
         }
 
@@ -119,16 +238,34 @@ app.post('/api/auth/login', loginLimiter, (req, res) => {
         const user = data.users.find(u => u.username.toLowerCase() === username.toLowerCase());
 
         if (!user || !user.aktivan) {
+            Logger.log(Logger.logTypes.SECURITY, `Failed login attempt for username: ${username}`, null, {
+                username,
+                reason: !user ? 'user_not_found' : 'user_deactivated',
+                ip: req.ip,
+                userAgent: req.get('User-Agent')
+            });
             return res.status(401).json({ error: 'Neispravni kredencijali ili deaktiviran nalog' });
         }
 
         const passwordOk = bcrypt.compareSync(password, user.password_hash);
         if (!passwordOk) {
+            Logger.log(Logger.logTypes.SECURITY, `Failed login attempt - wrong password for user: ${username}`, user.id, {
+                username,
+                ip: req.ip,
+                userAgent: req.get('User-Agent')
+            });
             return res.status(401).json({ error: 'Neispravni kredencijali' });
         }
 
         user.poslednje_logovanje = new Date().toISOString();
         writeAuthData({ ...data, users: data.users });
+
+        Logger.log(Logger.logTypes.LOGIN, `User logged in successfully: ${username}`, user.id, {
+            username,
+            role: user.role,
+            ip: req.ip,
+            userAgent: req.get('User-Agent')
+        });
 
         const token = generateToken(user);
         return res.json({
@@ -136,12 +273,23 @@ app.post('/api/auth/login', loginLimiter, (req, res) => {
             user: sanitizeUser(user)
         });
     } catch (error) {
+        Logger.log(Logger.logTypes.ERROR, `Login error: ${error.message}`, null, {
+            error: error.stack,
+            ip: req.ip,
+            userAgent: req.get('User-Agent')
+        });
         console.error('Login error:', error);
         return res.status(500).json({ error: 'Login failed' });
     }
 });
 
 app.post('/api/auth/logout', authenticateToken, (req, res) => {
+    Logger.log(Logger.logTypes.LOGOUT, `User logged out: ${req.authUser.username}`, req.authUser.id, {
+        username: req.authUser.username,
+        role: req.authUser.role,
+        ip: req.ip,
+        userAgent: req.get('User-Agent')
+    });
     return res.json({ success: true });
 });
 
@@ -412,6 +560,78 @@ app.put('/api/auth/change-password', authenticateToken, (req, res) => {
     } catch (error) {
         console.error('Change password error:', error);
         return res.status(500).json({ error: 'Promena lozinke nije uspjela' });
+    }
+});
+
+// Frontend error logging endpoint
+app.post('/api/system/log-error', authenticateToken, (req, res) => {
+    try {
+        const { authUser } = req;
+        const { message, stack, url, userAgent, context } = req.body;
+
+        Logger.log(Logger.logTypes.ERROR, `Frontend error: ${message}`, authUser.id, {
+            stack,
+            url,
+            userAgent,
+            context,
+            ip: req.ip,
+            source: 'frontend'
+        });
+
+        return res.json({ success: true });
+    } catch (error) {
+        console.error('Error logging frontend error:', error);
+        return res.status(500).json({ error: 'Failed to log error' });
+    }
+});
+
+// System logs endpoint
+app.get('/api/system/logs', authenticateToken, requireRoles('SUPERADMIN', 'ADMIN'), async (req, res) => {
+    try {
+        const { authUser } = req;
+        const { startDate, endDate, type, userId, page = 1, limit = 50 } = req.query;
+
+        let logs = await Logger.getLogs(startDate, endDate, type, userId);
+
+        // For ADMIN, filter logs to only show logs related to their agency users
+        if (authUser.role === 'ADMIN') {
+            const { authData } = req;
+            const agencyUserIds = authData.users
+                .filter(u => u.agencija === authUser.agencija)
+                .map(u => u.id);
+            
+            logs = logs.filter(log => 
+                log.userId === authUser.id || 
+                agencyUserIds.includes(log.userId) ||
+                log.type === Logger.logTypes.SYSTEM
+            );
+        }
+
+        // Pagination
+        const startIndex = (page - 1) * limit;
+        const endIndex = startIndex + parseInt(limit);
+        const paginatedLogs = logs.slice(startIndex, endIndex);
+
+        Logger.log(Logger.logTypes.SYSTEM, `Logs accessed by ${authUser.username}`, authUser.id, {
+            filters: { startDate, endDate, type, userId },
+            resultCount: paginatedLogs.length,
+            ip: req.ip
+        });
+
+        return res.json({
+            logs: paginatedLogs,
+            total: logs.length,
+            page: parseInt(page),
+            limit: parseInt(limit),
+            totalPages: Math.ceil(logs.length / limit)
+        });
+    } catch (error) {
+        Logger.log(Logger.logTypes.ERROR, `Error accessing logs: ${error.message}`, req.authUser?.id, {
+            error: error.stack,
+            ip: req.ip
+        });
+        console.error('Logs error:', error);
+        return res.status(500).json({ error: 'Failed to retrieve logs' });
     }
 });
 

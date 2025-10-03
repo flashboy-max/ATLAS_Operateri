@@ -2,6 +2,65 @@
 // AUTH.JS - Integrisana autentikacija sa backend API-jem
 // ================================================
 
+// Frontend Error Tracking System
+class ErrorTracker {
+    static async logError(error, context = {}) {
+        try {
+            const errorData = {
+                message: error.message,
+                stack: error.stack,
+                timestamp: new Date().toISOString(),
+                url: window.location.href,
+                userAgent: navigator.userAgent,
+                context: context
+            };
+
+            // Log to console for development
+            console.error('Error logged:', errorData);
+
+            // Send to backend if user is authenticated
+            const token = AuthSystem.getToken();
+            if (token) {
+                await fetch('/api/system/log-error', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify(errorData)
+                }).catch(err => {
+                    console.warn('Failed to send error to backend:', err);
+                });
+            }
+        } catch (err) {
+            console.error('Failed to log error:', err);
+        }
+    }
+
+    static setupGlobalErrorHandling() {
+        // Catch unhandled promise rejections
+        window.addEventListener('unhandledrejection', event => {
+            ErrorTracker.logError(new Error(`Unhandled Promise Rejection: ${event.reason}`), {
+                type: 'unhandled_promise_rejection',
+                reason: event.reason
+            });
+        });
+
+        // Catch JavaScript errors
+        window.addEventListener('error', event => {
+            ErrorTracker.logError(event.error || new Error(event.message), {
+                type: 'javascript_error',
+                filename: event.filename,
+                lineno: event.lineno,
+                colno: event.colno
+            });
+        });
+    }
+}
+
+// Initialize global error handling
+ErrorTracker.setupGlobalErrorHandling();
+
 class AuthSystem {
     constructor() {
         this.currentUser = null;
