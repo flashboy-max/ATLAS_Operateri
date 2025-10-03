@@ -10,52 +10,39 @@ class SystemLogs {
         this.currentTab = 'all';
         this.currentPage = 1;
         this.logsPerPage = 15;
-        this.isLoading = false;
-
-        this.init().catch(error => {
-            console.error('SystemLogs init failed:', error);
-            AuthSystem.logout();
-        });
+        this.init();
     }
 
-    async init() {
+    init() {
+        // Check authentication
         if (!AuthSystem.requireAuth()) {
             return;
         }
 
         this.currentUser = AuthSystem.getCurrentUser();
-
-        if (!this.currentUser) {
-            try {
-                const session = await AuthSystem.fetchSession();
-                if (session?.user) {
-                    this.currentUser = session.user;
-                    AuthSystem.persistSession(session.user, AuthSystem.getToken(), AuthSystem.wasRemembered());
-                }
-            } catch (error) {
-                console.warn('Neuspjesno osvjezavanje sesije:', error);
-                await AuthSystem.logout();
-                return;
-            }
-        }
-
+        
+        // Za KORISNIK rolu, automatski postavi na "my" tab i sakrij "Sve aktivnosti"
         if (this.currentUser.role === 'KORISNIK') {
             this.currentTab = 'my';
             this.hideAllActivitiesTab();
         } else {
+            // Check URL params for tab selection
             const urlParams = new URLSearchParams(window.location.search);
             const tabParam = urlParams.get('tab');
             if (tabParam === 'my') {
                 this.currentTab = 'my';
             }
         }
-
+        
+        // Load logs
         this.loadLogs();
-
+        
+        // Setup UI
         this.setupUserMenu();
         this.setupStats();
         this.setupEventListeners();
-
+        
+        // Set active tab based on URL param or role
         if (this.currentTab === 'my') {
             document.querySelectorAll('.tab-btn').forEach(btn => {
                 if (btn.dataset.tab === 'my') {
@@ -66,7 +53,7 @@ class SystemLogs {
             });
             this.updateUserFilterVisibility();
         }
-
+        
         this.renderLogsTable();
     }
 
@@ -598,14 +585,12 @@ class SystemLogs {
         return csvContent;
     }
 
-    async handleLogout() {
-
-        if (confirm('Da li ste sigurni da zelite da se odjavite?')) {
-
-            await AuthSystem.logout();
-
+    handleLogout() {
+        if (confirm('Da li ste sigurni da želite da se odjavite?')) {
+            const authSystem = new AuthSystem();
+            authSystem.logout();
+            window.location.href = 'login.html';
         }
-
     }
 
     getRoleDisplay(role) {

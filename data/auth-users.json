@@ -1,0 +1,65 @@
+{
+  "nextId": 7,
+  "users": [
+    {
+      "id": 1,
+      "username": "admin",
+      "password_hash": "$2b$10$mqpYQvDEguVNlvvkClUEG.UZmTe4EoxMO/ZHcKYGnFBU7ONR8lj9G",
+      "role": "SUPERADMIN",
+      "ime": "Admir",
+      "prezime": "Adminovic",
+      "email": "admin@atlas.ba",
+      "agencija": null,
+      "agencija_naziv": "Sistem administrator",
+      "aktivan": true,
+      "kreiran": "2025-01-15",
+      "poslednje_logovanje": "2025-10-03T14:32:28.724Z",
+      "created_by": null
+    },
+    {
+      "id": 2,
+      "username": "admin_ks",
+      "password_hash": "$2b$10$mqpYQvDEguVNlvvkClUEG.UZmTe4EoxMO/ZHcKYGnFBU7ONR8lj9G",
+      "role": "ADMIN",
+      "ime": "Kemal",
+      "prezime": "Kemo",
+      "email": "kemal.kemo@mup-ks.gov.ba",
+      "agencija": "MUP_KS",
+      "agencija_naziv": "Ministarstvo unutrasnjih poslova Kantona Sarajevo (MUP KS)",
+      "aktivan": true,
+      "kreiran": "2025-02-10",
+      "poslednje_logovanje": "2025-10-02T11:35:01.913Z",
+      "created_by": 1
+    },
+    {
+      "id": 3,
+      "username": "korisnik_ks",
+      "password_hash": "$2b$10$awicr4zRbYEOdtnNXUEtOuf5283FQ3mFw0c5JLNw5NC0L4l7w0I9.",
+      "role": "KORISNIK",
+      "ime": "Amira",
+      "prezime": "Amirica",
+      "email": "amira.amirica@mup-ks.gov.ba",
+      "agencija": "MUP_KS",
+      "agencija_naziv": "Ministarstvo unutrasnjih poslova Kantona Sarajevo (MUP KS)",
+      "aktivan": true,
+      "kreiran": "2025-03-05",
+      "poslednje_logovanje": "2025-09-29T11:20:00Z",
+      "created_by": 2
+    },
+    {
+      "id": 4,
+      "username": "admin_una",
+      "password_hash": "$2b$10$mqpYQvDEguVNlvvkClUEG.UZmTe4EoxMO/ZHcKYGnFBU7ONR8lj9G",
+      "role": "ADMIN",
+      "ime": "Nedzad",
+      "prezime": "Nedzo",
+      "email": "nedzad.nedzo@mup-unsko-sanski.gov.ba",
+      "agencija": "MUP_UNSKO_SANSKI",
+      "agencija_naziv": "Ministarstvo unutrasnjih poslova Unsko-sanskog kantona (MUP USK)",
+      "aktivan": true,
+      "kreiran": "2025-02-20",
+      "poslednje_logovanje": "2025-09-28T16:45:00Z",
+      "created_by": 1
+    }
+  ]
+}

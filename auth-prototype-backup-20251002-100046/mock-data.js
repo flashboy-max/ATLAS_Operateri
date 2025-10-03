@@ -15,8 +15,7 @@ const MOCK_USERS = [
         agencija_naziv: 'Sistem administrator',
         aktivan: true,
         kreiran: '2025-01-15',
-        poslednje_logovanje: '2025-10-01 09:30:00',
-        created_by: null
+        poslednje_logovanje: '2025-10-01 09:30:00'
     },
     {
         id: 2,
@@ -30,8 +29,7 @@ const MOCK_USERS = [
         agencija_naziv: 'Ministarstvo unutrašnjih poslova Kantona Sarajevo (MUP KS)',
         aktivan: true,
         kreiran: '2025-02-10',
-        poslednje_logovanje: '2025-09-30 14:15:00',
-        created_by: 1
+        poslednje_logovanje: '2025-09-30 14:15:00'
     },
     {
         id: 3,
@@ -45,8 +43,7 @@ const MOCK_USERS = [
         agencija_naziv: 'Ministarstvo unutrašnjih poslova Kantona Sarajevo (MUP KS)',
         aktivan: true,
         kreiran: '2025-03-05',
-        poslednje_logovanje: '2025-09-29 11:20:00',
-        created_by: 2
+        poslednje_logovanje: '2025-09-29 11:20:00'
     },
     {
         id: 4,
@@ -60,8 +57,7 @@ const MOCK_USERS = [
         agencija_naziv: 'Ministarstvo unutrašnjih poslova Unsko-sanskog kantona (MUP USK)',
         aktivan: true,
         kreiran: '2025-02-20',
-        poslednje_logovanje: '2025-09-28 16:45:00',
-        created_by: 1
+        poslednje_logovanje: '2025-09-28 16:45:00'
     }
 ];
 
@@ -371,5 +367,5 @@ function getAgencija(agencijaId) {
 
 // Export za module (ako koristiš)
 if (typeof module !== 'undefined' && module.exports) {
-    module.exports = { MOCK_USERS, AGENCIJE, SYSTEM_LOGS, getMockUser, getAgencija };
+    module.exports = { MOCK_USERS, AGENCIJE, getMockUser, getAgencija };
 }

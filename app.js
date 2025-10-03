@@ -229,6 +229,22 @@ const categoryTypeMap = {
 
 class ATLASApp {
     constructor() {
+        this.currentUser = null;
+        
+        // Initialize SharedHeader first
+        this.initializeSharedHeader();
+        
+        if (typeof AuthSystem !== 'undefined') {
+            if (!AuthSystem.requireAuth()) {
+                return;
+            }
+            this.currentUser = AuthSystem.getCurrentUser();
+        } else {
+            console.warn('AuthSystem nije ucitan - index.html radi bez provjere sesije.');
+        }
+
+        this.userPermissions = this.computeUserPermissions();
+
         this.operators = [];
         this.filteredOperators = [];
         this.currentEditId = null;
@@ -274,12 +290,24 @@ class ATLASApp {
             importDataBtn: document.getElementById('importDataBtn'),
             fileImportInput: document.getElementById('fileImportInput'),
             
+            // User menu
+            userMenuContainer: document.getElementById('headerUserMenu'),
+            userChip: document.getElementById('headerUserChip'),
+            userDropdown: document.getElementById('headerUserDropdown'),
+            userNameDisplay: document.getElementById('headerUserName'),
+            userRoleDisplay: document.getElementById('headerUserRole'),
+            dropdownName: document.getElementById('headerDropdownName'),
+            dropdownEmail: document.getElementById('headerDropdownEmail'),
+            dropdownAgency: document.getElementById('headerDropdownAgency'),
+            dropdownLinks: document.getElementById('headerDropdownLinks'),
+            logoutBtnHeader: document.getElementById('headerLogoutBtn'),
+            
             // Stat Cards (Clickable)
             statTotal: document.getElementById('statTotal'),
             statActive: document.getElementById('statActive'),
             statInactive: document.getElementById('statInactive'),
             
-            // Tehnički kontakti
+            // Tehnicki kontakti
             techContactsContainer: document.getElementById('tech-contacts-container'),
             addTechContactBtn: document.getElementById('add-tech-contact'),
             
@@ -287,7 +315,7 @@ class ATLASApp {
             servicesContainer: document.getElementById('services-container'),
             addServiceBtn: document.getElementById('add-service'),
             
-            // Tehnologije
+            // Tehnologije  
             technologiesContainer: document.getElementById('technologies-container'),
             addTechnologyBtn: document.getElementById('add-technology'),
             
@@ -297,12 +325,226 @@ class ATLASApp {
             closeHelpModal: document.getElementById('closeHelpModal'),
             closeHelpModalBtn: document.getElementById('closeHelpModalBtn')
         };
+
+        this.userMenuDocumentHandler = null;
         
         this.init();
     }
+
+    async initializeSharedHeader() {
+        try {
+            // Wait for SharedHeader to be available
+            if (typeof SharedHeader !== 'undefined') {
+                // Mount shared header
+                SharedHeader.mount();
+                
+                // Setup action handlers
+                SharedHeader.onAction('add-operator', () => {
+                    this.openModal();
+                });
+                
+                console.log('✅ SharedHeader inicijalizovan');
+            } else {
+                console.warn('⚠️ SharedHeader nije dostupan');
+            }
+        } catch (error) {
+            console.error('❌ Greška pri inicijalizaciji SharedHeader:', error);
+        }
+    }
     
+    updateUserInterface() {
+        // Update SharedHeader with current user
+        if (typeof SharedHeader !== 'undefined' && this.currentUser) {
+            SharedHeader.renderHeaderUser(this.currentUser);
+        }
+        
+        // Update permissions
+        this.updateHeaderPermissions();
+    }
+    
+    updateHeaderPermissions() {
+        if (typeof SharedHeader === 'undefined') return;
+        
+        // Set role-based permissions for the current page
+        const permissions = this.currentUser 
+            ? SharedHeader.computePermissions(this.currentUser.role)
+            : { manageOperators: false };
+        
+        // Control "Dodaj operatera" button visibility (only SUPERADMIN)
+        const addOperatorBtn = document.getElementById('addOperatorBtn');
+        if (addOperatorBtn) {
+            if (this.currentUser && this.currentUser.role === 'SUPERADMIN') {
+                addOperatorBtn.style.display = 'inline-flex';
+            } else {
+                addOperatorBtn.style.display = 'none';
+            }
+        }
+        
+        console.log('🔒 Permissions updated:', {
+            user: this.currentUser?.role || 'NO_USER',
+            canManageOperators: permissions.manageOperators,
+            addOperatorVisible: this.currentUser?.role === 'SUPERADMIN'
+        });
+    }
+
+    computeUserPermissions() {
+        if (!this.currentUser) {
+            return {
+                canManageOperators: true,
+                canImportData: true,
+                canExportData: true
+            };
+        }
+
+        const role = this.currentUser.role;
+        return {
+            canManageOperators: role === 'SUPERADMIN' || role === 'ADMIN',
+            canImportData: role === 'SUPERADMIN' || role === 'ADMIN',
+            canExportData: true
+        };
+    }
+
+    setupUserContext() {
+        const {
+            userMenuContainer,
+            userChip,
+            userDropdown,
+            userNameDisplay,
+            userRoleDisplay,
+            dropdownName,
+            dropdownEmail,
+            dropdownAgency,
+            dropdownLinks,
+            logoutBtnHeader
+        } = this.elements;
+
+        if (!userMenuContainer) {
+            return;
+        }
+
+        this.userPermissions = this.computeUserPermissions();
+
+        if (!this.currentUser) {
+            userMenuContainer.style.display = 'none';
+            return;
+        }
+
+        userMenuContainer.style.display = 'flex';
+
+        const { ime, prezime, email, role, agencija_naziv } = this.currentUser;
+
+        if (userNameDisplay) {
+            userNameDisplay.textContent = `${ime} ${prezime}`;
+        }
+        if (userRoleDisplay) {
+            userRoleDisplay.textContent = this.getRoleDisplay(role);
+        }
+        if (dropdownName) {
+            dropdownName.textContent = `${ime} ${prezime}`;
+        }
+        if (dropdownEmail) {
+            dropdownEmail.textContent = email || 'Nije postavljeno';
+        }
+        if (dropdownAgency) {
+            dropdownAgency.textContent = agencija_naziv || 'ATLAS sistem';
+        }
+
+        if (dropdownLinks) {
+            const links = [
+                { href: 'dashboard.html', icon: 'fas fa-chart-line', label: 'Dashboard' },
+                { href: 'index.html', icon: 'fas fa-network-wired', label: 'Operateri' }
+            ];
+
+            if (role === 'SUPERADMIN') {
+                links.push({ href: 'user-management.html', icon: 'fas fa-users-cog', label: 'Upravljanje korisnicima' });
+                links.push({ href: 'system-logs.html', icon: 'fas fa-clipboard-list', label: 'Sistemski logovi' });
+            } else if (role === 'ADMIN') {
+                links.push({ href: 'user-management.html', icon: 'fas fa-users', label: 'Korisnici agencije' });
+                links.push({ href: 'system-logs.html', icon: 'fas fa-clipboard-list', label: 'Sistemski logovi' });
+            } else {
+                links.push({ href: 'system-logs.html?tab=my', icon: 'fas fa-user-check', label: 'Moje aktivnosti' });
+            }
+
+            dropdownLinks.innerHTML = links.map(link => (
+                `<a class="user-dropdown-link" href="${link.href}">` +
+                    `<i class="${link.icon}"></i>` +
+                    `<span>${link.label}</span>` +
+                `</a>`
+            )).join('');
+        }
+
+        if (this.userMenuDocumentHandler) {
+            document.removeEventListener('click', this.userMenuDocumentHandler);
+        }
+
+        if (userChip && userDropdown) {
+            userChip.addEventListener('click', (event) => {
+                event.stopPropagation();
+                userDropdown.classList.toggle('active');
+            });
+
+            userDropdown.addEventListener('click', (event) => {
+                event.stopPropagation();
+            });
+
+            this.userMenuDocumentHandler = (event) => {
+                if (!userDropdown.contains(event.target) && !userChip.contains(event.target)) {
+                    userDropdown.classList.remove('active');
+                }
+            };
+
+            document.addEventListener('click', this.userMenuDocumentHandler);
+        }
+
+        if (logoutBtnHeader) {
+            logoutBtnHeader.addEventListener('click', async (event) => {
+                event.preventDefault();
+                event.stopPropagation();
+                await AuthSystem.logout();
+            });
+        }
+    }
+
+    applyRoleRestrictions() {
+        if (!this.userPermissions) {
+            return;
+        }
+
+        this.setButtonState(this.elements.addOperatorBtn, this.userPermissions.canManageOperators);
+        this.setButtonState(this.elements.importDataBtn, this.userPermissions.canImportData);
+    }
+
+    setButtonState(button, enabled) {
+        if (!button) {
+            return;
+        }
+
+        if (enabled) {
+            button.removeAttribute('disabled');
+            button.classList.remove('btn-disabled', 'disabled');
+        } else {
+            button.setAttribute('disabled', 'disabled');
+            button.classList.add('btn-disabled');
+        }
+    }
+
+    getRoleDisplay(role) {
+        const roles = {
+            'SUPERADMIN': 'Super Administrator',
+            'ADMIN': 'Administrator',
+            'KORISNIK': 'Korisnik'
+        };
+        return roles[role] || role || '';
+    }
+
     async init() {
         try {
+            this.setupUserContext();
+            this.applyRoleRestrictions();
+            
+            // Update SharedHeader interface after user setup
+            this.updateUserInterface();
+            
             this.showLoading(true);
             await this.loadData();
             
@@ -775,6 +1017,10 @@ class ATLASApp {
         
         // Modal Controls
         this.elements.addOperatorBtn.addEventListener('click', () => {
+            if (!this.userPermissions.canManageOperators) {
+                this.showNotification('Nemate dozvolu za dodavanje operatera.', 'warning');
+                return;
+            }
             this.openModal('add');
         });
         
@@ -847,10 +1093,19 @@ class ATLASApp {
         
         // Import Data
         this.elements.importDataBtn.addEventListener('click', () => {
+            if (!this.userPermissions.canImportData) {
+                this.showNotification('Nemate dozvolu za uvoz podataka.', 'warning');
+                return;
+            }
             this.elements.fileImportInput.click();
         });
         
         this.elements.fileImportInput.addEventListener('change', (e) => {
+            if (!this.userPermissions.canImportData) {
+                e.target.value = '';
+                this.showNotification('Nemate dozvolu za uvoz podataka.', 'warning');
+                return;
+            }
             this.handleFileImport(e);
         });
         
@@ -1106,6 +1361,15 @@ class ATLASApp {
                     return `<span class="tip-badge tip-${tipInfo.class}">${tipInfo.icon} ${tipInfo.text}</span>`;
                 }).join(' ') : '<span class="tip-badge tip-default">N/A</span>';
             
+            const managementButtons = this.userPermissions.canManageOperators ? `
+                        <button class="action-btn edit" onclick="event.stopPropagation(); app.editOperator(${operator.id})" title="Uredi">
+                            <i class="fas fa-edit"></i>
+                        </button>
+                        <button class="action-btn delete" onclick="event.stopPropagation(); app.deleteOperator(${operator.id})" title="Obrisi">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    ` : '';
+
             return `
             <tr class="fade-in operator-row" data-id="${operator.id}" onclick="app.toggleOperatorDetails(${operator.id})">
                 <td class="operator-col">
@@ -1151,12 +1415,7 @@ class ATLASApp {
                         <button class="action-btn view" onclick="event.stopPropagation(); app.viewOperator(${operator.id})" title="Pogledaj detalje">
                             <i class="fas fa-eye"></i>
                         </button>
-                        <button class="action-btn edit" onclick="event.stopPropagation(); app.editOperator(${operator.id})" title="Uredi">
-                            <i class="fas fa-edit"></i>
-                        </button>
-                        <button class="action-btn delete" onclick="event.stopPropagation(); app.deleteOperator(${operator.id})" title="Obriši">
-                            <i class="fas fa-trash"></i>
-                        </button>
+                        ${managementButtons}
                     </div>
                 </td>
             </tr>
@@ -1211,6 +1470,11 @@ class ATLASApp {
     
     openModal(mode, operatorId = null) {
         this.currentEditId = operatorId;
+
+        if ((mode === 'add' || mode === 'edit') && !this.userPermissions.canManageOperators) {
+            this.showNotification('Nemate dozvolu za upravljanje operaterima.', 'warning');
+            return;
+        }
         
         if (mode === 'add') {
             this.elements.modalTitle.textContent = 'Dodaj Novog Operatera';
@@ -1437,6 +1701,11 @@ class ATLASApp {
     }
     
     handleFormSubmit() {
+        if (!this.userPermissions.canManageOperators) {
+            this.showNotification('Nemate dozvolu za cuvanje promena operatera.', 'warning');
+            return;
+        }
+
         const form = this.elements.operatorForm;
         const formData = new FormData(form);
         
@@ -1840,6 +2109,10 @@ class ATLASApp {
     }
     
     editOperator(id) {
+        if (!this.userPermissions.canManageOperators) {
+            this.showNotification('Nemate dozvolu za uredjivanje operatera.', 'warning');
+            return;
+        }
         this.openModal('edit', id);
     }
     
@@ -2367,6 +2640,11 @@ class ATLASApp {
     }
 
     deleteOperator(id) {
+        if (!this.userPermissions.canManageOperators) {
+            this.showNotification('Nemate dozvolu za brisanje operatera.', 'warning');
+            return;
+        }
+
         const operator = this.operators.find(op => op.id === id);
         if (operator && confirm(`Da li ste sigurni da želite da obrišete operatera "${operator.naziv}"?`)) {
             console.log('Brisanje operatera sa ID:', id, 'naziv:', operator.naziv);
@@ -2450,6 +2728,11 @@ class ATLASApp {
     }
     
     async handleFileImport(event) {
+        if (!this.userPermissions.canImportData) {
+            this.showNotification('Nemate dozvolu za uvoz podataka.', 'warning');
+            return;
+        }
+
         const file = event.target.files[0];
         if (!file) return;
         

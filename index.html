@@ -6,37 +6,20 @@
     <title>ATLAS - Telekomunikacioni operateri BiH</title>
     <link rel="icon" href="favicon.ico" type="image/x-icon">
     <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="auth-prototype/shared-header.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    
+    <!-- Dodaj shared header skripte -->
+    <script src="auth-prototype/auth.js"></script>
+    <script src="auth-prototype/shared-header.js"></script>
 </head>
 <body>
     <div class="container">
         <!-- Header -->
-        <header class="header">
-            <div class="header-title-bar">
-                <div class="logo-full">
-                    <i class="fas fa-satellite-dish"></i>
-                    <div class="title-group">
-                        <h1>ATLAS</h1>
-                        <span class="subtitle">Telekomunikacioni operateri BiH</span>
-                    </div>
-                </div>
-                <button class="btn btn-help" id="helpBtn" title="Pomoć i uputstvo">
-                    <i class="fas fa-question-circle"></i>
-                </button>
-            </div>
-            <div class="header-actions-bar">
-                <button class="btn btn-primary" id="addOperatorBtn">
-                    <i class="fas fa-plus"></i> Dodaj operatera
-                </button>
-                <button class="btn btn-success" id="importDataBtn">
-                    <i class="fas fa-upload"></i> Uvoz JSON
-                </button>
-                <button class="btn btn-secondary" id="exportDataBtn">
-                    <i class="fas fa-download"></i> Izvoz
-                </button>
-            </div>
-        </header>
+        <div id="atlasHeaderMount"></div>
+
+
 
         <!-- Data Sync Status Bar -->
         <div id="sync-status-bar" class="sync-status-bar" style="display: none;">
@@ -57,6 +40,11 @@
                 <input type="text" id="searchInput" placeholder="Pretraži operatere...">
                 <button id="clearSearchBtn" class="clear-search-btn" title="Obriši pretragu" style="display: none;">
                     <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="search-actions">
+                <button class="btn btn-primary" id="addOperatorBtn">
+                    <i class="fas fa-plus"></i> Dodaj operatera
                 </button>
             </div>
             <div id="searchResults" class="search-results-info" style="display: none;">
@@ -653,6 +641,8 @@
     <div class="modal-overlay" id="modalOverlay"></div>
 
     <!-- Scripts -->
+    <script src="auth-prototype/auth.js" defer></script>
+    <script src="auth-prototype/shared-header.js" defer></script>
     <script type="module" src="app.js"></script>
 </body>
 </html>

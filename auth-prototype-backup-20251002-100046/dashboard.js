@@ -5,77 +5,34 @@
 class Dashboard {
     constructor() {
         this.currentUser = null;
-        this.init().catch(error => {
-            console.error('Dashboard init failed:', error);
-            alert('Nije moguce ucitati dashboard. Provjerite konzolu za detalje.');
-        });
+        this.init();
     }
 
-    async init() {
+    init() {
+        // Provjeri autentikaciju
         if (!AuthSystem.requireAuth()) {
             return;
         }
 
+        // Učitaj trenutnog korisnika
         this.currentUser = AuthSystem.getCurrentUser();
-
+        
         if (!this.currentUser) {
-            try {
-                const session = await AuthSystem.fetchSession();
-                if (session?.user) {
-                    this.currentUser = session.user;
-                    AuthSystem.persistSession(session.user, AuthSystem.getToken(), AuthSystem.wasRemembered());
-                }
-            } catch (error) {
-                console.warn('Neuspjesno osvjezavanje sesije, koristim lokalne podatke:', error);
-                this.currentUser = this.currentUser || AuthSystem.getCurrentUser();
-            }
-        }
-
-        if (!this.currentUser) {
-            console.error('Dashboard: korisnik nije autentificiran, prekidam.');
-            AuthSystem.clearSession();
             window.location.href = 'login.html';
             return;
         }
 
-        console.log('Dashboard ucitan za:', this.currentUser);
+        console.log('👤 Dashboard učitan za:', this.currentUser);
 
+        // Setup UI
         this.setupUserMenu();
-        this.setupWelcomeSection();
         this.setupStats();
         this.setupActions();
         this.setupActivity();
         this.setupEventListeners();
     }
 
-    setupWelcomeSection() {
-        const titleElement = document.getElementById('welcomeTitle');
-        const subtitleElement = document.getElementById('welcomeSubtitle');
-
-        if (!titleElement || !subtitleElement || !this.currentUser) {
-            return;
-        }
-
-        const hour = new Date().getHours();
-        let greeting = 'Dobro jutro';
-        if (hour >= 12 && hour < 18) greeting = 'Dobar dan';
-        if (hour >= 18) greeting = 'Dobro vece';
-
-        titleElement.textContent = `${greeting}, ${this.currentUser.ime}!`;
-        subtitleElement.textContent = this.getWelcomeMessage(this.currentUser.role);
-    }
-
-    getWelcomeMessage(role) {
-        const messages = {
-            'SUPERADMIN': 'Potpuna kontrola nad sistemom je spremna.',
-            'ADMIN': 'Pregled aktivnosti i upravljanje korisnicima agencije.',
-            'KORISNIK': 'Brz pristup operaterima i tvojim aktivnostima.'
-        };
-        return messages[role] || 'Dobrodosli nazad u ATLAS.';
-    }
-
     setupUserMenu() {
-
         const { ime, prezime, role, agencija_naziv, email } = this.currentUser;
         
         // Header user info
@@ -485,7 +442,7 @@ class Dashboard {
         // Logout
         document.getElementById('logoutBtn').addEventListener('click', (e) => {
             e.preventDefault();
-            this.handleLogout().catch(error => console.error('Logout error:', error));
+            this.handleLogout();
         });
     }
 
@@ -513,9 +470,11 @@ class Dashboard {
         }
     }
 
-    async handleLogout() {
-        if (confirm('Da li ste sigurni da zelite da se odjavite?')) {
-            await AuthSystem.logout();
+    handleLogout() {
+        if (confirm('Da li ste sigurni da želite da se odjavite?')) {
+            const authSystem = new AuthSystem();
+            authSystem.logout();
+            window.location.href = 'login.html';
         }
     }
 

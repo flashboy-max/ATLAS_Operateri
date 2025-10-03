@@ -10,45 +10,28 @@ class UserManagement {
         this.filteredUsers = [];
         this.editingUserId = null;
         this.userToDelete = null;
-        this.isLoading = false;
-        this.usingMockData = false;
-
-        this.init().catch(error => {
-            console.error('UserManagement init failed:', error);
-            alert('Nije moguce ucitati korisnike. Pokusajte ponovo.');
-            window.location.href = 'dashboard.html';
-        });
+        this.init();
     }
 
-    async init() {
+    init() {
+        // Provjeri autentikaciju
         if (!AuthSystem.requireAuth()) {
             return;
         }
 
         this.currentUser = AuthSystem.getCurrentUser();
-
-        if (!this.currentUser) {
-            try {
-                const session = await AuthSystem.fetchSession();
-                if (session?.user) {
-                    this.currentUser = session.user;
-                    AuthSystem.persistSession(session.user, AuthSystem.getToken(), AuthSystem.wasRemembered());
-                }
-            } catch (error) {
-                console.warn('Neuspjesno osvjezavanje sesije:', error);
-                await AuthSystem.logout();
-                return;
-            }
-        }
-
+        
+        // Provjeri da li korisnik ima pristup
         if (!this.hasAccess()) {
             alert('Nemate pristup ovoj stranici!');
             window.location.href = 'dashboard.html';
             return;
         }
 
-        await this.loadUsers();
-
+        // Load users
+        this.loadUsers();
+        
+        // Setup UI
         this.setupUserMenu();
         this.setupStats();
         this.populateAgencyDropdowns();
@@ -61,37 +44,17 @@ class UserManagement {
         return this.currentUser.role === 'SUPERADMIN' || this.currentUser.role === 'ADMIN';
     }
 
-    async loadUsers() {
-        this.isLoading = true;
-        this.usingMockData = false;
-        try {
-            const response = await AuthSystem.fetchWithAuth('/api/auth/users');
-            if (!response.ok) {
-                let message = 'Neuspjesno ucitavanje korisnika';
-                try {
-                    const error = await response.json();
-                    message = error?.error || message;
-                } catch (parseError) {
-                    message = await response.text();
-                }
-                throw new Error(message);
-            }
-            const users = await response.json();
-            this.users = Array.isArray(users) ? users : [];
-        } catch (error) {
-            console.warn('API users fallback -> MOCK_USERS:', error);
-            this.usingMockData = true;
-            this.users = [...MOCK_USERS];
-        } finally {
-            this.isLoading = false;
-        }
-
+    loadUsers() {
+        // Load from mock data
+        this.users = [...MOCK_USERS];
+        
+        // Ako je ADMIN, filtriraj samo korisnike njegove agencije (bez SUPERADMIN-a)
         if (this.currentUser.role === 'ADMIN') {
             this.users = this.users.filter(u => 
-                u.created_by === this.currentUser.id || u.id === this.currentUser.id
+                u.agencija === this.currentUser.agencija && u.role !== 'SUPERADMIN'
             );
         }
-
+        
         this.filteredUsers = [...this.users];
     }
 
@@ -224,7 +187,7 @@ class UserManagement {
         // Re-attach logout event listener
         document.getElementById('logoutBtn').addEventListener('click', (e) => {
             e.preventDefault();
-            this.handleLogout().catch(error => console.error('Logout error:', error));
+            this.handleLogout();
         });
     }
 
@@ -435,7 +398,7 @@ class UserManagement {
         // Logout
         document.getElementById('logoutBtn').addEventListener('click', (e) => {
             e.preventDefault();
-            this.handleLogout().catch(error => console.error('Logout error:', error));
+            this.handleLogout();
         });
 
         // Add user button
@@ -475,7 +438,7 @@ class UserManagement {
 
         // Form submit
         document.getElementById('userForm').addEventListener('submit', (e) => {
-            this.handleSubmit(e).catch(error => console.error('Submit error:', error));
+            this.handleSubmit(e);
         });
 
         // Role change handler
@@ -621,29 +584,16 @@ class UserManagement {
 
     setupRoleOptions() {
         const roleSelect = document.getElementById('role');
-        if (!roleSelect) return;
-
-        const options = Array.from(roleSelect.options);
-        options.forEach(opt => {
-            opt.disabled = false;
-            opt.style.display = '';
-        });
-
+        const options = roleSelect.querySelectorAll('option');
+        
         if (this.currentUser.role === 'ADMIN') {
-            const editingSelf = this.editingUserId === this.currentUser.id;
-
+            // ADMIN ne može kreirati SUPERADMIN-a
             options.forEach(opt => {
-                const isAllowed = editingSelf ? opt.value === 'ADMIN' : opt.value === 'KORISNIK';
-                if (!isAllowed) {
+                if (opt.value === 'SUPERADMIN') {
                     opt.disabled = true;
                     opt.style.display = 'none';
                 }
             });
-
-            roleSelect.value = editingSelf ? 'ADMIN' : 'KORISNIK';
-            roleSelect.disabled = true;
-        } else {
-            roleSelect.disabled = false;
         }
     }
 
@@ -671,9 +621,9 @@ class UserManagement {
         }
     }
 
-    async handleSubmit(e) {
+    handleSubmit(e) {
         e.preventDefault();
-
+        
         const formData = new FormData(e.target);
         const userData = {
             ime: formData.get('ime'),
@@ -684,23 +634,24 @@ class UserManagement {
             agencija: formData.get('agencija') || null,
             aktivan: formData.get('aktivan') === 'on'
         };
-
+        
+        // Ako je ADMIN, automatski postavi njegovu agenciju
         if (this.currentUser.role === 'ADMIN') {
             userData.agencija = this.currentUser.agencija;
-            userData.role = this.editingUserId === this.currentUser.id ? 'ADMIN' : 'KORISNIK';
         }
-
+        
+        // Validation
         const validation = this.validateUserData(userData, !this.editingUserId);
         if (!validation.valid) {
             this.showFormAlert(validation.message, 'error');
             return;
         }
-
+        
         if (this.editingUserId) {
-            await this.updateUser(userData);
+            this.updateUser(userData);
         } else {
             userData.password = formData.get('password');
-            await this.createUser(userData);
+            this.createUser(userData);
         }
     }
 
@@ -755,132 +706,57 @@ class UserManagement {
         return { valid: true };
     }
 
-    async createUser(userData) {
-        const agency = userData.agencija ? AGENCIJE.find(a => a.id === userData.agencija) : null;
-        const payload = {
+    createUser(userData) {
+        // Generate new ID
+        const newId = Math.max(...this.users.map(u => u.id)) + 1;
+        
+        const agencija = AGENCIJE.find(a => a.id === userData.agencija);
+        
+        const newUser = {
+            id: newId,
             ...userData,
-            agencija_naziv: agency ? agency.naziv : (userData.agencija ? 'Nepoznata agencija' : 'Sistem administrator'),
-            aktivan: !!userData.aktivan
+            agencija_naziv: agencija ? agencija.naziv : 'Sistem administrator',
+            kreiran: new Date().toISOString().split('T')[0],
+            poslednje_logovanje: null
         };
-
-        try {
-            if (!this.usingMockData) {
-                const response = await AuthSystem.fetchWithAuth('/api/auth/users', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify(payload)
-                });
-
-                const result = await response.json().catch(() => ({}));
-                if (!response.ok) {
-                    throw new Error(result?.error || 'Kreiranje korisnika nije uspjelo');
-                }
-
-                if (result?.user) {
-                    this.users.push(result.user);
-                } else {
-                    await this.loadUsers();
-                }
-            } else {
-                const sanitizedPayload = { ...payload };
-                delete sanitizedPayload.password;
-
-                const fallbackUser = {
-                    id: Math.max(0, ...this.users.map(u => u.id)) + 1,
-                    ...sanitizedPayload,
-                    kreiran: new Date().toISOString(),
-                    poslednje_logovanje: null,
-                    created_by: this.currentUser.id
-                };
-
-                this.users.push(fallbackUser);
-                MOCK_USERS.push(fallbackUser);
-            }
-
-            this.showFormAlert('Korisnik uspjesno kreiran!', 'success');
-
-            setTimeout(() => {
-                this.closeModal();
-                this.applyFilters();
-                this.setupStats();
-            }, 1200);
-        } catch (error) {
-            console.error('createUser error:', error);
-            this.showFormAlert(error.message || 'Kreiranje korisnika nije uspjelo', 'error');
-        }
+        
+        this.users.push(newUser);
+        MOCK_USERS.push(newUser);
+        
+        this.showFormAlert('Korisnik uspješno kreiran!', 'success');
+        
+        setTimeout(() => {
+            this.closeModal();
+            this.applyFilters();
+            this.setupStats();
+        }, 1500);
     }
 
-    async updateUser(userData) {
-        if (!this.editingUserId) return;
-
-        const agency = userData.agencija ? AGENCIJE.find(a => a.id === userData.agencija) : null;
-        const payload = {
+    updateUser(userData) {
+        const userIndex = this.users.findIndex(u => u.id === this.editingUserId);
+        if (userIndex === -1) return;
+        
+        const agencija = AGENCIJE.find(a => a.id === userData.agencija);
+        
+        this.users[userIndex] = {
+            ...this.users[userIndex],
             ...userData,
-            agencija_naziv: agency ? agency.naziv : (userData.agencija ? 'Nepoznata agencija' : 'Sistem administrator'),
-            aktivan: !!userData.aktivan
+            agencija_naziv: agencija ? agencija.naziv : 'Sistem administrator'
         };
-
-        try {
-            let updatedUser = null;
-
-            if (!this.usingMockData) {
-                const response = await AuthSystem.fetchWithAuth(`/api/auth/users/${this.editingUserId}`, {
-                    method: 'PUT',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify(payload)
-                });
-
-                const result = await response.json().catch(() => ({}));
-                if (!response.ok) {
-                    throw new Error(result?.error || 'Azuriranje korisnika nije uspjelo');
-                }
-
-                updatedUser = result?.user || null;
-                if (updatedUser) {
-                    this.users = this.users.map(u => u.id === updatedUser.id ? updatedUser : u);
-                } else {
-                    await this.loadUsers();
-                    updatedUser = this.users.find(u => u.id === this.editingUserId) || null;
-                }
-            } else {
-                const sanitizedPayload = { ...payload };
-                delete sanitizedPayload.password;
-
-                this.users = this.users.map(u => u.id === this.editingUserId ? {
-                    ...u,
-                    ...sanitizedPayload
-                } : u);
-
-                const mockIndex = MOCK_USERS.findIndex(u => u.id === this.editingUserId);
-                if (mockIndex !== -1) {
-                    MOCK_USERS[mockIndex] = this.users.find(u => u.id === this.editingUserId);
-                }
-
-                updatedUser = this.users.find(u => u.id === this.editingUserId) || null;
-            }
-
-            if (updatedUser && updatedUser.id === this.currentUser.id) {
-                const token = AuthSystem.getToken();
-                AuthSystem.persistSession(updatedUser, token, AuthSystem.wasRemembered());
-                this.currentUser = updatedUser;
-            }
-
-            this.showFormAlert('Korisnik uspjesno azuriran!', 'success');
-
-            setTimeout(() => {
-                this.closeModal();
-                this.applyFilters();
-                this.setupStats();
-                this.setupUserMenu();
-            }, 1200);
-        } catch (error) {
-            console.error('updateUser error:', error);
-            this.showFormAlert(error.message || 'Azuriranje korisnika nije uspjelo', 'error');
+        
+        // Update in MOCK_USERS too
+        const mockIndex = MOCK_USERS.findIndex(u => u.id === this.editingUserId);
+        if (mockIndex !== -1) {
+            MOCK_USERS[mockIndex] = this.users[userIndex];
         }
+        
+        this.showFormAlert('Korisnik uspješno ažuriran!', 'success');
+        
+        setTimeout(() => {
+            this.closeModal();
+            this.applyFilters();
+            this.setupStats();
+        }, 1500);
     }
 
     openDeleteModal(userId) {
@@ -904,39 +780,22 @@ class UserManagement {
         this.userToDelete = null;
     }
 
-    async confirmDelete() {
+    confirmDelete() {
         if (!this.userToDelete) return;
-
-        const targetId = this.userToDelete.id;
-        const deletedUser = this.userToDelete;
-
-        try {
-            if (!this.usingMockData) {
-                const response = await AuthSystem.fetchWithAuth(`/api/auth/users/${targetId}`, {
-                    method: 'DELETE'
-                });
-
-                const result = await response.json().catch(() => ({}));
-                if (!response.ok) {
-                    throw new Error(result?.error || 'Brisanje korisnika nije uspjelo');
-                }
-            } else {
-                const mockIndex = MOCK_USERS.findIndex(u => u.id === targetId);
-                if (mockIndex !== -1) {
-                    MOCK_USERS.splice(mockIndex, 1);
-                }
-            }
-
-            this.users = this.users.filter(u => u.id !== targetId);
-            this.closeDeleteModal();
-            this.applyFilters();
-            this.setupStats();
-
-            alert(`Korisnik ${deletedUser.ime} ${deletedUser.prezime} uspjesno obrisan!`);
-        } catch (error) {
-            console.error('confirmDelete error:', error);
-            alert(error.message || 'Brisanje korisnika nije uspjelo');
+        
+        // Remove from arrays
+        this.users = this.users.filter(u => u.id !== this.userToDelete.id);
+        const mockIndex = MOCK_USERS.findIndex(u => u.id === this.userToDelete.id);
+        if (mockIndex !== -1) {
+            MOCK_USERS.splice(mockIndex, 1);
         }
+        
+        this.closeDeleteModal();
+        this.applyFilters();
+        this.setupStats();
+        
+        // Show notification
+        alert(`Korisnik ${this.userToDelete.ime} ${this.userToDelete.prezime} uspješno obrisan!`);
     }
 
     closeModal() {
@@ -952,9 +811,11 @@ class UserManagement {
         alert.style.display = 'flex';
     }
 
-    async handleLogout() {
-        if (confirm('Da li ste sigurni da zelite da se odjavite?')) {
-            await AuthSystem.logout();
+    handleLogout() {
+        if (confirm('Da li ste sigurni da želite da se odjavite?')) {
+            const authSystem = new AuthSystem();
+            authSystem.logout();
+            window.location.href = 'login.html';
         }
     }
 
@@ -984,7 +845,7 @@ window.addEventListener('DOMContentLoaded', () => {
     });
 
     document.getElementById('confirmDeleteBtn').addEventListener('click', () => {
-        userManagement.confirmDelete().catch(error => console.error('Delete error:', error));
+        userManagement.confirmDelete();
     });
 
     document.getElementById('deleteModalOverlay').addEventListener('click', () => {
