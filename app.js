@@ -979,87 +979,115 @@ class ATLASApp {
     }
     
     setupEventListeners() {
-        // Search and Filter
-        this.elements.searchInput.addEventListener('input', (e) => {
-            this.handleSearch(e.target.value);
+        const {
+            searchInput,
+            clearSearchBtn,
+            typeFilter,
+            statTotal,
+            statActive,
+            statInactive,
+            addOperatorBtn,
+            closeModal,
+            cancelBtn,
+            modalOverlay,
+            operatorForm,
+            exportDataBtn,
+            importDataBtn,
+            fileImportInput,
+            helpBtn,
+            closeHelpModal,
+            closeHelpModalBtn,
+            addTechContactBtn,
+            addServiceBtn,
+            addTechnologyBtn
+        } = this.elements;
+
+        const filterDominantni = document.getElementById('filterDominantni');
+        const filterAlternativni = document.getElementById('filterAlternativni');
+
+        const requiredElements = {
+            searchInput,
+            clearSearchBtn,
+            addOperatorBtn,
+            typeFilter,
+            statTotal,
+            statActive,
+            statInactive,
+            modalOverlay,
+            closeModal,
+            cancelBtn,
+            operatorForm
+        };
+
+        const missingElements = Object.entries(requiredElements)
+            .filter(([, element]) => !element)
+            .map(([name]) => name);
+
+        if (missingElements.length > 0) {
+            console.error('Missing UI elements for event listeners:', missingElements);
+            return;
+        }
+
+        searchInput.addEventListener('input', (event) => {
+            this.handleSearch(event.target.value);
         });
-        
-        this.elements.clearSearchBtn.addEventListener('click', () => {
+
+        clearSearchBtn.addEventListener('click', () => {
             this.clearSearch();
         });
-        
-        this.elements.typeFilter.addEventListener('change', () => {
-            this.currentTypeFilter = this.elements.typeFilter.value;
+
+        typeFilter.addEventListener('change', () => {
+            this.currentTypeFilter = typeFilter.value;
             this.applyCombinedFilters();
         });
-        
-        // Stat Cards Click Handlers
-        this.elements.statTotal.addEventListener('click', () => {
-            this.filterByStatus('all');
-        });
-        
-        this.elements.statActive.addEventListener('click', () => {
-            this.filterByStatus('aktivan');
-        });
-        
-        this.elements.statInactive.addEventListener('click', () => {
-            this.filterByStatus('neaktivan');
-        });
-        
-        // Category Filters
-        document.getElementById('filterDominantni').addEventListener('click', () => {
-            this.filterByCategory('dominantni');
-        });
-        
-        document.getElementById('filterAlternativni').addEventListener('click', () => {
-            this.filterByCategory('alternativni');
-        });
-        
-        // Modal Controls
-        this.elements.addOperatorBtn.addEventListener('click', () => {
+
+        statTotal.addEventListener('click', () => this.filterByStatus('all'));
+        statActive.addEventListener('click', () => this.filterByStatus('aktivan'));
+        statInactive.addEventListener('click', () => this.filterByStatus('neaktivan'));
+
+        if (filterDominantni) {
+            filterDominantni.addEventListener('click', () => this.filterByCategory('dominantni'));
+        } else {
+            console.warn('Filter button "filterDominantni" not found.');
+        }
+
+        if (filterAlternativni) {
+            filterAlternativni.addEventListener('click', () => this.filterByCategory('alternativni'));
+        } else {
+            console.warn('Filter button "filterAlternativni" not found.');
+        }
+
+        addOperatorBtn.addEventListener('click', () => {
             if (!this.userPermissions.canManageOperators) {
                 this.showNotification('Nemate dozvolu za dodavanje operatera.', 'warning');
                 return;
             }
             this.openModal('add');
         });
-        
-        this.elements.closeModal.addEventListener('click', () => {
-            this.closeModal();
-        });
-        
-        this.elements.cancelBtn.addEventListener('click', () => {
-            this.closeModal();
-        });
-        
-        this.elements.modalOverlay.addEventListener('click', () => {
-            this.closeModal();
-        });
-        
-        // Form Submission
-        this.elements.operatorForm.addEventListener('submit', (e) => {
-            e.preventDefault();
+
+        closeModal.addEventListener('click', () => this.closeModal());
+        cancelBtn.addEventListener('click', () => this.closeModal());
+        modalOverlay.addEventListener('click', () => this.closeModal());
+
+        operatorForm.addEventListener('submit', (event) => {
+            event.preventDefault();
             this.handleFormSubmit();
         });
 
-        // Tehnički kontakti dugme
-        if (this.elements.addTechContactBtn) {
-            this.elements.addTechContactBtn.addEventListener('click', () => {
+        if (addTechContactBtn) {
+            addTechContactBtn.addEventListener('click', () => {
                 this.addTechContactField();
             });
         }
 
-        // Disable add buttons in edit mode - management is in single section
         if (this.currentEditId) {
-            if (this.elements.addServiceBtn) this.elements.addServiceBtn.disabled = true;
-            if (this.elements.addTechnologyBtn) this.elements.addTechnologyBtn.disabled = true;
+            if (addServiceBtn) addServiceBtn.disabled = true;
+            if (addTechnologyBtn) addTechnologyBtn.disabled = true;
         } else {
-            // Enable for add mode
-            if (this.elements.addServiceBtn) this.elements.addServiceBtn.disabled = false;
-            if (this.elements.addTechnologyBtn) this.elements.addTechnologyBtn.disabled = false;
+            if (addServiceBtn) addServiceBtn.disabled = false;
+            if (addTechnologyBtn) addTechnologyBtn.disabled = false;
         }
 
-        // Dynamic tip filtering based on category
         const kategorijaField = document.getElementById('kategorija');
         if (kategorijaField) {
             kategorijaField.addEventListener('change', () => {
@@ -1067,83 +1095,95 @@ class ATLASApp {
             });
         }
 
-        // Real-time validation for specific fields
         const validationFields = [
             { id: 'email', validator: this.isValidEmail.bind(this), message: 'Email adresa nije ispravna' },
             { id: 'telefon', validator: this.isValidPhone.bind(this), message: 'Broj telefona nije ispravan' },
             { id: 'web', validator: this.isValidUrl.bind(this), message: 'Web adresa nije ispravna' }
         ];
 
-        validationFields.forEach(fieldInfo => {
+        validationFields.forEach((fieldInfo) => {
             const field = document.getElementById(fieldInfo.id);
-            if (field) {
-                field.addEventListener('blur', () => {
-                    this.validateField(field, fieldInfo.validator, fieldInfo.message);
-                });
-                field.addEventListener('focus', () => {
-                    this.clearFieldError(field);
-                });
-            }
-        });
-        
-        // Export Data
-        this.elements.exportDataBtn.addEventListener('click', () => {
-            this.exportData();
-        });
-        
-        // Import Data
-        this.elements.importDataBtn.addEventListener('click', () => {
-            if (!this.userPermissions.canImportData) {
-                this.showNotification('Nemate dozvolu za uvoz podataka.', 'warning');
+            if (!field) {
                 return;
             }
-            this.elements.fileImportInput.click();
+
+            field.addEventListener('blur', () => {
+                this.validateField(field, fieldInfo.validator, fieldInfo.message);
+            });
+
+            field.addEventListener('focus', () => {
+                this.clearFieldError(field);
+            });
         });
-        
-        this.elements.fileImportInput.addEventListener('change', (e) => {
-            if (!this.userPermissions.canImportData) {
-                e.target.value = '';
-                this.showNotification('Nemate dozvolu za uvoz podataka.', 'warning');
-                return;
+
+        if (exportDataBtn) {
+            exportDataBtn.addEventListener('click', () => this.exportData());
+        } else {
+            console.warn('Export button not found.');
+        }
+
+        if (importDataBtn && fileImportInput) {
+            importDataBtn.addEventListener('click', () => {
+                if (!this.userPermissions.canImportData) {
+                    this.showNotification('Nemate dozvolu za uvoz podataka.', 'warning');
+                    return;
+                }
+                fileImportInput.click();
+            });
+
+            fileImportInput.addEventListener('change', (event) => {
+                if (!this.userPermissions.canImportData) {
+                    event.target.value = '';
+                    this.showNotification('Nemate dozvolu za uvoz podataka.', 'warning');
+                    return;
+                }
+                this.handleFileImport(event);
+            });
+        } else {
+            if (!importDataBtn) {
+                console.warn('Import button not found.');
             }
-            this.handleFileImport(e);
-        });
-        
-        // Help Modal
-        this.elements.helpBtn.addEventListener('click', () => {
-            this.openHelpModal();
-        });
-        
-        this.elements.closeHelpModal.addEventListener('click', () => {
-            this.closeHelpModal();
-        });
-        
-        this.elements.closeHelpModalBtn.addEventListener('click', () => {
-            this.closeHelpModal();
-        });
-        
-        // Keyboard shortcuts
-        document.addEventListener('keydown', (e) => {
-            if (e.key === 'Escape') {
-                // If search is active, clear it first, then close modal
-                if (this.elements.searchInput.value) {
+            if (!fileImportInput) {
+                console.warn('File input for import not found.');
+            }
+        }
+
+        if (helpBtn) {
+            helpBtn.addEventListener('click', () => this.openHelpModal());
+        } else {
+            console.warn('Help button not found.');
+        }
+
+        if (closeHelpModal) {
+            closeHelpModal.addEventListener('click', () => this.closeHelpModal());
+        }
+
+        if (closeHelpModalBtn) {
+            closeHelpModalBtn.addEventListener('click', () => this.closeHelpModal());
+        }
+
+        document.addEventListener('keydown', (event) => {
+            if (event.key === 'Escape') {
+                if (searchInput.value) {
                     this.clearSearch();
-                    this.elements.searchInput.blur();
+                    searchInput.blur();
                 } else {
                     this.closeModal();
                 }
             }
-            if (e.ctrlKey && e.key === 'f') {
-                e.preventDefault();
-                this.elements.searchInput.focus();
-                this.elements.searchInput.select();
+
+            if (event.ctrlKey && event.key === 'f') {
+                event.preventDefault();
+                searchInput.focus();
+                searchInput.select();
             }
-            // Enter to search when input is focused
-            if (e.key === 'Enter' && document.activeElement === this.elements.searchInput) {
-                this.handleSearch();
+
+            if (event.key === 'Enter' && document.activeElement === searchInput) {
+                this.handleSearch(searchInput.value);
             }
         });
     }
+
     
     showLoading(show) {
         this.elements.loadingIndicator.style.display = show ? 'block' : 'none';
