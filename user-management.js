@@ -2,7 +2,6 @@
 // USER MANAGEMENT JS
 // ================================================
 
-
 class UserManagement {
     constructor() {
         this.currentUser = null;
@@ -21,24 +20,10 @@ class UserManagement {
     }
 
     async init() {
-        if (!AuthSystem.requireAuth()) {
+        try {
+            this.currentUser = await AuthSystem.requireAuth();
+        } catch (error) {
             return;
-        }
-
-        this.currentUser = AuthSystem.getCurrentUser();
-
-        if (!this.currentUser) {
-            try {
-                const session = await AuthSystem.fetchSession();
-                if (session?.user) {
-                    this.currentUser = session.user;
-                    AuthSystem.persistSession(session.user, AuthSystem.getToken(), AuthSystem.wasRemembered());
-                }
-            } catch (error) {
-                console.warn('Neuspjesno osvjezavanje sesije:', error);
-                await AuthSystem.logout();
-                return;
-            }
         }
 
         if (!this.hasAccess()) {
@@ -47,9 +32,11 @@ class UserManagement {
             return;
         }
 
+        await SharedHeader.init(this.currentUser);
+        this.updatePageHeading();
+
         await this.loadUsers();
 
-        this.setupUserMenu();
         this.setupStats();
         this.populateAgencyDropdowns();
         this.renderUsersTable();
@@ -95,24 +82,24 @@ class UserManagement {
         this.filteredUsers = [...this.users];
     }
 
-    setupUserMenu() {
-        const { ime, prezime, role, agencija_naziv, email } = this.currentUser;
         
-        // Header user info
-        const userNameElement = document.querySelector('.user-name');
-        const userRoleElement = document.querySelector('.user-role');
-        
-        if (userNameElement) {
-            userNameElement.textContent = `${ime} ${prezime}`;
+
+        try {
+            SharedHeader.renderHeaderUser(this.currentUser);
+        } catch (error) {
+            console.error('Greska pri osvjezavanju SharedHeader korisnika:', error);
         }
-        if (userRoleElement) {
-            userRoleElement.textContent = this.getRoleDisplay(role);
+    }
+
+    updatePageHeading() {
+        if (!this.currentUser) {
+            return;
         }
-        
-        // Update page title and subtitle based on role
+
+        const { role } = this.currentUser;
         const pageTitle = document.querySelector('.page-title');
         const pageSubtitle = document.getElementById('pageSubtitle');
-        
+
         if (role === 'SUPERADMIN') {
             if (pageTitle) {
                 pageTitle.innerHTML = `
@@ -131,101 +118,19 @@ class UserManagement {
                 `;
             }
             if (pageSubtitle) {
-                pageSubtitle.textContent = `Upravljaj korisnicima tvoje agencije`;
+                pageSubtitle.textContent = 'Upravljaj korisnicima tvoje agencije';
+            }
+        } else {
+            if (pageTitle) {
+                pageTitle.innerHTML = `
+                    <i class="fas fa-users"></i>
+                    Korisnici
+                `;
+            }
+            if (pageSubtitle) {
+                pageSubtitle.textContent = 'Pregled korisnickih naloga';
             }
         }
-        
-        // Generate role-based dropdown menu
-        this.generateDropdownMenu(role);
-    }
-
-    generateDropdownMenu(role) {
-        const dropdown = document.getElementById('userDropdown');
-        
-        // Header ostaje isti
-        const header = `
-            <div class="dropdown-header">
-                <div class="dropdown-user-info">
-                    <strong id="dropdownUserName">${this.currentUser.ime} ${this.currentUser.prezime}</strong>
-                    <small id="dropdownUserEmail">${this.currentUser.email}</small>
-                    <span class="dropdown-agency" id="dropdownAgency">${this.currentUser.agencija_naziv}</span>
-                </div>
-            </div>
-        `;
-
-        let menuItems = '';
-        
-        if (role === 'SUPERADMIN') {
-            menuItems = `
-                <div class="dropdown-divider"></div>
-                <a href="dashboard.html" class="dropdown-item">
-                    <i class="fas fa-tachometer-alt"></i>
-                    <span>Dashboard</span>
-                </a>
-                <a href="user-management.html" class="dropdown-item">
-                    <i class="fas fa-users-cog"></i>
-                    <span>Upravljanje korisnicima</span>
-                </a>
-                <a href="system-logs.html" class="dropdown-item">
-                    <i class="fas fa-clipboard-list"></i>
-                    <span>Sistemski logovi</span>
-                </a>
-            `;
-        } else if (role === 'ADMIN') {
-            menuItems = `
-                <div class="dropdown-divider"></div>
-                <a href="dashboard.html" class="dropdown-item">
-                    <i class="fas fa-tachometer-alt"></i>
-                    <span>Dashboard</span>
-                </a>
-                <a href="user-management.html" class="dropdown-item">
-                    <i class="fas fa-users"></i>
-                    <span>Upravljanje korisnicima</span>
-                </a>
-                <a href="system-logs.html" class="dropdown-item">
-                    <i class="fas fa-clipboard-list"></i>
-                    <span>Sistemski logovi</span>
-                </a>
-            `;
-        } else if (role === 'KORISNIK') {
-            menuItems = `
-                <div class="dropdown-divider"></div>
-                <a href="dashboard.html" class="dropdown-item">
-                    <i class="fas fa-tachometer-alt"></i>
-                    <span>Dashboard</span>
-                </a>
-                <a href="system-logs.html?tab=my" class="dropdown-item">
-                    <i class="fas fa-user-check"></i>
-                    <span>Moje aktivnosti</span>
-                </a>
-            `;
-        }
-
-        // Zajednički dio - profil, postavke, odjava
-        const footer = `
-            <div class="dropdown-divider"></div>
-            <a href="moj-profil.html" class="dropdown-item">
-                <i class="fas fa-user-circle"></i>
-                <span>Moj profil</span>
-            </a>
-            <a href="postavke.html" class="dropdown-item">
-                <i class="fas fa-cog"></i>
-                <span>Postavke</span>
-            </a>
-            <div class="dropdown-divider"></div>
-            <a href="#" class="dropdown-item logout-item" id="logoutBtn">
-                <i class="fas fa-sign-out-alt"></i>
-                <span>Odjavi se</span>
-            </a>
-        `;
-
-        dropdown.innerHTML = header + menuItems + footer;
-        
-        // Re-attach logout event listener
-        document.getElementById('logoutBtn').addEventListener('click', (e) => {
-            e.preventDefault();
-            this.handleLogout().catch(error => console.error('Logout error:', error));
-        });
     }
 
     setupStats() {
@@ -409,35 +314,6 @@ class UserManagement {
     }
 
     setupEventListeners() {
-        // User menu toggle
-        const userMenu = document.querySelector('.user-menu');
-        const userDropdown = document.getElementById('userDropdown');
-        
-        if (userMenu && userDropdown) {
-            userMenu.addEventListener('click', (e) => {
-                e.stopPropagation();
-                userDropdown.classList.toggle('active');
-            });
-
-            document.addEventListener('click', () => {
-                userDropdown.classList.remove('active');
-            });
-        }
-
-        // Dropdown items - linkovi sada rade normalno
-        document.querySelectorAll('.user-dropdown .dropdown-item:not(#logoutBtn)').forEach(item => {
-            item.addEventListener('click', () => {
-                userDropdown.classList.remove('active');
-                // Dozvoli da link radi normalno
-            });
-        });
-
-        // Logout
-        document.getElementById('logoutBtn').addEventListener('click', (e) => {
-            e.preventDefault();
-            this.handleLogout().catch(error => console.error('Logout error:', error));
-        });
-
         // Add user button
         document.getElementById('addUserBtn').addEventListener('click', () => {
             this.openAddModal();
@@ -875,7 +751,8 @@ class UserManagement {
                 this.closeModal();
                 this.applyFilters();
                 this.setupStats();
-                this.setupUserMenu();
+                this.refreshSharedHeaderUser();
+                this.updatePageHeading();
             }, 1200);
         } catch (error) {
             console.error('updateUser error:', error);
@@ -950,12 +827,6 @@ class UserManagement {
         alert.textContent = message;
         alert.className = `alert ${type}`;
         alert.style.display = 'flex';
-    }
-
-    async handleLogout() {
-        if (confirm('Da li ste sigurni da zelite da se odjavite?')) {
-            await AuthSystem.logout();
-        }
     }
 
     getRoleDisplay(role) {

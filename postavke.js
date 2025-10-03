@@ -10,39 +10,21 @@ class PostavkeManager {
 
     async init() {
         try {
-            // Provjeri autentikaciju
-            if (!AuthSystem.requireAuth()) {
-                return;
-            }
-
-            this.currentUser = AuthSystem.getCurrentUser();
-            
-            // Initialize SharedHeader
-            await this.initializeSharedHeader();
-            
-            // Setup UI
-            this.loadPostavkeData();
-            this.setupEventListeners();
-            
-            console.log('✅ Postavke učitane za:', this.currentUser);
+            this.currentUser = await AuthSystem.requireAuth();
         } catch (error) {
-            console.error('❌ Greška pri inicijalizaciji Postavke:', error);
             window.location.href = 'login.html';
+            return;
         }
+
+        await SharedHeader.init(this.currentUser);
+
+        this.setupTabs();
+        this.setupEventListeners();
+        this.loadUserPreferences();
+
+        console.log('⚙️ Postavke učitane za:', this.currentUser);
     }
 
-    async initializeSharedHeader() {
-        if (typeof SharedHeader !== 'undefined') {
-            // Mount shared header
-            SharedHeader.mount();
-            
-            // Render user info
-            SharedHeader.renderHeaderUser(this.currentUser);
-            
-            console.log('✅ SharedHeader inicijalizovan u Postavke');
-        } else {
-            console.warn('⚠️ SharedHeader nije dostupan');
-        }
     }
 
     loadPostavkeData() {

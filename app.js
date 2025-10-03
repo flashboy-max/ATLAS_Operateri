@@ -333,22 +333,25 @@ class ATLASApp {
 
     async initializeSharedHeader() {
         try {
-            // Wait for SharedHeader to be available
-            if (typeof SharedHeader !== 'undefined') {
-                // Mount shared header
-                SharedHeader.mount();
-                
-                // Setup action handlers
-                SharedHeader.onAction('add-operator', () => {
-                    this.openModal();
+            if (typeof SharedHeader === 'undefined') {
+                await new Promise(resolve => {
+                    window.addEventListener('atlas-shared-header-ready', resolve, { once: true });
                 });
-                
-                console.log('✅ SharedHeader inicijalizovan');
-            } else {
-                console.warn('⚠️ SharedHeader nije dostupan');
             }
+
+            if (typeof SharedHeader === 'undefined') {
+                console.warn('SharedHeader nije dostupan');
+                return;
+            }
+
+            SharedHeader.mount();
+            SharedHeader.onAction('add-operator', () => {
+                this.openModal('add');
+            });
+
+            console.log('SharedHeader inicijalizovan');
         } catch (error) {
-            console.error('❌ Greška pri inicijalizaciji SharedHeader:', error);
+            console.error('Greska pri inicijalizaciji SharedHeader:', error);
         }
     }
     
@@ -558,7 +561,9 @@ class ATLASApp {
             this.renderOperators();
             this.updateStatistics();
             this.showLoading(false);
-            
+
+            this.handleDeepLinks();
+
             // Clean up any duplicate tooltips after initialization
             setTimeout(() => {
                 this.cleanupDuplicateTooltips();
@@ -1118,8 +1123,6 @@ class ATLASApp {
 
         if (exportDataBtn) {
             exportDataBtn.addEventListener('click', () => this.exportData());
-        } else {
-            console.warn('Export button not found.');
         }
 
         if (importDataBtn && fileImportInput) {
@@ -1139,19 +1142,10 @@ class ATLASApp {
                 }
                 this.handleFileImport(event);
             });
-        } else {
-            if (!importDataBtn) {
-                console.warn('Import button not found.');
-            }
-            if (!fileImportInput) {
-                console.warn('File input for import not found.');
-            }
         }
 
         if (helpBtn) {
             helpBtn.addEventListener('click', () => this.openHelpModal());
-        } else {
-            console.warn('Help button not found.');
         }
 
         if (closeHelpModal) {
@@ -1185,6 +1179,21 @@ class ATLASApp {
     }
 
     
+    handleDeepLinks() {
+        if (window.location.hash !== '#add-operator') {
+            return;
+        }
+
+        history.replaceState(null, document.title, window.location.pathname + window.location.search);
+
+        if (!this.userPermissions.canManageOperators) {
+            this.showNotification('Nemate dozvolu za dodavanje operatera.', 'warning');
+            return;
+        }
+
+        setTimeout(() => this.openModal('add'), 100);
+    }
+
     showLoading(show) {
         this.elements.loadingIndicator.style.display = show ? 'block' : 'none';
         this.elements.operatorsTableBody.style.display = show ? 'none' : '';

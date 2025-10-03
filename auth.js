@@ -281,12 +281,40 @@ class AuthSystem {
         return this.getStoredUser();
     }
 
-    static requireAuth() {
+    static async requireAuth({ redirect = true } = {}) {
         if (!this.isAuthenticated()) {
-            window.location.href = 'login.html';
-            return false;
+            if (redirect) {
+                window.location.href = 'login.html';
+            }
+            throw new Error('Korisnik nije autentificiran');
         }
-        return true;
+
+        let user = this.getStoredUser();
+        if (user) {
+            return user;
+        }
+
+        try {
+            const session = await this.fetchSession();
+            if (session?.user) {
+                const token = this.getToken();
+                this.persistSession(session.user, token, this.wasRemembered());
+                return session.user;
+            }
+        } catch (error) {
+            console.warn('requireAuth: fetchSession nije uspio, koristim lokalne podatke', error);
+        }
+
+        user = this.getStoredUser();
+        if (user) {
+            return user;
+        }
+
+        this.clearSession();
+        if (redirect) {
+            window.location.href = 'login.html';
+        }
+        throw new Error('Sesija nije dostupna');
     }
 
     static getAuthHeaders(explicitToken) {

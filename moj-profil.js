@@ -10,39 +10,20 @@ class MojProfil {
 
     async init() {
         try {
-            // Provjeri autentikaciju
-            if (!AuthSystem.requireAuth()) {
-                return;
-            }
-
-            this.currentUser = AuthSystem.getCurrentUser();
-            
-            // Initialize SharedHeader
-            await this.initializeSharedHeader();
-            
-            // Setup UI
-            this.loadProfileData();
-            this.setupEventListeners();
-            
-            console.log('✅ Moj profil učitan za:', this.currentUser);
+            this.currentUser = await AuthSystem.requireAuth();
         } catch (error) {
-            console.error('❌ Greška pri inicijalizaciji Moj profil:', error);
             window.location.href = 'login.html';
+            return;
         }
+
+        await SharedHeader.init(this.currentUser);
+
+        this.loadProfileData();
+        this.setupEventListeners();
+
+        console.log('📄 Moj profil ucitan za:', this.currentUser);
     }
 
-    async initializeSharedHeader() {
-        if (typeof SharedHeader !== 'undefined') {
-            // Mount shared header
-            SharedHeader.mount();
-            
-            // Render user info
-            SharedHeader.renderHeaderUser(this.currentUser);
-            
-            console.log('✅ SharedHeader inicijalizovan u Moj profil');
-        } else {
-            console.warn('⚠️ SharedHeader nije dostupan');
-        }
     }
 
     loadProfileData() {

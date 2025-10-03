@@ -1,15 +1,18 @@
 /* === Unified ATLAS header === */
 .atlas-header {
+    width: 100%;
     background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
-    border-radius: 16px;
-    margin-bottom: 24px;
-    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
-    padding: 28px 32px;
+    border-radius: 0 0 24px 24px;
+    margin: 0 0 24px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.12);
     position: relative;
     color: #ffffff;
 }
 
 .atlas-header__main {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 28px 32px;
     display: flex;
     justify-content: space-between;
     align-items: center;

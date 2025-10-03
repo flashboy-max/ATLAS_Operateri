@@ -6,21 +6,19 @@
     <title>ATLAS - Telekomunikacioni operateri BiH</title>
     <link rel="icon" href="favicon.ico" type="image/x-icon">
     <link rel="stylesheet" href="styles.css">
-    <link rel="stylesheet" href="auth-prototype/shared-header.css">
+    <link rel="stylesheet" href="shared-header.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     
     <!-- Dodaj shared header skripte -->
-    <script src="auth-prototype/auth.js"></script>
-    <script src="auth-prototype/shared-header.js"></script>
+    <script src="auth.js"></script>
+    <script src="shared-header.js"></script>
 </head>
 <body>
+    <!-- Shared Header Mount - van container-a za full-width -->
+    <div id="atlasHeaderMount"></div>
+    
     <div class="container">
-        <!-- Header -->
-        <div id="atlasHeaderMount"></div>
-
-
-
         <!-- Data Sync Status Bar -->
         <div id="sync-status-bar" class="sync-status-bar" style="display: none;">
             <div class="sync-status-content">
@@ -644,5 +642,6 @@
     <script type="module" src="app.js"></script>
 </body>
 </html>
+
 
 

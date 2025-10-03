@@ -12,40 +12,19 @@ class Dashboard {
     }
 
     async init() {
-        if (!AuthSystem.requireAuth()) {
+        try {
+            this.currentUser = await AuthSystem.requireAuth();
+        } catch (error) {
+            console.error('Dashboard: korisnik nije autentificiran, prekidam.', error);
             return;
         }
 
-        this.currentUser = AuthSystem.getCurrentUser();
-
-        if (!this.currentUser) {
-            try {
-                const session = await AuthSystem.fetchSession();
-                if (session?.user) {
-                    this.currentUser = session.user;
-                    AuthSystem.persistSession(session.user, AuthSystem.getToken(), AuthSystem.wasRemembered());
-                }
-            } catch (error) {
-                console.warn('Neuspjesno osvjezavanje sesije, koristim lokalne podatke:', error);
-                this.currentUser = this.currentUser || AuthSystem.getCurrentUser();
-            }
-        }
-
-        if (!this.currentUser) {
-            console.error('Dashboard: korisnik nije autentificiran, prekidam.');
-            AuthSystem.clearSession();
-            window.location.href = 'login.html';
-            return;
-        }
-
-        console.log('Dashboard ucitan za:', this.currentUser);
-
-        this.setupUserMenu();
+        await SharedHeader.init(this.currentUser);
+        this.setupEventListeners();
         this.setupWelcomeSection();
         this.setupStats();
         this.setupActions();
         this.setupActivity();
-        this.setupEventListeners();
     }
 
     setupWelcomeSection() {
@@ -74,11 +53,6 @@ class Dashboard {
         return messages[role] || 'Dobrodosli nazad u ATLAS.';
     }
 
-    setupUserMenu() {
-        if (typeof SharedHeader === "undefined") {
-            console.warn('SharedHeader nije dostupan na dashboard stranici.');
-            return;
-        }
 
         try {
             SharedHeader.mount();
@@ -87,6 +61,7 @@ class Dashboard {
             console.error('Greska pri inicijalizaciji SharedHeadera na dashboardu:', error);
         }
     }
+
 
 
 
@@ -361,14 +336,16 @@ class Dashboard {
     }
 
     setupEventListeners() {
-        if (typeof SharedHeader === "undefined") {
+        if (typeof SharedHeader === 'undefined') {
+            window.addEventListener('atlas-shared-header-ready', () => this.setupEventListeners(), { once: true });
             return;
         }
 
         SharedHeader.onAction('add-operator', () => {
-            window.location.href = "../index.html#add-operator";
+            window.location.href = 'index.html#add-operator';
         });
     }
+
 
 
     handleAction(actionId) {
@@ -385,7 +362,7 @@ class Dashboard {
                 break;
             case 'operators-main':
                 // Vodi na glavnu ATLAS aplikaciju (index.html u root folderu)
-                window.location.href = '../index.html';
+                window.location.href = 'index.html';
                 break;
             case 'system-logs':
                 window.location.href = 'system-logs.html';

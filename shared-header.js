@@ -36,9 +36,23 @@
   const actionHandlers = new Map();
   let documentClickHandler = null;
 
+  function resolveHref(link) {
+    if (!link || !link.href) {
+      return '#';
+    }
+
+    const href = link.href;
+    if (/^(?:https?:|mailto:|tel:|#|\/\/)/i.test(href)) {
+      return href;
+    }
+
+    return href;
+  }
+
   function ensureTemplateHTML() {
-    if (document.querySelector('.atlas-header')) {
-      return document.querySelector('.atlas-header');
+    const existing = document.querySelector('.atlas-header');
+    if (existing) {
+      return existing;
     }
 
     const mount = document.getElementById('atlasHeaderMount');
@@ -145,29 +159,44 @@
   function renderFooterLinks() {
     const footer = document.getElementById('atlasDropdownFooter');
     if (!footer) return;
+
+    const profileLink = resolveHref({ href: 'moj-profil.html' });
+    const settingsLink = resolveHref({ href: 'postavke.html' });
+
     footer.innerHTML = `
-      <a href="moj-profil.html" class="user-dropdown-link">
+      <a href="${profileLink}" class="user-dropdown-link">
         <i class="fas fa-user-circle"></i>
         <span>Moj profil</span>
       </a>
-      <a href="postavke.html" class="user-dropdown-link">
+      <a href="${settingsLink}" class="user-dropdown-link">
         <i class="fas fa-cog"></i>
         <span>Postavke</span>
       </a>
     `;
   }
 
+  function initSharedHeader(user, options = {}) {
+    ensureTemplateHTML();
+    renderHeaderUser(user || null);
+    if (options && Object.prototype.hasOwnProperty.call(options, 'actions')) {
+      setActions(options.actions);
+    }
+    return computePermissions(user?.role);
+  }
+
   function buildLinkHTML(link) {
     if (link.action) {
-      return `<a href="#" class="user-dropdown-link" data-action="${link.action}">` +
-        `<i class="${link.icon}"></i>` +
-        `<span>${link.label}</span>` +
-        `</a>`;
+      return `<a href="#" class="user-dropdown-link" data-action="${link.action}">`
+        + `<i class="${link.icon}"></i>`
+        + `<span>${link.label}</span>`
+        + `</a>`;
     }
-    return `<a href="${link.href}" class="user-dropdown-link">` +
-      `<i class="${link.icon}"></i>` +
-      `<span>${link.label}</span>` +
-      `</a>`;
+
+    const href = resolveHref(link);
+    return `<a href="${href}" class="user-dropdown-link">`
+      + `<i class="${link.icon}"></i>`
+      + `<span>${link.label}</span>`
+      + `</a>`;
   }
 
   function initDropdown() {
@@ -203,6 +232,12 @@
       actionHandlers.get(action)();
       return;
     }
+
+    if (action === 'add-operator') {
+      global.location.href = 'index.html#add-operator';
+      return;
+    }
+
     global.dispatchEvent(new CustomEvent('atlas-header-action', { detail: { action } }));
   }
 
@@ -247,10 +282,15 @@
 
   global.SharedHeader = {
     mount: ensureTemplateHTML,
+    init: initSharedHeader,
     renderHeaderUser,
     computePermissions,
     getRoleConfig,
     onAction,
     setActions
   };
+
+  if (typeof global.dispatchEvent === 'function') {
+    global.dispatchEvent(new Event('atlas-shared-header-ready'));
+  }
 })(window);

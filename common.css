@@ -9,6 +9,11 @@
     box-sizing: border-box;
 }
 
+#atlasHeaderMount {
+    position: relative;
+    z-index: 1000;
+}
+
 :root {
     /* Boje iz glavnog ATLAS-a */
     --primary-color: #4169E1;
