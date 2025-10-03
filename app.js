@@ -1535,9 +1535,14 @@ class ATLASApp {
             this.clearServices();
             this.clearTechnologies();
 
-            // Enable add buttons for add mode
-            if (this.elements.addServiceBtn) this.elements.addServiceBtn.disabled = false;
-            if (this.elements.addTechnologyBtn) this.elements.addTechnologyBtn.disabled = false;
+            // Initialize service and technology catalogs in ADD mode (same as EDIT mode)
+            // This allows selecting services/technologies from catalog
+            this.addServiceField(null, true, []); // Empty existing services array
+            this.addTechnologyField(null, true, []); // Empty existing technologies array
+            
+            // Disable main add buttons - use catalog selection instead
+            if (this.elements.addServiceBtn) this.elements.addServiceBtn.disabled = true;
+            if (this.elements.addTechnologyBtn) this.elements.addTechnologyBtn.disabled = true;
             
         } else if (mode === 'edit' && operatorId) {
             const operator = this.operators.find(op => op.id === operatorId);
