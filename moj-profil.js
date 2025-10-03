@@ -41,8 +41,230 @@ class MojProfil {
     }
 
     setupEventListeners() {
-        // Za sada placeholder - funkcionalnost će biti dodana kasnije
-        console.log('📋 Event listeneri postavljeni za Moj profil');
+        // Edit profile button
+        const editBtn = document.getElementById('editProfileBtn');
+        if (editBtn) {
+            editBtn.addEventListener('click', () => this.toggleEditMode());
+        }
+        
+        // Save profile button
+        const saveBtn = document.getElementById('saveProfileBtn');
+        if (saveBtn) {
+            saveBtn.addEventListener('click', () => this.saveProfile());
+        }
+        
+        // Cancel edit button
+        const cancelBtn = document.getElementById('cancelEditBtn');
+        if (cancelBtn) {
+            cancelBtn.addEventListener('click', () => this.cancelEdit());
+        }
+        
+        // Change password button
+        const changePasswordBtn = document.getElementById('changePasswordBtn');
+        if (changePasswordBtn) {
+            changePasswordBtn.addEventListener('click', () => this.showChangePasswordModal());
+        }
+        
+        // Change password modal
+        this.setupPasswordModal();
+    }
+
+    toggleEditMode() {
+        this.isEditing = !this.isEditing;
+        
+        const editBtn = document.getElementById('editProfileBtn');
+        const saveBtn = document.getElementById('saveProfileBtn');
+        const cancelBtn = document.getElementById('cancelEditBtn');
+        
+        const firstName = document.getElementById('firstName');
+        const lastName = document.getElementById('lastName');
+        const email = document.getElementById('email');
+        
+        if (this.isEditing) {
+            // Switch to edit mode
+            if (editBtn) editBtn.style.display = 'none';
+            if (saveBtn) saveBtn.style.display = 'inline-block';
+            if (cancelBtn) cancelBtn.style.display = 'inline-block';
+            
+            if (firstName) firstName.disabled = false;
+            if (lastName) lastName.disabled = false;
+            if (email) email.disabled = false;
+        } else {
+            // Switch to view mode
+            if (editBtn) editBtn.style.display = 'inline-block';
+            if (saveBtn) saveBtn.style.display = 'none';
+            if (cancelBtn) cancelBtn.style.display = 'none';
+            
+            if (firstName) firstName.disabled = true;
+            if (lastName) lastName.disabled = true;
+            if (email) email.disabled = true;
+        }
+    }
+
+    async saveProfile() {
+        const firstName = document.getElementById('firstName')?.value;
+        const lastName = document.getElementById('lastName')?.value;
+        const email = document.getElementById('email')?.value;
+        
+        if (!firstName || !lastName) {
+            this.showNotification('Ime i prezime su obavezni!', 'error');
+            return;
+        }
+        
+        try {
+            const response = await fetch('/api/auth/update-profile', {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${AuthSystem.getToken()}`
+                },
+                body: JSON.stringify({
+                    ime: firstName,
+                    prezime: lastName,
+                    email: email
+                })
+            });
+            
+            if (response.ok) {
+                const result = await response.json();
+                this.currentUser = { ...this.currentUser, ...result.user };
+                this.loadProfileData();
+                this.toggleEditMode();
+                this.showNotification('Profil uspješno ažuriran!', 'success');
+                
+                // Update SharedHeader with new data
+                await SharedHeader.init(this.currentUser);
+            } else {
+                const error = await response.json();
+                throw new Error(error.error || 'Greška pri ažuriranju profila');
+            }
+        } catch (error) {
+            console.error('Greška pri čuvanju profila:', error);
+            this.showNotification(error.message || 'Greška pri čuvanju profila', 'error');
+        }
+    }
+
+    cancelEdit() {
+        this.loadProfileData();
+        this.toggleEditMode();
+    }
+
+    showChangePasswordModal() {
+        const modal = document.getElementById('changePasswordModal');
+        if (modal) {
+            modal.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+    }
+
+    hideChangePasswordModal() {
+        const modal = document.getElementById('changePasswordModal');
+        if (modal) {
+            modal.classList.remove('active');
+            document.body.style.overflow = '';
+            
+            // Clear form
+            const form = document.getElementById('changePasswordForm');
+            if (form) form.reset();
+        }
+    }
+
+    setupPasswordModal() {
+        // Close modal buttons
+        const closeBtn = document.getElementById('closePasswordModal');
+        const cancelBtn = document.getElementById('cancelPasswordBtn');
+        
+        if (closeBtn) {
+            closeBtn.addEventListener('click', () => this.hideChangePasswordModal());
+        }
+        
+        if (cancelBtn) {
+            cancelBtn.addEventListener('click', () => this.hideChangePasswordModal());
+        }
+        
+        // Modal overlay click
+        const modal = document.getElementById('changePasswordModal');
+        if (modal) {
+            modal.addEventListener('click', (e) => {
+                if (e.target.classList.contains('modal-overlay')) {
+                    this.hideChangePasswordModal();
+                }
+            });
+        }
+        
+        // Password toggle buttons
+        document.querySelectorAll('.password-toggle').forEach(button => {
+            button.addEventListener('click', () => {
+                const targetId = button.getAttribute('data-target');
+                const input = document.getElementById(targetId);
+                const icon = button.querySelector('i');
+                
+                if (input.type === 'password') {
+                    input.type = 'text';
+                    icon.classList.remove('fa-eye');
+                    icon.classList.add('fa-eye-slash');
+                } else {
+                    input.type = 'password';
+                    icon.classList.remove('fa-eye-slash');
+                    icon.classList.add('fa-eye');
+                }
+            });
+        });
+        
+        // Change password form
+        const form = document.getElementById('changePasswordForm');
+        if (form) {
+            form.addEventListener('submit', (e) => {
+                e.preventDefault();
+                this.changePassword();
+            });
+        }
+    }
+
+    async changePassword() {
+        const currentPassword = document.getElementById('currentPassword')?.value;
+        const newPassword = document.getElementById('newPassword')?.value;
+        const confirmPassword = document.getElementById('confirmPassword')?.value;
+        
+        if (!currentPassword || !newPassword || !confirmPassword) {
+            this.showNotification('Sva polja su obavezna!', 'error');
+            return;
+        }
+        
+        if (newPassword !== confirmPassword) {
+            this.showNotification('Nova lozinka i potvrda se ne poklapaju!', 'error');
+            return;
+        }
+        
+        if (newPassword.length < 8) {
+            this.showNotification('Nova lozinka mora imati najmanje 8 karaktera!', 'error');
+            return;
+        }
+        
+        try {
+            const response = await fetch('/api/auth/change-password', {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${AuthSystem.getToken()}`
+                },
+                body: JSON.stringify({
+                    currentPassword: currentPassword,
+                    newPassword: newPassword
+                })
+            });
+            
+            if (response.ok) {
+                this.hideChangePasswordModal();
+                this.showNotification('Lozinka uspješno promijenjena!', 'success');
+            } else {
+                const error = await response.json();
+                throw new Error(error.error || 'Greška pri promjeni lozinke');
+            }
+        } catch (error) {
+            console.error('Greška pri promjeni lozinke:', error);
+            this.showNotification(error.message || 'Greška pri promjeni lozinke', 'error');
+        }
     }
 
     toggleEditMode() {

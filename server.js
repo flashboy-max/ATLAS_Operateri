@@ -323,6 +323,98 @@ app.delete('/api/auth/users/:id', authenticateToken, requireRoles('SUPERADMIN'),
     }
 });
 
+// Update profile endpoint
+app.put('/api/auth/update-profile', authenticateToken, (req, res) => {
+    try {
+        const { authUser, authData } = req;
+        const { ime, prezime, email } = req.body;
+
+        // Validation
+        if (!ime || !prezime) {
+            return res.status(400).json({ error: 'Ime i prezime su obavezni' });
+        }
+
+        if (email && !email.match(/^[^\s@]+@[^\s@]+\.[^\s@]+$/)) {
+            return res.status(400).json({ error: 'Neispravna email adresa' });
+        }
+
+        // Find user and update
+        const userIndex = authData.users.findIndex(u => u.id === authUser.id);
+        if (userIndex === -1) {
+            return res.status(404).json({ error: 'Korisnik nije pronaden' });
+        }
+
+        // Update user data
+        authData.users[userIndex] = {
+            ...authData.users[userIndex],
+            ime: ime.trim(),
+            prezime: prezime.trim(),
+            email: email ? email.trim() : authData.users[userIndex].email,
+            azuriran: new Date().toISOString()
+        };
+
+        // Save to file
+        writeAuthData(authData);
+
+        // Return updated user data
+        return res.json({ 
+            success: true, 
+            user: sanitizeUser(authData.users[userIndex])
+        });
+    } catch (error) {
+        console.error('Update profile error:', error);
+        return res.status(500).json({ error: 'Ažuriranje profila nije uspjelo' });
+    }
+});
+
+// Change password endpoint
+app.put('/api/auth/change-password', authenticateToken, (req, res) => {
+    try {
+        const { authUser, authData } = req;
+        const { currentPassword, newPassword } = req.body;
+
+        // Validation
+        if (!currentPassword || !newPassword) {
+            return res.status(400).json({ error: 'Trenutna i nova lozinka su obavezne' });
+        }
+
+        if (newPassword.length < 8) {
+            return res.status(400).json({ error: 'Nova lozinka mora imati najmanje 8 karaktera' });
+        }
+
+        // Find user
+        const userIndex = authData.users.findIndex(u => u.id === authUser.id);
+        if (userIndex === -1) {
+            return res.status(404).json({ error: 'Korisnik nije pronaden' });
+        }
+
+        const user = authData.users[userIndex];
+
+        // Verify current password
+        if (!bcrypt.compareSync(currentPassword, user.lozinka)) {
+            return res.status(400).json({ error: 'Trenutna lozinka nije ispravna' });
+        }
+
+        // Hash new password
+        const hashedNewPassword = bcrypt.hashSync(newPassword, 10);
+
+        // Update password
+        authData.users[userIndex] = {
+            ...user,
+            lozinka: hashedNewPassword,
+            azuriran: new Date().toISOString()
+        };
+
+        // Save to file
+        writeAuthData(authData);
+
+        return res.json({ success: true });
+    } catch (error) {
+        console.error('Change password error:', error);
+        return res.status(500).json({ error: 'Promena lozinke nije uspjela' });
+    }
+});
+
 // ----------------------------
 // Operator routes (existing)
 // ----------------------------

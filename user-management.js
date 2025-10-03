@@ -74,8 +74,9 @@ class UserManagement {
         }
 
         if (this.currentUser.role === 'ADMIN') {
+            // ADMIN vidi samo korisnike svoje agencije
             this.users = this.users.filter(u => 
-                u.created_by === this.currentUser.id || u.id === this.currentUser.id
+                u.agencija === this.currentUser.agencija || u.id === this.currentUser.id
             );
         }
 
@@ -134,6 +135,12 @@ class UserManagement {
         document.getElementById('activeUsers').textContent = active;
         document.getElementById('adminUsers').textContent = admins;
         document.getElementById('agenciesCount').textContent = agencies;
+        
+        // Update stats labels based on user role
+        if (this.currentUser.role === 'ADMIN') {
+            const totalLabel = document.querySelector('#totalUsers').parentNode.querySelector('.stat-label-small');
+            if (totalLabel) totalLabel.textContent = 'Korisnici agencije';
+        }
     }
 
     populateAgencyDropdowns() {

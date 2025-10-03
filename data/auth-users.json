@@ -7,13 +7,13 @@
       "password_hash": "$2b$10$mqpYQvDEguVNlvvkClUEG.UZmTe4EoxMO/ZHcKYGnFBU7ONR8lj9G",
       "role": "SUPERADMIN",
       "ime": "Admir",
-      "prezime": "Adminovic",
+      "prezime": "Admirović",
       "email": "admin@atlas.ba",
       "agencija": null,
       "agencija_naziv": "Sistem administrator",
       "aktivan": true,
       "kreiran": "2025-01-15",
-      "poslednje_logovanje": "2025-10-03T20:53:11.097Z",
+      "poslednje_logovanje": "2025-10-03T21:36:04.351Z",
       "created_by": null
     },
     {
@@ -28,7 +28,7 @@
       "agencija_naziv": "Ministarstvo unutrasnjih poslova Kantona Sarajevo (MUP KS)",
       "aktivan": true,
       "kreiran": "2025-02-10",
-      "poslednje_logovanje": "2025-10-03T20:00:07.679Z",
+      "poslednje_logovanje": "2025-10-03T21:31:39.583Z",
       "created_by": 1
     },
     {
@@ -43,7 +43,7 @@
       "agencija_naziv": "Ministarstvo unutrasnjih poslova Kantona Sarajevo (MUP KS)",
       "aktivan": true,
       "kreiran": "2025-03-05",
-      "poslednje_logovanje": "2025-10-03T20:00:49.041Z",
+      "poslednje_logovanje": "2025-10-03T21:14:13.384Z",
       "created_by": 2
     },
     {

@@ -67,9 +67,17 @@
                             </div>
                         </div>
 
-                        <div class="coming-soon-message">
-                            <i class="fas fa-info-circle"></i>
-                            <p>Uređivanje profila će biti dostupno nakon integracije sa backend sistemom.</p>
+                        <!-- Action buttons -->
+                        <div class="profile-actions" id="profileActions">
+                            <button type="button" id="editProfileBtn" class="btn btn-primary">
+                                <i class="fas fa-edit"></i> Uredi profil
+                            </button>
+                            <button type="button" id="saveProfileBtn" class="btn btn-success" style="display: none;">
+                                <i class="fas fa-save"></i> Sačuvaj izmjene
+                            </button>
+                            <button type="button" id="cancelEditBtn" class="btn btn-secondary" style="display: none;">
+                                <i class="fas fa-times"></i> Otkaži
+                            </button>
                         </div>
                     </div>
                 </div>
@@ -79,15 +87,69 @@
                         <h2 class="card-title">Sigurnost</h2>
                     </div>
                     <div class="card-body">
-                        <div class="coming-soon-message">
-                            <i class="fas fa-lock"></i>
-                            <p>Promjena lozinke će biti dostupna nakon integracije sa backend sistemom.</p>
+                        <div class="security-section">
+                            <h4>Promjena lozinke</h4>
+                            <p class="text-muted">Redovno mijenjajte lozinku radi sigurnosti</p>
+                            <button type="button" id="changePasswordBtn" class="btn btn-outline-primary">
+                                <i class="fas fa-key"></i> Promijeni lozinku
+                            </button>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
     </main>
+
+    <!-- Change Password Modal -->
+    <div id="changePasswordModal" class="modal">
+        <div class="modal-overlay"></div>
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Promjena lozinke</h3>
+                <button type="button" class="close-btn" id="closePasswordModal">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="changePasswordForm">
+                    <div class="form-group">
+                        <label for="currentPassword">Trenutna lozinka *</label>
+                        <div class="password-input-group">
+                            <input type="password" id="currentPassword" name="currentPassword" class="form-control" required>
+                            <button type="button" class="password-toggle" data-target="currentPassword">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="newPassword">Nova lozinka *</label>
+                        <div class="password-input-group">
+                            <input type="password" id="newPassword" name="newPassword" class="form-control" required minlength="8">
+                            <button type="button" class="password-toggle" data-target="newPassword">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                        </div>
+                        <small class="text-muted">Minimum 8 karaktera</small>
+                    </div>
+                    <div class="form-group">
+                        <label for="confirmPassword">Potvrdi novu lozinku *</label>
+                        <div class="password-input-group">
+                            <input type="password" id="confirmPassword" name="confirmPassword" class="form-control" required minlength="8">
+                            <button type="button" class="password-toggle" data-target="confirmPassword">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" id="cancelPasswordBtn">Otkaži</button>
+                <button type="submit" form="changePasswordForm" class="btn btn-primary" id="savePasswordBtn">
+                    <i class="fas fa-save"></i> Promijeni lozinku
+                </button>
+            </div>
+        </div>
+    </div>
 
     <!-- Scripts -->
     <script src="mock-data.js"></script>
