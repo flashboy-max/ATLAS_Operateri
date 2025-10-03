@@ -401,7 +401,7 @@ class ATLASApp {
 
         const role = this.currentUser.role;
         return {
-            canManageOperators: role === 'SUPERADMIN' || role === 'ADMIN',
+            canManageOperators: role === 'SUPERADMIN', // Samo SUPERADMIN može upravljati operaterima
             canImportData: role === 'SUPERADMIN' || role === 'ADMIN',
             canExportData: true
         };

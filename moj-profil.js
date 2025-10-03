@@ -322,11 +322,6 @@ class MojProfil {
         this.toggleEditMode();
     }
 
-    showChangePasswordModal() {
-        // TODO: Implementirati modal za promjenu lozinke
-        alert('Funkcionalnost promjene lozinke će biti dostupna uskoro.');
-    }
-
     updateRoleBadge(role) {
         const roleBadge = document.getElementById('profileRoleBadge');
         if (!roleBadge) return;

@@ -56,8 +56,8 @@ class Dashboard {
 
 
 
-    setupStats() {
-        const stats = this.getStatsForRole(this.currentUser.role);
+    async setupStats() {
+        const stats = await this.getStatsForRole(this.currentUser.role);
         const statsSection = document.getElementById('statsSection');
         
         statsSection.innerHTML = stats.map(stat => `
@@ -73,24 +73,28 @@ class Dashboard {
         `).join('');
     }
 
-    getStatsForRole(role) {
+    async getStatsForRole(role) {
+        // Fetch dynamic stats from API
+        const operatorsCount = await this.fetchOperatorsCount();
+        const usersCount = await this.fetchUsersCount();
+        
         const baseStats = [
             {
                 icon: 'fas fa-building',
                 label: 'Ukupno operatera',
-                value: '31',
+                value: operatorsCount.total,
                 color: 'primary'
             },
             {
                 icon: 'fas fa-check-circle',
                 label: 'Aktivni operateri',
-                value: '24',
+                value: operatorsCount.active,
                 color: 'success'
             },
             {
                 icon: 'fas fa-exclamation-circle',
                 label: 'Neaktivni operateri',
-                value: '7',
+                value: operatorsCount.inactive,
                 color: 'warning'
             }
         ];
@@ -101,7 +105,7 @@ class Dashboard {
                 {
                     icon: 'fas fa-users',
                     label: 'Ukupno korisnika',
-                    value: '47',
+                    value: usersCount.total,
                     color: 'info'
                 }
             ];
@@ -113,13 +117,58 @@ class Dashboard {
                 {
                     icon: 'fas fa-user-shield',
                     label: 'Korisnici agencije',
-                    value: '12',
+                    value: usersCount.agency,
                     color: 'info'
                 }
             ];
         }
 
         return baseStats;
+    }
+
+    async fetchOperatorsCount() {
+        try {
+            // TODO: Replace with actual API call when available
+            return {
+                total: 31,
+                active: 24,
+                inactive: 7
+            };
+        } catch (error) {
+            console.warn('Failed to fetch operators count:', error);
+            return { total: 31, active: 24, inactive: 7 };
+        }
+    }
+
+    async fetchUsersCount() {
+        try {
+            const response = await fetch('/api/auth/users', {
+                headers: {
+                    'Authorization': `Bearer ${AuthSystem.getToken()}`
+                }
+            });
+
+            if (response.ok) {
+                const users = await response.json();
+                const total = users.length;
+                
+                // For ADMIN, count is already filtered by backend
+                // For SUPERADMIN, this represents all users
+                return {
+                    total: total,
+                    agency: total  // For ADMIN this is the same since backend filters
+                };
+            } else {
+                throw new Error('Failed to fetch users');
+            }
+        } catch (error) {
+            console.warn('Failed to fetch users count:', error);
+            // Fallback values
+            return {
+                total: this.currentUser.role === 'SUPERADMIN' ? 47 : 12,
+                agency: 12
+            };
+        }
     }
 
     setupActions() {
