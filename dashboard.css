@@ -461,6 +461,19 @@
     color: var(--text-muted);
 }
 
+/* Loading and Error States for Activities */
+.loading-indicator, .error-indicator {
+    text-align: center;
+    padding: var(--spacing-lg);
+    font-size: 0.9rem;
+    color: var(--text-muted);
+    font-style: italic;
+}
+
+.error-indicator {
+    color: var(--danger-color);
+}
+
 /* === BACK SECTION === */
 .back-section {
     text-align: center;

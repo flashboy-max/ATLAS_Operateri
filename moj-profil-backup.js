@@ -41,19 +41,10 @@ class MojProfil {
     }
 
     setupEventListeners() {
-        console.log('🔧 Postavljam event listenere...');
-        
         // Edit profile button
         const editBtn = document.getElementById('editProfileBtn');
-        console.log('editBtn:', editBtn);
         if (editBtn) {
-            editBtn.addEventListener('click', (e) => {
-                console.log('🔧 Klik na Uredi profil dugme!');
-                e.preventDefault();
-                this.toggleEditMode();
-            });
-        } else {
-            console.error('❌ editProfileBtn element nije pronađen!');
+            editBtn.addEventListener('click', () => this.toggleEditMode());
         }
         
         // Save profile button
@@ -79,7 +70,6 @@ class MojProfil {
     }
 
     toggleEditMode() {
-        console.log('🔄 toggleEditMode pozvan, trenutno isEditing:', this.isEditing);
         this.isEditing = !this.isEditing;
         
         const editBtn = document.getElementById('editProfileBtn');
@@ -90,10 +80,7 @@ class MojProfil {
         const lastName = document.getElementById('lastName');
         const email = document.getElementById('email');
         
-        console.log('Elements found:', { editBtn, saveBtn, cancelBtn, firstName, lastName, email });
-        
         if (this.isEditing) {
-            console.log('✏️ Ulazim u edit mode');
             // Switch to edit mode
             if (editBtn) editBtn.style.display = 'none';
             if (saveBtn) saveBtn.style.display = 'inline-block';
@@ -103,7 +90,6 @@ class MojProfil {
             if (lastName) lastName.disabled = false;
             if (email) email.disabled = false;
         } else {
-            console.log('👁️ Ulazim u view mode');
             // Switch to view mode
             if (editBtn) editBtn.style.display = 'inline-block';
             if (saveBtn) saveBtn.style.display = 'none';
@@ -116,7 +102,6 @@ class MojProfil {
     }
 
     async saveProfile() {
-        console.log('💾 Čuvam profil...');
         const firstName = document.getElementById('firstName')?.value;
         const lastName = document.getElementById('lastName')?.value;
         const email = document.getElementById('email')?.value;
@@ -139,25 +124,28 @@ class MojProfil {
                     email: email
                 })
             });
-
+            
             if (response.ok) {
-                const updatedUser = await response.json();
-                this.currentUser = updatedUser;
+                const result = await response.json();
+                this.currentUser = { ...this.currentUser, ...result.user };
                 this.loadProfileData();
                 this.toggleEditMode();
-                this.showNotification('Profil je uspešno ažuriran!', 'success');
+                this.showNotification('Profil uspješno ažuriran!', 'success');
+                
+                // Update SharedHeader with new data
+                await SharedHeader.init(this.currentUser);
             } else {
-                throw new Error('Failed to update profile');
+                const error = await response.json();
+                throw new Error(error.error || 'Greška pri ažuriranju profila');
             }
         } catch (error) {
-            console.error('Error updating profile:', error);
-            this.showNotification('Greška pri ažuriranju profila', 'error');
+            console.error('Greška pri čuvanju profila:', error);
+            this.showNotification(error.message || 'Greška pri čuvanju profila', 'error');
         }
     }
 
     cancelEdit() {
-        console.log('❌ Otkazujem edit...');
-        this.loadProfileData(); // Reload original data
+        this.loadProfileData();
         this.toggleEditMode();
     }
 
@@ -182,23 +170,26 @@ class MojProfil {
     }
 
     setupPasswordModal() {
-        // Close modal button
+        // Close modal buttons
         const closeBtn = document.getElementById('closePasswordModal');
+        const cancelBtn = document.getElementById('cancelPasswordBtn');
+        
         if (closeBtn) {
-            closeBtn.addEventListener('click', () => {
-                this.hideChangePasswordModal();
-            });
+            closeBtn.addEventListener('click', () => this.hideChangePasswordModal());
         }
-
+        
+        if (cancelBtn) {
+            cancelBtn.addEventListener('click', () => this.hideChangePasswordModal());
+        }
+        
         // Modal overlay click
         const modal = document.getElementById('changePasswordModal');
         if (modal) {
-            const overlay = modal.querySelector('.modal-overlay');
-            if (overlay) {
-                overlay.addEventListener('click', () => {
+            modal.addEventListener('click', (e) => {
+                if (e.target.classList.contains('modal-overlay')) {
                     this.hideChangePasswordModal();
-                });
-            }
+                }
+            });
         }
         
         // Password toggle buttons
@@ -258,76 +249,149 @@ class MojProfil {
                     'Authorization': `Bearer ${AuthSystem.getToken()}`
                 },
                 body: JSON.stringify({
-                    currentPassword,
-                    newPassword
+                    currentPassword: currentPassword,
+                    newPassword: newPassword
                 })
             });
-
+            
             if (response.ok) {
                 this.hideChangePasswordModal();
-                this.showNotification('Lozinka je uspešno promenjena!', 'success');
+                this.showNotification('Lozinka uspješno promijenjena!', 'success');
             } else {
                 const error = await response.json();
-                this.showNotification(error.message || 'Greška pri promeni lozinke', 'error');
+                throw new Error(error.error || 'Greška pri promjeni lozinke');
             }
         } catch (error) {
-            console.error('Error changing password:', error);
-            this.showNotification('Greška pri promeni lozinke', 'error');
+            console.error('Greška pri promjeni lozinke:', error);
+            this.showNotification(error.message || 'Greška pri promjeni lozinke', 'error');
         }
     }
 
+    toggleEditMode() {
+        this.isEditing = !this.isEditing;
+        
+        const viewSection = document.getElementById('profileViewSection');
+        const editSection = document.getElementById('profileEditSection');
+        
+        if (viewSection) viewSection.style.display = this.isEditing ? 'none' : 'block';
+        if (editSection) editSection.style.display = this.isEditing ? 'block' : 'none';
+    }
+
+    async saveProfile() {
+        const updatedData = {
+            ime: document.getElementById('editIme')?.value,
+            prezime: document.getElementById('editPrezime')?.value,
+            email: document.getElementById('editEmail')?.value
+        };
+        
+        if (!updatedData.ime || !updatedData.prezime) {
+            this.showNotification('Ime i prezime su obavezni!', 'error');
+            return;
+        }
+        
+        try {
+            const response = await fetch('/api/auth/update-profile', {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${AuthSystem.getToken()}`
+                },
+                body: JSON.stringify(updatedData)
+            });
+            
+            if (response.ok) {
+                const result = await response.json();
+                this.currentUser = { ...this.currentUser, ...updatedData };
+                this.loadProfileData();
+                this.toggleEditMode();
+                this.showNotification('Profil uspješno ažuriran!', 'success');
+                
+                // Ažuriraj header
+                await SharedHeader.init(this.currentUser);
+            } else {
+                throw new Error('Greška pri ažuriranju profila');
+            }
+        } catch (error) {
+            console.error('Greška pri čuvanju profila:', error);
+            this.showNotification('Greška pri čuvanju profila', 'error');
+        }
+    }
+
+    cancelEdit() {
+        this.loadProfileData();
+        this.toggleEditMode();
+    }
+
+    updateRoleBadge(role) {
+        const roleBadge = document.getElementById('profileRoleBadge');
+        if (!roleBadge) return;
+        
+        const roleClasses = {
+            'SUPERADMIN': 'badge-superadmin',
+            'ADMIN': 'badge-admin',
+            'KORISNIK': 'badge-korisnik'
+        };
+        
+        roleBadge.className = `role-badge ${roleClasses[role] || ''}`;
+        roleBadge.textContent = this.getRoleDisplay(role);
+    }
+
+    setTextContent(elementId, value) {
+        const element = document.getElementById(elementId);
+        if (element) element.textContent = value || 'N/A';
+    }
+
+    setInputValue(elementId, value) {
+        const element = document.getElementById(elementId);
+        if (element) element.value = value || '';
+    }
+
     showNotification(message, type = 'info') {
-        // Create notification element
         const notification = document.createElement('div');
         notification.className = `notification notification-${type}`;
-        notification.innerHTML = `
-            <div class="notification-content">
-                <i class="fas ${type === 'success' ? 'fa-check-circle' : type === 'error' ? 'fa-exclamation-circle' : 'fa-info-circle'}"></i>
-                <span>${message}</span>
-            </div>
+        notification.textContent = message;
+        notification.style.cssText = `
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 16px 24px;
+            background: ${type === 'success' ? '#10b981' : type === 'error' ? '#ef4444' : '#3b82f6'};
+            color: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            z-index: 10000;
+            animation: slideIn 0.3s ease;
         `;
-
-        // Add to page
+        
         document.body.appendChild(notification);
-
-        // Show notification
-        setTimeout(() => notification.classList.add('show'), 100);
-
-        // Remove after 3 seconds
+        
         setTimeout(() => {
-            notification.classList.remove('show');
+            notification.style.animation = 'slideOut 0.3s ease';
             setTimeout(() => notification.remove(), 300);
         }, 3000);
     }
 
-    // Helper methods
-    setTextContent(id, value) {
-        const element = document.getElementById(id);
-        if (element) {
-            element.textContent = value;
-        }
-    }
-
-    setInputValue(id, value) {
-        const element = document.getElementById(id);
-        if (element) {
-            element.value = value || '';
-        }
-    }
-
     getRoleDisplay(role) {
-        const roleMap = {
+        const roles = {
             'SUPERADMIN': 'Super Administrator',
             'ADMIN': 'Administrator',
             'KORISNIK': 'Korisnik'
         };
-        return roleMap[role] || role;
+        return roles[role] || role;
     }
 
-    formatDate(dateString) {
-        if (!dateString) return 'N/A';
+    formatDate(dateStr) {
+        if (!dateStr) return 'Nepoznato';
+        const date = new Date(dateStr);
+        const now = new Date();
+        const diffTime = Math.abs(now - date);
+        const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
         
-        return new Date(dateString).toLocaleDateString('bs-BA', {
+        if (diffDays === 0) return 'Danas';
+        if (diffDays === 1) return 'Juče';
+        if (diffDays < 7) return `Prije ${diffDays} dana`;
+        
+        return date.toLocaleDateString('bs-BA', {
             year: 'numeric',
             month: 'long',
             day: 'numeric'
@@ -337,6 +401,5 @@ class MojProfil {
 
 // Initialize when DOM is ready
 document.addEventListener('DOMContentLoaded', () => {
-    console.log('🚀 DOM je spreman, inicijalizujem MojProfil...');
     new MojProfil();
 });

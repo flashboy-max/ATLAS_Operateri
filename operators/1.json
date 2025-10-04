@@ -52,7 +52,7 @@
     "posjeduje_misljenje_zuo": "Da",
     "napomene": "ISP operater sa obavezama za zakonito presretanje i pristup obračunskim podacima."
   },
-  "datum_azuriranja": "2025-10-01",
+  "datum_azuriranja": "2025-10-04",
   "kontakt_osoba": "Marko Džeba - Direktor",
   "usluge": [
     {
@@ -65,6 +65,12 @@
       "kategorija": "unknown",
       "naziv": "Poslovni Internet",
       "opis": "Poslovni internet sa SLA garantijama",
+      "status": "aktivna"
+    },
+    {
+      "kategorija": "unknown",
+      "naziv": "IPTV",
+      "opis": "TV preko IP mreže",
       "status": "aktivna"
     }
   ],
@@ -90,6 +96,8 @@
   ],
   "kategorija": "alternativni",
   "tipovi": [
-    "isp"
+    "isp",
+    "enterprise",
+    "ostali"
   ]
 }

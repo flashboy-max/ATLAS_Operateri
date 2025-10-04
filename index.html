@@ -468,173 +468,257 @@
 
     <!-- Import File Input (Hidden) -->
     <input type="file" id="fileImportInput" accept=".json" style="display: none;">
-
     <!-- Help Modal -->
     <div class="modal" id="helpModal">
         <div class="modal-content help-modal-content">
-            <div class="modal-header">
-                <h2>� Pomoć i uputstvo</h2>
-                <button class="close-btn" id="closeHelpModal">
+            <div class="modal-header help-modal-header">
+                <h2><i class="fas fa-life-ring"></i> Pomoc i uputstvo</h2>
+                <button class="close-btn help-modal-close" id="closeHelpModal">
                     <i class="fas fa-times"></i>
                 </button>
             </div>
             <div class="modal-body help-content">
-                <!-- Intro sekcija -->
                 <div class="help-intro">
                     <div class="help-logo">
                         <i class="fas fa-satellite-dish"></i>
                     </div>
                     <h3>ATLAS</h3>
-                    <p class="help-subtitle">Advanced Telecom Listing And Search</p>
-                    <p>Sistem za upravljanje bazom telekomunikacionih operatera u BiH</p>
+                    <p class="help-subtitle">Advanced Telecommunication Legal Access System</p>
+                    <p>Centralizovani sistem za policijske agencije u BiH za brz, siguran i zakonski uskladjen pristup informacijama o telekom operaterima.</p>
+                    <div class="help-badges">
+                        <span class="help-badge"><i class="fas fa-lock"></i> Sigurni podaci</span>
+                        <span class="help-badge"><i class="fas fa-user-shield"></i> Role-based pristup</span>
+                        <span class="help-badge"><i class="fas fa-sync"></i> Real-time azuriranja</span>
+                    </div>
                 </div>
-                
-                <!-- Osnovne funkcije -->
+
                 <div class="help-section">
-                    <h3><i class="fas fa-tools"></i> Osnovne funkcije</h3>
-                    <div class="help-cards">
-                        <div class="help-card">
-                            <div class="help-card-icon" style="background: #3b82f6;">
-                                <i class="fas fa-eye"></i>
-                            </div>
-                            <h4>Pregled operatera</h4>
-                            <p>Kliknite na bilo kojeg operatera u tabeli da vidite detaljne informacije, kontakte, usluge i zakonske obaveze.</p>
+                    <h3><i class="fas fa-compass"></i> Brzi pregled sistema</h3>
+                    <div class="help-info-grid">
+                        <div class="help-info-card">
+                            <h4><i class="fas fa-database"></i> Centralizacija informacija</h4>
+                            <p>Jedinstvena baza svih operatera sa kontaktima, infrastrukturom, zonama pokrivanja i historijom azuriranja.</p>
                         </div>
-                        <div class="help-card">
-                            <div class="help-card-icon" style="background: #10b981;">
-                                <i class="fas fa-plus"></i>
-                            </div>
-                            <h4>Dodavanje novog</h4>
-                            <p>Kliknite dugme "Dodaj operatera" i popunite formu sa osnovnim podacima, kontaktima i zakonskim obavezama.</p>
+                        <div class="help-info-card">
+                            <h4><i class="fas fa-balance-scale-left"></i> Zakonske obaveze</h4>
+                            <p>Pregled implementiranih presretanja, pristupa obracunskim podacima i rokova ispunjenja zakonskih zahtjeva.</p>
                         </div>
-                        <div class="help-card">
-                            <div class="help-card-icon" style="background: #f59e0b;">
-                                <i class="fas fa-edit"></i>
-                            </div>
-                            <h4>Izmjena podataka</h4>
-                            <p>Kliknite ikonu olovke pored operatera da uredite postojeće podatke. Sve promjene se automatski čuvaju.</p>
+                        <div class="help-info-card">
+                            <h4><i class="fas fa-shield-alt"></i> Audit trail</h4>
+                            <p>Sve radnje se biljeze sa detaljima o korisniku, vremenu, IP adresi i statusu akcije radi sigurnosne revizije.</p>
                         </div>
-                        <div class="help-card">
-                            <div class="help-card-icon" style="background: #ef4444;">
-                                <i class="fas fa-trash"></i>
-                            </div>
-                            <h4>Brisanje</h4>
-                            <p>Kliknite ikonu kantice da obrišete operatera iz baze. Moraćete potvrditi akciju prije brisanja.</p>
+                        <div class="help-info-card">
+                            <h4><i class="fas fa-handshake"></i> Koordinacija agencija</h4>
+                            <p>Role-based pristup i zajednicki standardi omogucavaju saradnju izmedu drzavnih, entitetskih i kantonalnih jedinica.</p>
                         </div>
                     </div>
                 </div>
-                
-                <!-- Pretraga i filtriranje -->
+
                 <div class="help-section">
-                    <h3><i class="fas fa-search"></i> Pretraga i filtriranje</h3>
-                    <div class="help-filter-guide">
-                        <div class="filter-step">
-                            <span class="step-number">1</span>
-                            <div class="step-content">
-                                <h4>Pretraga po tekstu</h4>
-                                <p>Unesite naziv, tip ili bilo koju drugu informaciju u search bar. Sistem pretražuje naziv, opis, kontakte i sve druge podatke.</p>
+                    <h3><i class="fas fa-users-cog"></i> Korisnicke role i ovlastenja</h3>
+                    <div class="help-role-grid">
+                        <div class="help-role-card">
+                            <h4><i class="fas fa-crown"></i> Super administrator</h4>
+                            <p class="help-role-summary">Potpuna kontrola nad sistemom i bezbjednosnim politikama.</p>
+                            <ul>
+                                <li>Upravljanje svim operaterima i korisnicima</li>
+                                <li>Pristup sistemskim logovima i audit trail zapisima</li>
+                                <li>Import/Export podataka i podesavanje konfiguracije</li>
+                            </ul>
+                            <div class="help-role-expect">
+                                <strong>Sta ocekivati:</strong>
+                                <span>Dashboard sa globalnim statistikama, upozorenjima i brzim akcijama.</span>
                             </div>
                         </div>
-                        <div class="filter-step">
-                            <span class="step-number">2</span>
-                            <div class="step-content">
-                                <h4>Filtriranje po statusu</h4>
-                                <p>Kliknite na <strong>Ukupno</strong>, <strong>Aktivni</strong> ili <strong>Neaktivni</strong> da filtrirate operatere prema njihovom statusu.</p>
+                        <div class="help-role-card">
+                            <h4><i class="fas fa-user-shield"></i> Administrator agencije</h4>
+                            <p class="help-role-summary">Fokus na korisnike i aktivnosti svoje institucije.</p>
+                            <ul>
+                                <li>Upravljanje nalozima i rolama unutar agencije</li>
+                                <li>Pregled operatera i logova (read-only)</li>
+                                <li>Generisanje izvjestaja za nadredjene</li>
+                            </ul>
+                            <div class="help-role-expect">
+                                <strong>Sta ocekivati:</strong>
+                                <span>Statistike koristenja po agenciji i pregled najbitnijih aktivnosti.</span>
                             </div>
                         </div>
-                        <div class="filter-step">
-                            <span class="step-number">3</span>
-                            <div class="step-content">
-                                <h4>Filtriranje po kategoriji</h4>
-                                <p>Kliknite <strong>🏢 Dominantni</strong> ili <strong>🔷 Alternativni</strong> da vidite samo operatere iz te kategorije.</p>
+                        <div class="help-role-card">
+                            <h4><i class="fas fa-user-check"></i> Operativni korisnik</h4>
+                            <p class="help-role-summary">Brz pristup operaterima i licnim podacima.</p>
+                            <ul>
+                                <li>Detaljan pregled operatera i kontakata (read-only)</li>
+                                <li>Koristenje naprednih filtera i eksport osnovnih izvjestaja</li>
+                                <li>Upravljanje vlastitim profilom i pregled licnih aktivnosti</li>
+                            </ul>
+                            <div class="help-role-expect">
+                                <strong>Sta ocekivati:</strong>
+                                <span>Personalizovani dashboard i notifikacije o promjenama podataka.</span>
                             </div>
                         </div>
-                        <div class="filter-step">
-                            <span class="step-number">4</span>
-                            <div class="step-content">
-                                <h4>Filtriranje po tipu</h4>
-                                <p>Koristite dropdown meni da izaberete specifičan tip: mobilni, MVNO, ISP, kablovski, enterprise ili ostali.</p>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="help-tip">
-                        <i class="fas fa-lightbulb"></i>
-                        <p><strong>Savjet:</strong> Možete kombinovati sve filtere! Na primjer, kliknite "Aktivni" + "Dominantni" + "ISP" da vidite samo aktivne dominantne ISP operatere.</p>
                     </div>
                 </div>
-                
+
                 <div class="help-section">
-                    <h3>📊 Kategorije operatera</h3>
-                    <div class="categories-info">
-                        <div class="category-item">
-                            <span class="category-icon">🏢</span>
+                    <h3><i class="fas fa-toolbox"></i> Kljucne funkcionalnosti</h3>
+                    <div class="help-feature-grid">
+                        <div class="help-feature-card">
+                            <h4><i class="fas fa-broadcast-tower"></i> Operateri</h4>
+                            <ul>
+                                <li>Detaljne karte pokrivanja, tehnicke specifikacije i kontakt informacije</li>
+                                <li>Status zakonskih obaveza sa vizuelnim indikatorima</li>
+                                <li>Export podataka za offline rad ili analizu</li>
+                            </ul>
+                        </div>
+                        <div class="help-feature-card">
+                            <h4><i class="fas fa-users"></i> Korisnici</h4>
+                            <ul>
+                                <li>Kreiranje novih naloga uz provjeru podataka u realnom vremenu</li>
+                                <li>Dodjeljivanje rola i reset lozinki kroz siguran workflow</li>
+                                <li>Historija izmjena rola i pristupnih prava</li>
+                            </ul>
+                        </div>
+                        <div class="help-feature-card">
+                            <h4><i class="fas fa-chart-line"></i> Dashboard</h4>
+                            <ul>
+                                <li>Kljucni indikatori: broj operatera, aktivne dozvole, recentne aktivnosti</li>
+                                <li>Brze akcije za ceste zadatke i globalni search</li>
+                                <li>Notifikacije o azuriranjima i compliance statusu</li>
+                            </ul>
+                        </div>
+                        <div class="help-feature-card">
+                            <h4><i class="fas fa-clipboard-list"></i> System logs</h4>
+                            <ul>
+                                <li>Audit zapis svake akcije sa korisnikom, vremenom, IP adresom i statusom</li>
+                                <li>Filteri po roli, tipu akcije, vremenu i statusu</li>
+                                <li>CSV export za dodatnu forenzicku analizu</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="help-section">
+                    <h3><i class="fas fa-route"></i> Radni tok - korak po korak</h3>
+                    <div class="help-steps">
+                        <div class="help-step">
+                            <span class="help-step-number">1</span>
                             <div>
-                                <strong>Dominantni operater</strong>
-                                <p><em>Nacionalno pokriće, vlastita infrastruktura, pružaju sve usluge</em></p>
-                                <p>Veliki nacionalni operateri koji pružaju sve vrste telekomunikacionih usluga na nacionalnom nivou. Imaju vlastitu infrastrukturu i pokrivaju teritoriju BiH.</p>
-                                <small><strong>Primeri:</strong> BH Telecom, m:tel, HT Eronet</small>
+                                <h4>Prijava i sigurnost</h4>
+                                <p>Unesite korisnicko ime i lozinku, koristite opciju "Zapamti me" samo na sigurnim uredjajima. Nakon tri netacna pokusaja kontaktirajte administratora.</p>
                             </div>
                         </div>
-                        <div class="category-item">
-                            <span class="category-icon">�</span>
+                        <div class="help-step">
+                            <span class="help-step-number">2</span>
                             <div>
-                                <strong>Alternativni operater</strong>
-                                <p><em>Specijalizovani ili regionalni operateri, različite kombinacije usluga</em></p>
-                                <p>Operateri koji nude specijalizovane ili regionalne usluge. Mogu biti MVNO operateri (mobilne usluge bez vlastite mreže), ISP-ovi (internet provajderi), kablovski operateri ili poslovni (B2B) operateri.</p>
-                                <small><strong>Primeri:</strong> Telemach, LOGOSOFT, ONE, AKTON, Miss.Net</small>
+                                <h4>Dashboard i navigacija</h4>
+                                <p>Koristite gornji meni i breadcrumb navigaciju za brz pristup. Quick actions pruzaju preice ka najcescim zadacima.</p>
+                            </div>
+                        </div>
+                        <div class="help-step">
+                            <span class="help-step-number">3</span>
+                            <div>
+                                <h4>Pretraga operatera</h4>
+                                <p>U search bar unesite naziv, grad ili tehnologiju. Kombinujte filtre po statusu, kategoriji i tipu za precizne rezultate.</p>
+                            </div>
+                        </div>
+                        <div class="help-step">
+                            <span class="help-step-number">4</span>
+                            <div>
+                                <h4>Rad sa podacima</h4>
+                                <p>Dodajte, uredite ili pregledajte operatera kroz modal formu. Promjene se automatski sinhronizuju sa backend API-jem i lokalnim backupom.</p>
+                            </div>
+                        </div>
+                        <div class="help-step">
+                            <span class="help-step-number">5</span>
+                            <div>
+                                <h4>Izvjestavanje i export</h4>
+                                <p>Generisite CSV ili PDF izvjestaje, pratite logove aktivnosti i koristite notifikacije za zakonske rokove.</p>
                             </div>
                         </div>
                     </div>
                 </div>
-                
+
                 <div class="help-section">
-                    <h3>📱 Tipovi operatera</h3>
-                    <p>Prilikom dodavanja ili pregleda operatera, možete selektovati više tipova (ne odnosi se međusobno):</p>
-                    <ul>
-                        <li><strong>📱 Mobilni operater:</strong> Operator sa vlastom mobilnom infrastrukturom</li>
-                        <li><strong>📡 MVNO:</strong> Mobile Virtual Network Operator - koristi infrastrukturu drugih operatera</li>
-                        <li><strong>🌐 Internet servis provajder (ISP):</strong> Pruža internet usluge</li>
-                        <li><strong>📺 Kablovski operater:</strong> Televizijske i internet usluge + Internet)</li>
-                        <li><strong>💼 Enterprise/B2B:</strong> Poslovan operater specijalizovan za korporativne klijente (wholesale, nedefinisano)</li>
-                        <li><strong>⚙️ Ostali:</strong> Cloud, satelitske, wholesale, nedefinisano</li>
+                    <h3><i class="fas fa-tools"></i> Troubleshooting i preporuke</h3>
+                    <div class="help-troubleshooting-grid">
+                        <div class="help-troubleshooting-card">
+                            <h4><i class="fas fa-sign-in-alt"></i> Ne mogu se prijaviti</h4>
+                            <p>Provjerite kredencijale, resetujte lozinku preko "Zaboravili ste lozinku?" i kontaktirajte administratora agencije ako problem ostane.</p>
+                        </div>
+                        <div class="help-troubleshooting-card">
+                            <h4><i class="fas fa-search"></i> Nema rezultata pretrage</h4>
+                            <p>Prosirite kriterije, uklonite restriktivne filtere i pokusajte alternativne kljucne rijeci ili tip operatera.</p>
+                        </div>
+                        <div class="help-troubleshooting-card">
+                            <h4><i class="fas fa-tachometer-alt"></i> Sporo ucitavanje</h4>
+                            <p>Osvjezite stranicu, ocistite cache preglednika i provjerite internet konekciju. Ako se ponavlja, prijavite IT podrsci.</p>
+                        </div>
+                        <div class="help-troubleshooting-card">
+                            <h4><i class="fas fa-user-lock"></i> Pristup odbijen</h4>
+                            <p>Provjerite svoju rolu i dozvole. Za prosirenje pristupa obratite se administratoru ili super administratoru.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="help-section">
+                    <h3><i class="fas fa-shield-alt"></i> Sigurnosne smjernice</h3>
+                    <ul class="help-guidelines">
+                        <li>Redovno mijenjajte lozinku (najmanje svaka tri mjeseca) i odmah prijavite sumnjive aktivnosti.</li>
+                        <li>Koristite dvosmjernu autentifikaciju kada je dostupna i pratite aktivne sesije putem "Moj profil" sekcije.</li>
+                        <li>Ne dijelite podatke iz sistema izvan ovlastenih kanala; svi exporti se biljeze u sistemskim logovima.</li>
+                        <li>Za hitne situacije koristite prioritetne kontakte operatera i oznacite zahtjev kao urgentan.</li>
                     </ul>
                 </div>
-                
+
                 <div class="help-section">
-                    <h3>⚡ Kratke komande</h3>
-                    <ul>
-                        <li><kbd>Ctrl + F</kbd> - Fokus na search bar</li>
-                        <li><kbd>Escape</kbd> - Zatvoriti modal</li>
-                        <li><kbd>Enter</kbd> - Sačuvati formu</li>
-                    </ul>
+                    <h3><i class="fas fa-headset"></i> Podrska i resursi</h3>
+                    <div class="help-support-grid">
+                        <div class="help-support-card">
+                            <h4>Tehnicka podrska</h4>
+                            <ul>
+                                <li>Email: <a href="mailto:admin@atlas.ba">admin@atlas.ba</a></li>
+                                <li>Telefon: +387 33 123 456 (radnim danima 08:00-16:00)</li>
+                                <li>Vrijeme odziva: do 4 sata za hitne slucajeve</li>
+                            </ul>
+                        </div>
+                        <div class="help-support-card">
+                            <h4>Sigurnosni incidenti</h4>
+                            <ul>
+                                <li>Hitna linija: +387 33 987 654</li>
+                                <li>Email: <a href="mailto:security@atlas.ba">security@atlas.ba</a></li>
+                                <li>Odmah prijavite svaku sumnju na kompromitaciju</li>
+                            </ul>
+                        </div>
+                        <div class="help-support-card">
+                            <h4>Dodatni materijali</h4>
+                            <ul>
+                                <li>Online dokumentacija dostupna kroz "Pomoc" sekciju</li>
+                                <li>Redovni online treninzi za nove korisnike</li>
+                                <li>FAQ i brza referenca u biblioteci sistema</li>
+                            </ul>
+                        </div>
+                    </div>
                 </div>
-                
+
                 <div class="help-section">
-                    <h3>💾 Čuvanje podataka</h3>
-                    <p><strong>🔄 Nova arhitektura backend/frontend:</strong></p>
-                    <ul>
-                        <li><strong>Individualni fajlovi:</strong> Svaki operator se čuva u svom JSON fajlu (/operators/1.json, /operators/2.json, itd.)</li>
-                        <li><strong>API endpoint-i:</strong> Podaci se učitavaju preko REST API-ja na localhost:3001</li>
-                        <li><strong>Automatsko čuvanje:</strong> Sve izmene se automatski sinhronizuju sa backend-om</li>
-                        <li><strong>LocalStorage backup:</strong> Podaci se čuvaju lokalno kao offline fallback</li>
-                        <li><strong>Real-time sync:</strong> Dodavanje, editovanje i brisanje operatera se odmah reflektuje u API-ju</li>
+                    <h3><i class="fas fa-balance-scale"></i> Zakonski okvir</h3>
+                    <ul class="help-legal">
+                        <li>Zakon o telekomunikacijama Bosne i Hercegovine</li>
+                        <li>Zakon o policijskim agencijama i internim sigurnosnim protokolima</li>
+                        <li>GDPR principi zastite podataka i nacionalni propisi o privatnosti</li>
+                        <li>Sve informacije su povjerljive i namijenjene iskljucivo sluzbenoj upotrebi</li>
                     </ul>
-                    
-                    <h4>🔧 Reload dugme:</h4>
-                    <p>Reload dugme učitava najnovije podatke iz API-ja (individualni fajlovi), osiguravajući uvek ažurne informacije sa servera.</p>
-                </div>
-                
-                <div class="help-section">
-                    <h3>🆘 Podrška</h3>
-                    <p>Za dodatnu pomoć ili prijavljivanje grešaka, kontaktirajte ATLAS Development Team.</p>
                 </div>
             </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-primary" id="closeHelpModalBtn">Razumem</button>
+            <div class="modal-footer help-modal-footer">
+                <div class="help-footer-meta">
+                    <span><i class="fas fa-lock"></i> Povjerljivo - samo za ovlastene korisnike</span>
+                    <span>c 2025 ATLAS - Telekomunikacioni operateri BiH</span>
+                </div>
+                <button type="button" class="help-modal-action" id="closeHelpModalBtn">Zatvori</button>
             </div>
         </div>
     </div>
-
     <!-- Modal Overlay -->
     <div class="modal-overlay" id="modalOverlay"></div>
 
@@ -642,6 +726,9 @@
     <script type="module" src="app.js"></script>
 </body>
 </html>
+
+
+
 
 
 
