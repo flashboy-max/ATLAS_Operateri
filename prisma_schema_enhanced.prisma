@@ -1,0 +1,318 @@
+// filepath: prisma_schema_enhanced.prisma
+// Poboljšana verzija Prisma šeme sa kompletnim poljima iz operateri.json
+
+generator client {
+  provider = "prisma-client-js"
+  previewFeatures = ["fullTextSearch", "postgresqlExtensions"]
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ==================== AUTHENTICATION ====================
+
+model Agency {
+  id         BigInt   @id @default(autoincrement())
+  name       String   @unique @db.VarChar(200)
+  code       String   @unique @db.VarChar(50)
+  createdAt  DateTime @default(now()) @map("created_at")
+  updatedAt  DateTime @updatedAt @map("updated_at")
+
+  users      User[]
+  auditLogs  AuditLog[]
+
+  @@map("agency")
+}
+
+model Role {
+  id          BigInt   @id @default(autoincrement())
+  name        String   @unique @db.VarChar(100)
+  description String?  @db.Text
+
+  users       UserRole[]
+
+  @@map("role")
+}
+
+model User {
+  id          BigInt   @id @default(autoincrement())
+  agencyId    BigInt?  @map("agency_id")
+  username    String   @unique @db.VarChar(150)
+  passHash    String   @map("pass_hash") @db.Text
+  email       String?  @db.VarChar(255)
+  fullName    String?  @map("full_name") @db.VarChar(255)
+  isActive    Boolean  @default(true) @map("is_active")
+  mfaEnabled  Boolean  @default(false) @map("mfa_enabled")
+  mfaSecret   String?  @map("mfa_secret") @db.Text
+  lastLogin   DateTime? @map("last_login")
+  lastActivity DateTime? @map("last_activity")
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  agency      Agency?  @relation(fields: [agencyId], references: [id])
+  roles       UserRole[]
+  auditLogs   AuditLog[]
+  sessions    Session[]
+
+  @@index([agencyId])
+  @@index([username])
+  @@index([email])
+  @@map("app_user")
+}
+
+model UserRole {
+  userId  BigInt @map("user_id")
+  roleId  BigInt @map("role_id")
+
+  user    User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  role    Role   @relation(fields: [roleId], references: [id], onDelete: Cascade)
+
+  @@id([userId, roleId])
+  @@map("user_role")
+}
+
+model Session {
+  id            String   @id @default(uuid())
+  userId        BigInt   @map("user_id")
+  accessToken   String   @map("access_token") @db.Text
+  refreshToken  String   @map("refresh_token") @db.Text
+  ipAddress     String?  @map("ip_address") @db.Inet
+  userAgent     String?  @map("user_agent") @db.Text
+  expiresAt     DateTime @map("expires_at")
+  createdAt     DateTime @default(now()) @map("created_at")
+
+  user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([accessToken])
+  @@index([refreshToken])
+  @@index([expiresAt])
+  @@map("session")
+}
+
+// ==================== OPERATORS (ENHANCED) ====================
+
+model Operator {
+  id                   BigInt   @id @default(autoincrement())
+  
+  // Osnovni podaci (mapiranje iz operateri.json)
+  legalName            String   @unique @map("legal_name") @db.VarChar(200)      // "naziv"
+  commercialName       String?  @map("commercial_name") @db.VarChar(200)        // "komercijalni_naziv"
+  status               String   @default("aktivan") @db.VarChar(50)             // "status"
+  description          String?  @db.Text                                         // "opis"
+  notes                String?  @db.Text                                         // "napomena" - važno za policiju
+  
+  // Kontakt informacije (spakovano u JSONB za fleksibilnost)
+  contactInfo          Json?    @map("contact_info") @db.JsonB
+  // Struktura iz operateri.json:
+  // {
+  //   "adresa": "string",
+  //   "telefon": "string",
+  //   "email": "string",
+  //   "web": "string",
+  //   "customer_service": { "podrska": "string" },
+  //   "drustvene_mreze": { "facebook": "string", ... }
+  // }
+  
+  technicalContacts    Json?    @map("technical_contacts") @db.JsonB
+  // Struktura: [{ "ime": "string", "pozicija": "string", "email": "string", "telefon": "string", "tip_kontakta": "string" }]
+  
+  // Detaljne usluge (strukturirano po kategorijama)
+  services             Json?    @db.JsonB
+  // Struktura iz operateri.json:
+  // {
+  //   "mobilne": ["gsm", "3g", "4g", "5g", ...],
+  //   "fiksne": ["analog", "isdn", "voip", ...],
+  //   "internet": ["adsl", "vdsl", "ftth", ...],
+  //   "tv": ["iptv", "cable_tv", ...],
+  //   "cloud_poslovne": ["cloud_storage", "hosting", ...],
+  //   "dodatne": ["roaming", "m2m_iot", ...]
+  // }
+  
+  // Detaljne tehnologije (strukturirano po kategorijama)
+  technologies         Json?    @map("technologies") @db.JsonB
+  // Struktura iz operateri.json:
+  // {
+  //   "mobilne": ["tech_2g_gsm", "tech_3g_umts", "tech_4g_lte", "tech_5g_nr", ...],
+  //   "fiksne": ["tech_analog", "tech_isdn", "tech_voip_sip", ...],
+  //   "mrezne": ["tech_adsl", "tech_vdsl", "tech_ftth", "tech_ipv4", "tech_ipv6", ...]
+  // }
+  
+  // Zakonske obaveze (KRITIČNO za policiju)
+  legalObligations     Json?    @map("legal_obligations") @db.JsonB
+  // Struktura iz operateri.json:
+  // {
+  //   "zakonito_presretanje": "Da/Ne",
+  //   "zadrzavanje_podataka": "Da/Ne",
+  //   "period_zadrzavanja": "12 mjeseci",
+  //   "nivo_enkripcije": "AES-256",
+  //   "gdpr_uskladenost": "Da"
+  // }
+  
+  // Legacy polja (za backward compatibility sa starim API-jem)
+  apiBaseUrl           String?  @map("api_base_url") @db.Text
+  contactEmail         String?  @map("contact_email") @db.VarChar(255)
+  contactPhone         String?  @map("contact_phone") @db.VarChar(50)
+  
+  isActive             Boolean  @default(true) @map("is_active")
+  createdAt            DateTime @default(now()) @map("created_at")
+  updatedAt            DateTime @updatedAt @map("updated_at")
+
+  capabilities         OperatorCapability[]
+  endpoints            OperatorEndpoint[]
+
+  @@index([legalName])
+  @@index([commercialName])
+  @@index([status])
+  @@index([isActive])
+  
+  @@map("operator")
+}
+
+// Omogućava pretragu operatera po servisima (npr. "Koji operateri imaju 5G?")
+model OperatorCapability {
+  id          BigInt   @id @default(autoincrement())
+  operatorId  BigInt   @map("operator_id")
+  capability  String   @db.VarChar(100)
+
+  operator    Operator @relation(fields: [operatorId], references: [id], onDelete: Cascade)
+
+  @@unique([operatorId, capability])
+  @@index([capability])
+  @@map("operator_capability")
+}
+
+// API endpointi za komunikaciju sa operaterima (buduća integracija)
+model OperatorEndpoint {
+  id          BigInt   @id @default(autoincrement())
+  operatorId  BigInt   @map("operator_id")
+  name        String   @db.VarChar(100)
+  method      String   @db.VarChar(10)
+  path        String   @db.Text
+  version     String   @db.VarChar(20)
+  isActive    Boolean  @default(true) @map("is_active")
+
+  operator    Operator @relation(fields: [operatorId], references: [id], onDelete: Cascade)
+
+  @@unique([operatorId, name, version])
+  @@index([operatorId])
+  @@map("operator_endpoint")
+}
+
+// ==================== LEGAL BASIS ====================
+
+model LegalBasis {
+  id          BigInt   @id @default(autoincrement())
+  referenceNo String   @map("reference_no") @db.VarChar(200)
+  issuer      String?  @db.VarChar(200)
+  issuedAt    DateTime? @map("issued_at") @db.Date
+  description String?  @db.Text
+  createdAt   DateTime @default(now()) @map("created_at")
+
+  auditLogs   AuditLog[]
+
+  @@index([referenceNo])
+  @@map("legal_basis")
+}
+
+// ==================== AUDIT LOG (ENHANCED) ====================
+
+enum AuditAction {
+  LOGIN_SUCCESS
+  LOGIN_FAILURE
+  LOGOUT
+  TOKEN_REFRESH
+  SESSION_EXPIRED
+  USER_CREATE
+  USER_UPDATE
+  USER_DELETE
+  USER_STATUS_CHANGE
+  OPERATOR_CREATE
+  OPERATOR_UPDATE
+  OPERATOR_DELETE
+  OPERATOR_SEARCH      // Dodato: pretraga operatera
+  OPERATOR_VIEW        // Dodato: pregled operatera
+  SYSTEM_ERROR
+  SECURITY_ALERT
+  UNAUTHORIZED_ACCESS
+
+  @@map("audit_action")
+}
+
+enum AuditStatus {
+  SUCCESS
+  FAILED
+  ERROR
+  DENIED
+
+  @@map("audit_status")
+}
+
+model AuditLog {
+  id             BigInt       @id @default(autoincrement())
+  occurredAt     DateTime     @default(now()) @map("occurred_at")
+  actorUserId    BigInt?      @map("actor_user_id")
+  actorAgencyId  BigInt?      @map("actor_agency_id")
+  action         AuditAction
+  actionDisplay  String?      @map("action_display") @db.VarChar(255)
+  status         AuditStatus
+  targetType     String?      @map("target_type") @db.VarChar(50)
+  targetId       BigInt?      @map("target_id")
+  targetDisplay  String?      @map("target_display") @db.VarChar(255)
+  legalBasisId   BigInt?      @map("legal_basis_id")
+  
+  // Dodatni security/tracking podaci
+  ipAddress      String?      @map("ip_address") @db.Inet
+  userAgent      String?      @map("user_agent") @db.Text
+  sessionId      String?      @map("session_id") @db.VarChar(100)
+  
+  // Fleksibilni metadata (before/after za changes, reason za failures, itd.)
+  metadata       Json?        @db.JsonB
+  
+  // Hash chain za immutability (blockchain princip)
+  hashPrev       String?      @map("hash_prev") @db.VarChar(64)
+  hashCurrent    String?      @map("hash_current") @db.VarChar(64)
+
+  user           User?        @relation(fields: [actorUserId], references: [id])
+  agency         Agency?      @relation(fields: [actorAgencyId], references: [id])
+  legalBasis     LegalBasis?  @relation(fields: [legalBasisId], references: [id])
+
+  @@index([occurredAt(sort: Desc)])
+  @@index([actorUserId, occurredAt(sort: Desc)])
+  @@index([action, occurredAt(sort: Desc)])
+  @@index([targetType, targetId, occurredAt(sort: Desc)])
+  @@index([status, occurredAt(sort: Desc)])
+  @@index([ipAddress, occurredAt(sort: Desc)])
+  
+  @@map("audit_log")
+}
+
+// ==================== NAPOMENE ====================
+
+// 1. GIN Index za JSON pretragu (kreirati manuelno nakon migracije):
+//    CREATE INDEX idx_operator_services ON operator USING GIN (services);
+//    CREATE INDEX idx_operator_technologies ON operator USING GIN (technologies);
+//    CREATE INDEX idx_operator_legal_obligations ON operator USING GIN (legal_obligations);
+//    CREATE INDEX idx_audit_metadata ON audit_log USING GIN (metadata);
+
+// 2. Full-text search za operatere (opciono):
+//    ALTER TABLE operator ADD COLUMN search_vector tsvector;
+//    CREATE INDEX idx_operator_search ON operator USING GIN (search_vector);
+//    CREATE TRIGGER operator_search_update BEFORE INSERT OR UPDATE ON operator
+//      FOR EACH ROW EXECUTE FUNCTION 
+//      tsvector_update_trigger(search_vector, 'pg_catalog.simple', legal_name, commercial_name, description, notes);
+
+// 3. Particionisanje audit_log tabele po mjesecima (za velike količine):
+//    CREATE TABLE audit_log_2025_10 PARTITION OF audit_log
+//      FOR VALUES FROM ('2025-10-01') TO ('2025-11-01');
+//    CREATE TABLE audit_log_2025_11 PARTITION OF audit_log
+//      FOR VALUES FROM ('2025-11-01') TO ('2025-12-01');
+//    -- Automatizuj kreiranje particija sa pg_cron ili aplikativnom logikom
+
+// 4. CHECK constraints za validaciju (kreirati manuelno):
+//    ALTER TABLE operator ADD CONSTRAINT check_status 
+//      CHECK (status IN ('aktivan', 'neaktivan', 'u pripremi', 'zatvoren'));
+//    ALTER TABLE audit_log ADD CONSTRAINT check_hash_format 
+//      CHECK (hash_current ~ '^[a-f0-9]{64}$');

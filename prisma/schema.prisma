@@ -1,0 +1,407 @@
+// filepath: prisma/schema.prisma
+// AŽURIRANA VERZIJA - Kompletno mapiranje sa operateri.json
+// ✅ BEZ GUBITKA PODATAKA - SVE iz JSON-a se čuva u bazi
+
+generator client {
+  provider = "prisma-client-js"
+  previewFeatures = ["postgresqlExtensions"]
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ==================== AUTHENTICATION ====================
+
+model Agency {
+  id         BigInt   @id @default(autoincrement())
+  name       String   @unique @db.VarChar(200)
+  code       String   @unique @db.VarChar(50)
+  createdAt  DateTime @default(now()) @map("created_at")
+  updatedAt  DateTime @updatedAt @map("updated_at")
+
+  users      User[]
+  auditLogs  AuditLog[]
+
+  @@map("agency")
+}
+
+model Role {
+  id          BigInt   @id @default(autoincrement())
+  name        String   @unique @db.VarChar(100)
+  description String?  @db.Text
+
+  users       UserRole[]
+
+  @@map("role")
+}
+
+model User {
+  id          BigInt   @id @default(autoincrement())
+  agencyId    BigInt?  @map("agency_id")
+  username    String   @unique @db.VarChar(150)
+  passHash    String   @map("pass_hash") @db.Text
+  email       String?  @db.VarChar(255)
+  fullName    String?  @map("full_name") @db.VarChar(255)
+  isActive    Boolean  @default(true) @map("is_active")
+  mfaEnabled  Boolean  @default(false) @map("mfa_enabled")
+  mfaSecret   String?  @map("mfa_secret") @db.Text
+  lastLogin   DateTime? @map("last_login")
+  lastActivity DateTime? @map("last_activity")
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  agency      Agency?  @relation(fields: [agencyId], references: [id])
+  roles       UserRole[]
+  auditLogs   AuditLog[]
+  sessions    Session[]
+
+  @@index([agencyId])
+  @@index([username])
+  @@index([email])
+  @@map("app_user")
+}
+
+model UserRole {
+  userId  BigInt @map("user_id")
+  roleId  BigInt @map("role_id")
+
+  user    User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  role    Role   @relation(fields: [roleId], references: [id], onDelete: Cascade)
+
+  @@id([userId, roleId])
+  @@map("user_role")
+}
+
+model Session {
+  id            String   @id @default(uuid())
+  userId        BigInt   @map("user_id")
+  accessToken   String   @map("access_token") @db.Text
+  refreshToken  String   @map("refresh_token") @db.Text
+  ipAddress     String?  @map("ip_address") @db.Inet
+  userAgent     String?  @map("user_agent") @db.Text
+  expiresAt     DateTime @map("expires_at")
+  createdAt     DateTime @default(now()) @map("created_at")
+
+  user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([accessToken])
+  @@index([refreshToken])
+  @@index([expiresAt])
+  @@map("session")
+}
+
+// ==================== OPERATORS (COMPLETE MAPPING FROM operateri.json) ====================
+
+model Operator {
+  id                   BigInt   @id @default(autoincrement())
+  
+  // ===== OSNOVNI PODACI (direktno mapiranje iz operateri.json) =====
+  legalName            String   @unique @map("legal_name") @db.VarChar(200)      // "naziv"
+  commercialName       String?  @map("commercial_name") @db.VarChar(200)        // "komercijalni_naziv"
+  status               String   @default("aktivan") @db.VarChar(50)             // "status": "aktivan", "neaktivan"
+  description          String?  @db.Text                                         // "opis"
+  notes                String?  @db.Text                                         // "napomena" - VAŽNO za policiju
+  
+  // ===== KATEGORIJA I TIPOVI =====
+  category             String?  @db.VarChar(50)                                  // "kategorija": "dominantni", "alternativni"
+  operatorTypes        Json?    @map("operator_types") @db.JsonB                // "tipovi": ["mobilni", "isp", "kablovski", "enterprise"]
+  
+  // ===== KONTAKT INFORMACIJE (kompleksna struktura iz "kontakt") =====
+  contactInfo          Json?    @map("contact_info") @db.JsonB
+  // Struktura iz operateri.json "kontakt": 
+  // {
+  //   "adresa": "Obala Kulina bana 8, 71000 Sarajevo",
+  //   "telefon": "+387 33 000 900",
+  //   "email": "info@bhtelecom.ba",
+  //   "web": "https://www.bhtelecom.ba",
+  //   "customer_service": {
+  //     "privatni": "1500",
+  //     "poslovni": "+387 33 000 900",
+  //     "podrska": "0800 30 930",
+  //     "b2b": "+387 33 296 622"
+  //   },
+  //   "drustvene_mreze": {
+  //     "facebook": "https://www.facebook.com/BHTelecom/",
+  //     "instagram": "https://www.instagram.com/bhtelecom/",
+  //     "twitter": "https://twitter.com/BHTelecom",
+  //     "linkedin": "https://www.linkedin.com/company/bh-telecom/"
+  //   }
+  // }
+  
+  // ===== TEHNIČKI KONTAKTI (array iz "tehnicki_kontakti") =====
+  technicalContacts    Json?    @map("technical_contacts") @db.JsonB
+  // Struktura iz operateri.json "tehnicki_kontakti":
+  // [
+  //   {
+  //     "ime": "Nedim Fazlibegović",
+  //     "pozicija": "Šef službe za ZPT i saradnju sa sudovima, tužilaštvima, policijskim i sigurnosnim agencijama",
+  //     "email": "nedim.fazlibegovic@bhtelecom.ba",
+  //     "telefon": "+387 61 616 034",
+  //     "tip_kontakta": "bezbednost"  // ili "tehnicki"
+  //   }
+  // ]
+  
+  // ===== DETALJNE USLUGE (strukturirano po kategorijama iz "detaljne_usluge") =====
+  services             Json?    @db.JsonB
+  // Struktura iz operateri.json "detaljne_usluge":
+  // {
+  //   "mobilne": [
+  //     "mobile_prepaid",       // Prepaid paketi
+  //     "mobile_postpaid",      // Postpaid paketi
+  //     "mobile_esim",          // eSIM podrška
+  //     "mobile_volte_vowifi",  // VoLTE i VoWiFi
+  //     "mobile_roaming",       // Međunarodni roaming
+  //     "mobile_mnp"            // Mobile Number Portability
+  //   ],
+  //   "fiksne": [
+  //     "fixed_pstn",           // Analogna fiksna telefonija
+  //     "fixed_isdn",           // ISDN
+  //     "fixed_voip",           // VoIP fiksna
+  //     "voice_mail"            // Glasovna pošta
+  //   ],
+  //   "internet": [
+  //     "internet_ftth",              // Fiber to the Home
+  //     "internet_adsl_vdsl",         // xDSL tehnologije
+  //     "internet_mobile",            // Mobilni internet
+  //     "internet_fixed_wireless",    // Fixed wireless (WiFi)
+  //     "dedicated_internet",         // Dedicated/Leased lines
+  //     "data_transfer"               // Data transfer usluge
+  //   ],
+  //   "tv": [
+  //     "iptv",                 // IPTV
+  //     "cable_tv",             // Kablovska TV
+  //     "satellite_tv"          // Satelitska TV
+  //   ],
+  //   "cloud_poslovne": [
+  //     "cloud_hosting",        // Cloud hosting
+  //     "cloud_backup",         // Cloud backup
+  //     "data_center",          // Data center usluge
+  //     "office365",            // Office 365 / Microsoft 365
+  //     "colocation",           // Colocation usluge
+  //     "sms_gateway",          // SMS Gateway
+  //     "smart_city",           // Smart City rješenja
+  //     "smart_home",           // Smart Home rješenja
+  //     "digital_signature"     // Digitalni potpis
+  //   ],
+  //   "dodatne": [
+  //     "device_sales",         // Prodaja uređaja
+  //     "router_sales",         // Prodaja routera
+  //     "system_integration",   // Sistemska integracija
+  //     "roaming",              // Roaming (legacy)
+  //     "m2m_iot"               // M2M i IoT usluge
+  //   ]
+  // }
+  
+  // ===== DETALJNE TEHNOLOGIJE (strukturirano po kategorijama iz "detaljne_tehnologije") =====
+  technologies         Json?    @map("technologies") @db.JsonB
+  // Struktura iz operateri.json "detaljne_tehnologije":
+  // {
+  //   "mobilne": [
+  //     "tech_2g",              // 2G GSM
+  //     "tech_3g",              // 3G UMTS
+  //     "tech_4g",              // 4G LTE
+  //     "tech_5g_ready",        // 5G ready infrastruktura
+  //     "tech_5g_nr",           // 5G NR (New Radio)
+  //     "tech_volte",           // Voice over LTE
+  //     "tech_vowifi",          // Voice over WiFi
+  //     "tech_hlr_hss",         // HLR/HSS (Home Subscriber Server)
+  //     "tech_eir",             // Equipment Identity Register
+  //     "tech_smsc_mmsc"        // SMS/MMS centar
+  //   ],
+  //   "fiksne": [
+  //     "tech_pstn",            // PSTN (Analog)
+  //     "tech_isdn",            // ISDN
+  //     "tech_voip_fixed",      // VoIP fiksna
+  //     "tech_ims_fixed",       // IMS (IP Multimedia Subsystem)
+  //     "tech_sip",             // SIP protokol
+  //     "tech_analog"           // Analogna tehnologija
+  //   ],
+  //   "mrezne": [
+  //     "tech_ftth_fttb",       // Fiber to the Home/Building
+  //     "tech_xdsl",            // xDSL (ADSL, VDSL)
+  //     "tech_docsis",          // DOCSIS (Cable)
+  //     "tech_fixed_wireless",  // Fixed Wireless
+  //     "tech_ipv4",            // IPv4
+  //     "tech_ipv6",            // IPv6
+  //     "tech_cgnat",           // Carrier-Grade NAT
+  //     "tech_mpls",            // MPLS mreže
+  //     "tech_sdwan",           // SD-WAN
+  //     "tech_cdn",             // Content Delivery Network
+  //     "tech_data_center",     // Data Center infrastruktura
+  //     "tech_carrier_grade"    // Carrier-grade oprema
+  //   ]
+  // }
+  
+  // ===== ZAKONSKE OBAVEZE (KRITIČNO za policiju - iz "zakonske_obaveze") =====
+  legalObligations     Json?    @map("legal_obligations") @db.JsonB
+  // Struktura iz operateri.json "zakonske_obaveze":
+  // {
+  //   "zakonito_presretanje": true|false|"Da"|"Ne",
+  //   "implementacija": "Implementirano i dostupno - Vlastita medijacija",
+  //   "kontakt_osoba": "Nedim Fazlibegović",
+  //   "email_kontakt": "nedim.fazlibegovic@bhtelecom.ba",
+  //   "telefon_kontakt": "+387 61 616 034",
+  //   "posleduje_misljenje_zuo": "Da"|"Ne",
+  //   "pristup_obracunskim_podacima": true|false|"Da"|"Ne",
+  //   "napomene": "Kao dominantni operater, BH Telecom ima sve zakonske obaveze implementirane..."
+  // }
+  
+  // ===== DODATNE INFORMACIJE =====
+  lastUpdated          String?  @map("last_updated") @db.VarChar(20)           // "datum_azuriranja": "2025-09-08"
+  contactPerson        String?  @map("contact_person") @db.VarChar(200)       // "kontakt_osoba": "Nedim Fazlibegović - Šef službe"
+  
+  // ===== LEGACY POLJA (za backward compatibility) =====
+  apiBaseUrl           String?  @map("api_base_url") @db.Text
+  contactEmail         String?  @map("contact_email") @db.VarChar(255)
+  contactPhone         String?  @map("contact_phone") @db.VarChar(50)
+  
+  // ===== SYSTEM POLJA =====
+  isActive             Boolean  @default(true) @map("is_active")
+  createdAt            DateTime @default(now()) @map("created_at")
+  updatedAt            DateTime @updatedAt @map("updated_at")
+
+  capabilities         OperatorCapability[]
+  endpoints            OperatorEndpoint[]
+
+  @@index([legalName])
+  @@index([commercialName])
+  @@index([status])
+  @@index([category])
+  @@index([isActive])
+  
+  @@map("operator")
+}
+
+// Capability tabela - omogućava pretragu "Koji operateri imaju 5G?"
+model OperatorCapability {
+  id          BigInt   @id @default(autoincrement())
+  operatorId  BigInt   @map("operator_id")
+  capability  String   @db.VarChar(100)
+
+  operator    Operator @relation(fields: [operatorId], references: [id], onDelete: Cascade)
+
+  @@unique([operatorId, capability])
+  @@index([capability])
+  @@map("operator_capability")
+}
+
+// API endpointi za buduću integraciju sa operaterima
+model OperatorEndpoint {
+  id          BigInt   @id @default(autoincrement())
+  operatorId  BigInt   @map("operator_id")
+  name        String   @db.VarChar(100)
+  method      String   @db.VarChar(10)
+  path        String   @db.Text
+  version     String   @db.VarChar(20)
+  isActive    Boolean  @default(true) @map("is_active")
+
+  operator    Operator @relation(fields: [operatorId], references: [id], onDelete: Cascade)
+
+  @@unique([operatorId, name, version])
+  @@index([operatorId])
+  @@map("operator_endpoint")
+}
+
+// ==================== LEGAL BASIS ====================
+
+model LegalBasis {
+  id          BigInt   @id @default(autoincrement())
+  referenceNo String   @map("reference_no") @db.VarChar(200)
+  issuer      String?  @db.VarChar(200)
+  issuedAt    DateTime? @map("issued_at") @db.Date
+  description String?  @db.Text
+  createdAt   DateTime @default(now()) @map("created_at")
+
+  auditLogs   AuditLog[]
+
+  @@index([referenceNo])
+  @@map("legal_basis")
+}
+
+// ==================== AUDIT LOG ====================
+
+enum AuditAction {
+  LOGIN_SUCCESS
+  LOGIN_FAILURE
+  LOGOUT
+  TOKEN_REFRESH
+  SESSION_EXPIRED
+  USER_CREATE
+  USER_UPDATE
+  USER_DELETE
+  USER_STATUS_CHANGE
+  OPERATOR_CREATE
+  OPERATOR_UPDATE
+  OPERATOR_DELETE
+  OPERATOR_SEARCH
+  OPERATOR_VIEW
+  SYSTEM_ERROR
+  SECURITY_ALERT
+  UNAUTHORIZED_ACCESS
+
+  @@map("audit_action")
+}
+
+enum AuditStatus {
+  SUCCESS
+  FAILED
+  ERROR
+  DENIED
+
+  @@map("audit_status")
+}
+
+model AuditLog {
+  id             BigInt       @id @default(autoincrement())
+  occurredAt     DateTime     @default(now()) @map("occurred_at")
+  actorUserId    BigInt?      @map("actor_user_id")
+  actorAgencyId  BigInt?      @map("actor_agency_id")
+  action         AuditAction
+  actionDisplay  String?      @map("action_display") @db.VarChar(255)
+  status         AuditStatus
+  targetType     String?      @map("target_type") @db.VarChar(50)
+  targetId       BigInt?      @map("target_id")
+  targetDisplay  String?      @map("target_display") @db.VarChar(255)
+  legalBasisId   BigInt?      @map("legal_basis_id")
+  ipAddress      String?      @map("ip_address") @db.Inet
+  userAgent      String?      @map("user_agent") @db.Text
+  sessionId      String?      @map("session_id") @db.VarChar(100)
+  metadata       Json?        @db.JsonB
+  hashPrev       String?      @map("hash_prev") @db.VarChar(64)
+  hashCurrent    String?      @map("hash_current") @db.VarChar(64)
+
+  user           User?        @relation(fields: [actorUserId], references: [id])
+  agency         Agency?      @relation(fields: [actorAgencyId], references: [id])
+  legalBasis     LegalBasis?  @relation(fields: [legalBasisId], references: [id])
+
+  @@index([occurredAt(sort: Desc)])
+  @@index([actorUserId, occurredAt(sort: Desc)])
+  @@index([action, occurredAt(sort: Desc)])
+  @@index([targetType, targetId, occurredAt(sort: Desc)])
+  @@index([status, occurredAt(sort: Desc)])
+  @@index([ipAddress, occurredAt(sort: Desc)])
+  
+  @@map("audit_log")
+}
+
+// ==================== NAPOMENE I POST-MIGRATION KORACI ====================
+
+// 1. GIN indeksi za JSONB pretragu (kreirati NAKON migracije):
+//    psql -U atlas_user -d atlas_db -c "CREATE INDEX idx_operator_services ON operator USING GIN (services);"
+//    psql -U atlas_user -d atlas_db -c "CREATE INDEX idx_operator_technologies ON operator USING GIN (technologies);"
+//    psql -U atlas_user -d atlas_db -c "CREATE INDEX idx_operator_legal_obligations ON operator USING GIN (legal_obligations);"
+//    psql -U atlas_user -d atlas_db -c "CREATE INDEX idx_operator_contact_info ON operator USING GIN (contact_info);"
+//    psql -U atlas_user -d atlas_db -c "CREATE INDEX idx_audit_metadata ON audit_log USING GIN (metadata);"
+
+// 2. CHECK constraints za validaciju (kreirati NAKON migracije):
+//    Pokreni: psql -U atlas_user -d atlas_db -f scripts/add-check-constraints.sql
+
+// 3. Full-text search (opciono):
+//    ALTER TABLE operator ADD COLUMN search_vector tsvector;
+//    CREATE INDEX idx_operator_search ON operator USING GIN (search_vector);
+
+// 4. Particionisanje audit_log tabele (za production):
+//    Implementirati mjesečno particionisanje u Q1 2026
