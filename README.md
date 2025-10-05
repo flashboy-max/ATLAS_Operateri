@@ -1,4 +1,4 @@
-# 🏛️ ATLA## 📋 Sadržaj
+# 🏛️ ATLAS 📋 Sadržaj
 
 - [Pregled](#-pregled)
 - [Ključne funkcionalnosti](#-ključne-funkcionalnosti)
@@ -107,7 +107,7 @@ cd ATLAS_Operateri
 npm install
 npm run server
 # Open http://localhost:3000
-# Login: super.admin / super123
+# Use default credentials from auth-users.json
 ```
 
 📖 **Detaljnije**: [QUICK_START.md](QUICK_START.md)
@@ -189,17 +189,12 @@ Aplikacija će biti dostupna na: **http://localhost:3000**
 
 ### Default kredencijali
 
-**SUPERADMIN**
-- Username: `super.admin`
-- Password: ``
+Default korisnici i lozinke se nalaze u `data/auth-users.json` fajlu.
 
-**ADMIN**
-- Username: `admin.user`
-- Password: ``
-
-**KORISNIK**
-- Username: `test.korisnik`
-- Password: ``
+Dostupne role:
+- **SUPERADMIN** - Puni pristup svim funkcijama
+- **ADMIN** - Upravljanje svojom agencijom
+- **KORISNIK** - Pristup operaterima i svom profilu
 
 > ⚠️ **VAŽNO**: Promijenite default lozinke nakon prvog logovanja!
 5. Open Pull Request (PR)

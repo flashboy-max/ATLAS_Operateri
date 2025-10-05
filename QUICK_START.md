@@ -19,7 +19,7 @@ npm run server
 # http://localhost:3000
 ```
 
-**Login**: `super.admin` / `super123`
+**Default login kredencijali se nalaze u `data/auth-users.json`**
 
 ---
 
@@ -84,11 +84,12 @@ Otvori browser i idi na `http://localhost:3000`
 
 **Default korisnici:**
 
-| Role | Username | Password | Opis |
-|------|----------|----------|------|
-| SUPERADMIN | `super.admin` | `super123` | Puni pristup |
-| ADMIN | `admin.user` | `admin123` | Agencijska admin |
-| KORISNIK | `test.korisnik` | `test123` | Osnovni pristup |
+Default kredencijali (username i password) se nalaze u `data/auth-users.json` fajlu.
+
+Dostupne role:
+- **SUPERADMIN** - Puni pristup svim funkcijama
+- **ADMIN** - Upravljanje svojom agencijom  
+- **KORISNIK** - Pristup operaterima i svom profilu
 
 > ⚠️ **VAŽNO**: Nakon prvog logovanja, promijeni lozinku u postavkama!
 

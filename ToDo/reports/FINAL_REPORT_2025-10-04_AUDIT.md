@@ -184,7 +184,7 @@ data/
 
 ### **Test 2: Login Audit**
 1. Otvori `http://localhost:3001`
-2. Uloguj se (npr. `admin` / `admin123`)
+2. Uloguj se sa default kredencijalima
 3. Idi u **System Logs** (Dashboard → Sistemski logovi)
 4. Traži: "se prijavio u sistem"
 5. ✅ **Očekivano:** Vidiš svoj login event

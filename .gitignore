@@ -92,6 +92,7 @@ coverage/
 # ============ Documentation Build ============
 docs/_build/
 site/
+docs/auth-prototype/
 
 # ============ Optional Ignore ============
 # Uncomment if needed
