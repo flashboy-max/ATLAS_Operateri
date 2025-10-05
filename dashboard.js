@@ -280,7 +280,7 @@ class Dashboard {
                 const data = await response.json();
                 const rawLogs = Array.isArray(data?.logs) ? data.logs : (Array.isArray(data) ? data : []);
 
-                const recentLogs = [...rawLogs]
+                const recentLogs = rawLogs
                     .sort((a, b) => {
                         const dateB = new Date(b.timestamp_iso || b.timestamp || 0);
                         const dateA = new Date(a.timestamp_iso || a.timestamp || 0);
@@ -292,8 +292,20 @@ class Dashboard {
                     const actionCode = (log.action || log.category || log.type || 'SYSTEM').toString().toUpperCase();
                     const icon = this.getActivityIcon(actionCode);
                     const actor = log.user_name || log.username || 'Nepoznat korisnik';
-                    const actionText = log.action_display || log.message || actionCode;
-                    const targetText = log.target ? ` — ${log.target}` : '';
+                    
+                    // 🔍 Unificiraj action_display - ukloni tehničke detalje
+                    let actionText = log.action_display || log.message || actionCode;
+                    if (actionText.includes('/api/') || actionText.includes('GET ') || actionText.includes('POST ')) {
+                        actionText = this.unifyActionDisplay(actionText, actionCode);
+                    }
+                    
+                    // 🔍 Unificiraj target - ukloni tehničke linkove
+                    let target = log.target || '';
+                    if (target.includes('/api/') || target.includes('GET ') || target.includes('POST ')) {
+                        target = this.unifyApiTarget(target, actionCode);
+                    }
+                    
+                    const targetText = target ? ` — ${target}` : '';
 
                     return {
                         icon: icon.icon,
@@ -312,6 +324,104 @@ class Dashboard {
         }
     }
 
+    /**
+     * Unificiraj tehnički API target u čitljiv format
+     */
+    unifyApiTarget(target, action) {
+        // Ukloni HTTP metode i query parametre
+        target = target.replace(/^(GET|POST|PUT|DELETE|PATCH)\s+/i, '');
+        target = target.replace(/\?.*$/, ''); // Ukloni ?v=123456
+        
+        // Mapiranje API endpointa u čitljive nazive
+        const apiMappings = {
+            '/api/auth/session': 'Sesija',
+            '/api/auth/login': 'Prijava',
+            '/api/auth/logout': 'Odjava',
+            '/api/auth/users': 'Korisnici',
+            '/api/system/logs': 'Sistemski logovi',
+            '/api/operator': 'Operateri',
+            '/api/save-operator': 'Čuvanje operatera',
+        };
+
+        // Provjeri direktno mapiranje
+        for (const [endpoint, label] of Object.entries(apiMappings)) {
+            if (target.includes(endpoint)) {
+                return label;
+            }
+        }
+
+        // Ako je /api/operator/123, izvuci ID
+        const operatorMatch = target.match(/\/api\/operator\/(\d+)/);
+        if (operatorMatch) {
+            return `Operater #${operatorMatch[1]}`;
+        }
+
+        // Fallback - ukloni /api/ prefix
+        if (target.startsWith('/api/')) {
+            target = target.replace('/api/', '').replace(/\//g, ' › ');
+        }
+
+        // Ako je još uvijek URL, prikaži kao "Sistemski dogadjaj"
+        if (target.startsWith('/') || target.startsWith('http')) {
+            return 'Sistemski dogadjaj';
+        }
+
+        return target;
+    }
+
+    /**
+     * Unificiraj action display u čitljiv format
+     */
+    unifyActionDisplay(actionDisplay, action) {
+        // Ako već ima format "Korisnik X kreirao...", ostavi ga
+        if (actionDisplay.includes('kreirao') || 
+            actionDisplay.includes('ažurirao') || 
+            actionDisplay.includes('obrisao') ||
+            actionDisplay.includes('prijavio') ||
+            actionDisplay.includes('odjavio')) {
+            return actionDisplay;
+        }
+
+        // Ukloni HTTP metode i query parametre
+        actionDisplay = actionDisplay.replace(/^(GET|POST|PUT|DELETE|PATCH)\s+/i, '');
+        actionDisplay = actionDisplay.replace(/\?.*$/, '');
+
+        // Mapiranje API poziva u čitljive akcije
+        const actionMappings = {
+            '/api/auth/session': 'Provjera sesije',
+            '/api/auth/login': 'Prijava u sistem',
+            '/api/auth/logout': 'Odjava iz sistema',
+            '/api/auth/users': 'Pregled korisnika',
+            '/api/system/logs': 'Pregled logova',
+            '/api/operator': 'Rad sa operaterima',
+            '/api/save-operator': 'Čuvanje operatera',
+            '/.well-known': 'Browser DevTools',
+        };
+
+        // Provjeri direktno mapiranje
+        for (const [endpoint, label] of Object.entries(actionMappings)) {
+            if (actionDisplay.includes(endpoint)) {
+                return label;
+            }
+        }
+
+        // Ako je /api/operator/123, to je pregled operatera
+        if (actionDisplay.match(/\/api\/operator\/\d+/)) {
+            return 'Pregled operatera';
+        }
+
+        // Fallback na action type
+        const actionLabels = {
+            'LOGIN': 'Prijava',
+            'LOGOUT': 'Odjava',
+            'REQUEST': 'HTTP zahtjev',
+            'SYSTEM': 'Sistemski dogadjaj',
+            'SECURITY': 'Sigurnosni dogadjaj',
+        };
+
+        return actionLabels[action] || 'Sistemski dogadjaj';
+    }
+
     getActivityIcon(action) {
         const icons = {
             'LOGIN': { icon: 'fas fa-sign-in-alt', class: 'icon-success' },
@@ -320,10 +430,16 @@ class Dashboard {
             'UPDATE_USER': { icon: 'fas fa-user-edit', class: 'icon-warning' },
             'DELETE_USER': { icon: 'fas fa-user-minus', class: 'icon-danger' },
             'CREATE_OPERATOR': { icon: 'fas fa-plus-circle', class: 'icon-primary' },
+            'OPERATOR_CREATE': { icon: 'fas fa-plus-circle', class: 'icon-primary' },
             'UPDATE_OPERATOR': { icon: 'fas fa-edit', class: 'icon-warning' },
+            'OPERATOR_UPDATE': { icon: 'fas fa-edit', class: 'icon-warning' },
             'DELETE_OPERATOR': { icon: 'fas fa-trash-alt', class: 'icon-danger' },
+            'OPERATOR_DELETE': { icon: 'fas fa-trash-alt', class: 'icon-danger' },
             'SEARCH': { icon: 'fas fa-search', class: 'icon-info' },
-            'EXPORT': { icon: 'fas fa-file-export', class: 'icon-success' }
+            'EXPORT': { icon: 'fas fa-file-export', class: 'icon-success' },
+            'REQUEST': { icon: 'fas fa-globe', class: '' },
+            'SYSTEM': { icon: 'fas fa-cog', class: '' },
+            'SECURITY': { icon: 'fas fa-shield-alt', class: 'icon-danger' }
         };
         return icons[action] || { icon: 'fas fa-info-circle', class: '' };
     }

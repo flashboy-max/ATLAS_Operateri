@@ -89,15 +89,29 @@ class SystemLogs {
         const status = (raw.status || (raw.type === 'error' ? 'FAILED' : 'SUCCESS')).toString().toUpperCase();
         const userName = raw.user_name || raw.username || 'Nepoznat korisnik';
         const userRole = raw.user_role || raw.role || 'SYSTEM';
-        const target = raw.target || raw.message || '';
+        
+        // 🔍 Unificiraj target - ukloni tehničke linkove
+        let target = raw.target || raw.message || '';
+        
+        // Ako je target URL (GET /api/...), unify ga
+        if (target.includes('/api/') || target.includes('GET ') || target.includes('POST ')) {
+            target = this.unifyApiTarget(target, action);
+        }
+        
         const ipAddress = raw.ip_address || raw.ip || 'unknown';
+
+        // 🔍 Unificiraj action_display - ukloni tehničke detalje
+        let actionDisplay = raw.action_display || raw.message || action;
+        if (actionDisplay.includes('/api/') || actionDisplay.includes('GET ') || actionDisplay.includes('POST ')) {
+            actionDisplay = this.unifyActionDisplay(actionDisplay, action);
+        }
 
         return {
             ...raw,
             timestamp: displayTimestamp,
             timestamp_iso: timestampIso,
             action,
-            action_display: raw.action_display || raw.message || action,
+            action_display: actionDisplay,
             status,
             user_name: userName,
             user_role: userRole,
@@ -110,6 +124,144 @@ class SystemLogs {
         };
     }
 
+    /**
+     * Deduplikacija logova - grupiši iste akcije u vremenskom periodu
+     * Npr. 10x "Pregled operatera" u roku od 5 sekundi → 1 log entry
+     */
+    deduplicateLogs(logs) {
+        if (logs.length === 0) return logs;
+
+        const deduplicated = [];
+        const seen = new Map();
+
+        for (const log of logs) {
+            // Kreiraj unique key: user + action + target (bez vremena)
+            const key = `${log.user_id}_${log.action}_${log.target}`;
+            
+            // Ako smo već vidjeli ovaj key u zadnjih 30 sekundi, skip
+            if (seen.has(key)) {
+                const prevLog = seen.get(key);
+                const timeDiff = Math.abs(new Date(log.timestamp_iso) - new Date(prevLog.timestamp_iso));
+                
+                // Ako je razlika manja od 30 sekundi, ažuriraj sa novijim
+                if (timeDiff < 30000) {
+                    // Zamijeni stari sa novim (noviji timestamp)
+                    const index = deduplicated.indexOf(prevLog);
+                    if (index > -1 && new Date(log.timestamp_iso) > new Date(prevLog.timestamp_iso)) {
+                        deduplicated[index] = log;
+                        seen.set(key, log);
+                    }
+                    continue; // Skip ovaj log
+                }
+            }
+            
+            // Dodaj novi log
+            deduplicated.push(log);
+            seen.set(key, log);
+        }
+
+        console.log(`📊 Deduplicated: ${logs.length} → ${deduplicated.length} logs`);
+        return deduplicated;
+    }
+
+    /**
+     * Unificiraj tehnički API target u čitljiv format
+     */
+    unifyApiTarget(target, action) {
+        // Ukloni HTTP metode i query parametre
+        target = target.replace(/^(GET|POST|PUT|DELETE|PATCH)\s+/i, '');
+        target = target.replace(/\?.*$/, ''); // Ukloni ?v=123456
+        
+        // Mapiranje API endpointa u čitljive nazive
+        const apiMappings = {
+            '/api/auth/session': 'Sesija',
+            '/api/auth/login': 'Prijava',
+            '/api/auth/logout': 'Odjava',
+            '/api/auth/users': 'Korisnici',
+            '/api/system/logs': 'Sistemski logovi',
+            '/api/operator': 'Operateri',
+            '/api/save-operator': 'Čuvanje operatera',
+        };
+
+        // Provjeri direktno mapiranje
+        for (const [endpoint, label] of Object.entries(apiMappings)) {
+            if (target.includes(endpoint)) {
+                return label;
+            }
+        }
+
+        // Ako je /api/operator/123, izvuci ID
+        const operatorMatch = target.match(/\/api\/operator\/(\d+)/);
+        if (operatorMatch) {
+            return `Operater #${operatorMatch[1]}`;
+        }
+
+        // Fallback - ukloni /api/ prefix
+        if (target.startsWith('/api/')) {
+            target = target.replace('/api/', '').replace(/\//g, ' › ');
+        }
+
+        // Ako je još uvijek URL, prikaži kao "Sistemski dogadjaj"
+        if (target.startsWith('/') || target.startsWith('http')) {
+            return 'Sistemski dogadjaj';
+        }
+
+        return target;
+    }
+
+    /**
+     * Unificiraj action display u čitljiv format
+     */
+    unifyActionDisplay(actionDisplay, action) {
+        // Ako već ima format "Korisnik X kreirao...", ostavi ga
+        if (actionDisplay.includes('kreirao') || 
+            actionDisplay.includes('ažurirao') || 
+            actionDisplay.includes('obrisao') ||
+            actionDisplay.includes('prijavio') ||
+            actionDisplay.includes('odjavio')) {
+            return actionDisplay;
+        }
+
+        // Ukloni HTTP metode i query parametre
+        actionDisplay = actionDisplay.replace(/^(GET|POST|PUT|DELETE|PATCH)\s+/i, '');
+        actionDisplay = actionDisplay.replace(/\?.*$/, '');
+
+        // Mapiranje API poziva u čitljive akcije
+        const actionMappings = {
+            '/api/auth/session': 'Provjera sesije',
+            '/api/auth/login': 'Prijava u sistem',
+            '/api/auth/logout': 'Odjava iz sistema',
+            '/api/auth/users': 'Pregled korisnika',
+            '/api/system/logs': 'Pregled logova',
+            '/api/operator': 'Rad sa operaterima',
+            '/api/save-operator': 'Čuvanje operatera',
+            '/.well-known': 'Browser DevTools',
+        };
+
+        // Provjeri direktno mapiranje
+        for (const [endpoint, label] of Object.entries(actionMappings)) {
+            if (actionDisplay.includes(endpoint)) {
+                return label;
+            }
+        }
+
+        // Ako je /api/operator/123, to je pregled operatera
+        if (actionDisplay.match(/\/api\/operator\/\d+/)) {
+            return 'Pregled operatera';
+        }
+
+        // Fallback na action type
+        const actionLabels = {
+            'LOGIN': 'Prijava',
+            'LOGOUT': 'Odjava',
+            'REQUEST': 'HTTP zahtjev',
+            'SYSTEM': 'Sistemski dogadjaj',
+            'SECURITY': 'Sigurnosni dogadjaj',
+        };
+
+        return actionLabels[action] || 'Sistemski dogadjaj';
+    }
+
     async loadLogs() {
         this.isLoading = true;
         
@@ -118,7 +270,7 @@ class SystemLogs {
                 ? AuthSystem.getToken()
                 : null;
             const headers = token ? { 'Authorization': `Bearer ${token}` } : {};
-            const response = await fetch('/api/system/logs?limit=100', {
+            const response = await fetch('/api/system/logs?limit=300', {
                 headers
             });
 
@@ -138,6 +290,10 @@ class SystemLogs {
                 
                 console.log('📊 Raw logs count:', rawLogs.length);
                 this.allLogs = rawLogs.map(log => this.normalizeLog(log)).filter(Boolean);
+                
+                // 🔍 Grupiši iste akcije (npr. 10x GET /api/operator/25 → 1 entry)
+                this.allLogs = this.deduplicateLogs(this.allLogs);
+                
                 this.filteredLogs = [...this.allLogs];
                 this.totalLogs = data.total ?? this.allLogs.length;
                 console.log('📊 Processed logs count:', this.allLogs.length);
@@ -459,10 +615,16 @@ class SystemLogs {
             'UPDATE_USER': { icon: 'fas fa-user-edit', class: 'update' },
             'DELETE_USER': { icon: 'fas fa-user-minus', class: 'delete' },
             'CREATE_OPERATOR': { icon: 'fas fa-plus-circle', class: 'create' },
+            'OPERATOR_CREATE': { icon: 'fas fa-plus-circle', class: 'create' },
             'UPDATE_OPERATOR': { icon: 'fas fa-edit', class: 'update' },
+            'OPERATOR_UPDATE': { icon: 'fas fa-edit', class: 'update' },
             'DELETE_OPERATOR': { icon: 'fas fa-trash-alt', class: 'delete' },
+            'OPERATOR_DELETE': { icon: 'fas fa-trash-alt', class: 'delete' },
             'SEARCH': { icon: 'fas fa-search', class: 'search' },
-            'EXPORT': { icon: 'fas fa-file-export', class: 'export' }
+            'EXPORT': { icon: 'fas fa-file-export', class: 'export' },
+            'REQUEST': { icon: 'fas fa-globe', class: 'info' },
+            'SYSTEM': { icon: 'fas fa-cog', class: 'info' },
+            'SECURITY': { icon: 'fas fa-shield-alt', class: 'security' }
         };
         return icons[action] || { icon: 'fas fa-info-circle', class: 'info' };
     }

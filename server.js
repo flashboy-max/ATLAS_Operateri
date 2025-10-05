@@ -771,6 +771,57 @@ app.get('/api/system/logs', authenticateToken, requireRoles('SUPERADMIN', 'ADMIN
     }
 });
 
+// Audit log endpoint - Prihvata log entry sa frontenda
+app.post('/api/audit/log', authenticateToken, async (req, res) => {
+    try {
+        const { authUser } = req;
+        const logData = req.body;
+
+        // Validacija
+        if (!logData.action || !logData.action_display) {
+            return res.status(400).json({ error: 'Invalid log data' });
+        }
+
+        // Osiguraj da user_id odgovara autentifikovanom korisniku
+        logData.userId = authUser.id;
+        logData.user_id = authUser.id;
+        logData.user_name = `${authUser.ime} ${authUser.prezime}`;
+        logData.user_role = authUser.role;
+        logData.ip_address = req.ip || 'unknown';
+        logData.user_agent = req.headers['user-agent'] || 'unknown';
+
+        // Zapisi u log fajl
+        Logger.log(
+            logData.action,
+            logData.action_display,
+            authUser.id,
+            {
+                action: logData.action,
+                action_display: logData.action_display,
+                status: logData.status || 'SUCCESS',
+                target: logData.target,
+                target_id: logData.target_id,
+                session_id: logData.session_id,
+                metadata: logData.metadata || {},
+                user_agency: authUser.agencija_naziv
+            }
+        );
+
+        return res.json({ 
+            success: true, 
+            message: 'Log recorded',
+            timestamp: new Date().toISOString()
+        });
+    } catch (error) {
+        console.error('Audit log error:', error);
+        Logger.log(Logger.logTypes.ERROR, `Failed to record audit log: ${error.message}`, req.authUser?.id, {
+            error: error.stack,
+            ip: req.ip
+        });
+        return res.status(500).json({ error: 'Failed to record audit log' });
+    }
+});
+
 // ----------------------------
 // Operator routes (existing)
 // ----------------------------

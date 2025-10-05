@@ -292,6 +292,14 @@ class AuthSystem {
         }
 
         this.persistSession(data.user, data.token, rememberMe);
+
+        // 🔍 AUDIT LOG: Uspješna prijava
+        if (typeof AuditLogger !== 'undefined') {
+            await AuditLogger.logLogin(username).catch(err => 
+                console.warn('Audit log failed:', err)
+            );
+        }
+
         return { user: data.user, token: data.token };
     }
 
@@ -314,6 +322,14 @@ class AuthSystem {
 
     static async logout({ redirect = true } = {}) {
         const token = this.getToken();
+
+        // 🔍 AUDIT LOG: Odjava prije clearSession
+        if (typeof AuditLogger !== 'undefined') {
+            await AuditLogger.logLogout().catch(err => 
+                console.warn('Audit log failed:', err)
+            );
+        }
+
         this.clearSession();
 
         if (token) {

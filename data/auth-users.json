@@ -13,7 +13,7 @@
       "agencija_naziv": "Sistem administrator",
       "aktivan": true,
       "kreiran": "2025-01-15",
-      "poslednje_logovanje": "2025-10-04T08:25:15.293Z",
+      "poslednje_logovanje": "2025-10-05T17:44:22.281Z",
       "created_by": null,
       "azuriran": "2025-10-04T08:34:54.618Z"
     },
@@ -29,7 +29,7 @@
       "agencija_naziv": "Ministarstvo unutrasnjih poslova Kantona Sarajevo (MUP KS)",
       "aktivan": true,
       "kreiran": "2025-02-10",
-      "poslednje_logovanje": "2025-10-04T00:07:34.387Z",
+      "poslednje_logovanje": "2025-10-04T12:27:31.518Z",
       "created_by": 1
     },
     {
@@ -44,7 +44,7 @@
       "agencija_naziv": "Ministarstvo unutrasnjih poslova Kantona Sarajevo (MUP KS)",
       "aktivan": true,
       "kreiran": "2025-03-05",
-      "poslednje_logovanje": "2025-10-04T00:07:24.910Z",
+      "poslednje_logovanje": "2025-10-04T12:27:25.866Z",
       "created_by": 2
     },
     {

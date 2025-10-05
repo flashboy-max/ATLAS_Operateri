@@ -1,7 +1,7 @@
 {
   "name": "atlas-operateri",
-  "version": "1.5.0",
-  "description": "ATLAS Telekomunikacioni Operateri BiH - Standard Catalog",
+  "version": "3.0.0",
+  "description": "ATLAS - Automatizovani Telekomunikacioni Listing Agencijski Sistem | Full-stack web aplikacija za upravljanje operaterima u BiH",
   "main": "app.js",
   "type": "module",
   "scripts": {

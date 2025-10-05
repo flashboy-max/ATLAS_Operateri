@@ -2150,6 +2150,13 @@ class ATLASApp {
         
         // Try to save to API (don't wait for result)
         this.saveOperatorToAPI(newOperator);
+
+        // 🔍 AUDIT LOG: Kreiranje operatera
+        if (typeof AuditLogger !== 'undefined') {
+            AuditLogger.logOperatorAction('create', newOperator).catch(err => 
+                console.warn('Audit log failed:', err)
+            );
+        }
         
         this.renderOperators();
         this.updateStatistics();
@@ -2169,6 +2176,13 @@ class ATLASApp {
             
             // Try to save to API (don't wait for result)
             this.saveOperatorToAPI(this.operators[index]);
+
+            // 🔍 AUDIT LOG: Ažuriranje operatera
+            if (typeof AuditLogger !== 'undefined') {
+                AuditLogger.logOperatorAction('update', this.operators[index]).catch(err => 
+                    console.warn('Audit log failed:', err)
+                );
+            }
             
             this.renderOperators();
             this.updateStatistics();
@@ -2730,6 +2744,13 @@ class ATLASApp {
             
             // Try to delete from API (don't wait for result)
             this.deleteOperatorFromAPI(id);
+
+            // 🔍 AUDIT LOG: Brisanje operatera
+            if (typeof AuditLogger !== 'undefined') {
+                AuditLogger.logOperatorAction('delete', operator).catch(err => 
+                    console.warn('Audit log failed:', err)
+                );
+            }
             
             // Update UI
             this.renderOperators();
