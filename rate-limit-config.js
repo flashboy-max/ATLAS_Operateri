@@ -9,10 +9,10 @@ import rateLimit from 'express-rate-limit';
 // 1. Global Rate Limiter
 // ==========================================
 // Applies to all requests
-// Limit: 100 requests per 15 minutes per IP
+// Limit: 10000 requests per 15 minutes per IP (VERY generous for testing/development)
 export const globalLimiter = rateLimit({
     windowMs: 15 * 60 * 1000, // 15 minuta
-    max: 100, // 100 zahtjeva
+    max: 10000, // 10000 zahtjeva (za testiranje)
     standardHeaders: true,
     legacyHeaders: false,
     message: {
@@ -49,10 +49,10 @@ export const loginLimiter = rateLimit({
 // 3. API Rate Limiter (Per-User)
 // ==========================================
 // Protects API endpoints from abuse
-// Limit: 60 requests per minute per authenticated user (increased for development)
+// Limit: 1000 requests per minute per authenticated user (VERY generous for testing)
 export const apiLimiter = rateLimit({
     windowMs: 1 * 60 * 1000, // 1 minuta
-    max: 60, // 60 zahtjeva po minuti
+    max: 1000, // 1000 zahtjeva po minuti (za testiranje)
     standardHeaders: true,
     legacyHeaders: false,
     message: {

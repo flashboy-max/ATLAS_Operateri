@@ -84,7 +84,7 @@ class AuthSystem {
             });
             const data = await response.json();
             this.csrfToken = data.csrfToken;
-            console.log('✅ CSRF token fetched');
+            console.log('✅ CSRF token fetched:', this.csrfToken);
         } catch (error) {
             console.error('Failed to fetch CSRF token:', error);
         }
@@ -669,15 +669,19 @@ class AuthSystem {
             requestBody.mfa_token = mfaToken;
         }
 
+        // Get CSRF token from the global instance
+        const csrfToken = window.authSystem?.csrfToken;
+        console.log('🔍 Sending login with CSRF token:', csrfToken);
         const response = await fetch('/api/auth/login', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
-                'CSRF-Token': this.csrfToken
+                'csrf-token': csrfToken
             },
             credentials: 'include', // Include httpOnly cookies
             body: JSON.stringify(requestBody)
         });
+        console.log('🔍 Login response status:', response.status);
 
         if (!response.ok) {
             const error = await response.json().catch(() => ({}));
@@ -858,7 +862,7 @@ class AuthSystem {
         
         // Include CSRF token if available
         if (window.authSystem?.csrfToken) {
-            headers['CSRF-Token'] = window.authSystem.csrfToken;
+            headers['csrf-token'] = window.authSystem.csrfToken;
         }
         
         return headers;

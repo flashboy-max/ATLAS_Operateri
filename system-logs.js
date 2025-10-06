@@ -431,7 +431,14 @@ class SystemLogs {
 
     populateUserFilter() {
         const filterUser = document.getElementById('filterUser');
-        const uniqueUsers = [...new Set(this.allLogs.map(l => l.user_name))];
+        const uniqueUsers = [...new Set(this.allLogs.map(l => l.user_name))]
+            .filter(userName => {
+                // Filter out invalid user names
+                if (!userName || userName.trim() === '') return false;
+                if (userName === 'undefined undefined') return false;
+                if (userName.includes('undefined')) return false;
+                return true;
+            });
         
         uniqueUsers.sort().forEach(userName => {
             const option = document.createElement('option');

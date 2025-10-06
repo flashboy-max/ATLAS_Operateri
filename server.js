@@ -77,6 +77,27 @@ if (!fs.existsSync(logsDir)) {
     fs.mkdirSync(logsDir, { recursive: true });
 }
 
+// Helper function to format user name safely
+function formatUserName(user) {
+    if (!user) return 'Sistem';
+    
+    // First try full_name from session data
+    if (user.full_name && user.full_name.trim()) {
+        return user.full_name.trim();
+    }
+    
+    // If user has ime and prezime, use them
+    if (user.ime || user.prezime) {
+        const ime = user.ime || '';
+        const prezime = user.prezime || '';
+        const fullName = `${ime} ${prezime}`.trim();
+        if (fullName) return fullName;
+    }
+    
+    // Fallback to username or default
+    return user.username || user.korisnickoIme || 'Korisnik';
+}
+
 // Logger utility
 class Logger {
     static logTypes = {
@@ -309,7 +330,7 @@ app.use(cookieParser());
 // Apply global rate limiter to all routes
 app.use(globalLimiter);
 
-// CSRF Protection
+// CSRF Protection - but don't apply globally yet
 const csrfProtection = csurf({ 
     cookie: {
         httpOnly: true,
@@ -317,7 +338,7 @@ const csrfProtection = csurf({
         sameSite: 'strict'
     }
 });
-app.use(csrfProtection);
+// Note: csrfProtection will be applied to specific routes, not globally
 
 console.log('✅ Security middleware configured (Rate limiting, Cookie parser, CSRF protection)');
 
@@ -344,7 +365,7 @@ app.use((req, res, next) => {
                 action: res.statusCode >= 400 ? 'REQUEST_ERROR' : 'REQUEST',
                 action_display: `${req.method} ${req.path}`,
                 status: res.statusCode >= 400 ? 'FAILED' : 'SUCCESS',
-                user_name: req.authUser ? `${req.authUser.ime} ${req.authUser.prezime}` : 'Sistem',
+                user_name: formatUserName(req.authUser),
                 user_role: req.authUser?.role || 'SYSTEM',
                 target: req.originalUrl || req.path,
                 method: req.method,
@@ -548,12 +569,18 @@ ensureOperatorsDir();
 // Auth routes
 // ----------------------------
 
-// CSRF Token endpoint (no authentication required)
-app.get('/api/auth/csrf-token', (req, res) => {
-    res.json({ csrfToken: req.csrfToken() });
+// CSRF Token endpoint (no authentication required, no CSRF protection)
+app.get('/api/auth/csrf-token', csrfProtection, (req, res) => {
+    const token = req.csrfToken();
+    console.log('🔐 Generated CSRF token:', token);
+    console.log('🔐 CSRF cookie set:', req.cookies._csrf);
+    res.json({ csrfToken: token });
 });
 
-app.post('/api/auth/login', loginLimiter, async (req, res) => {
+app.post('/api/auth/login', csrfProtection, loginLimiter, async (req, res) => {
+    console.log('🔐 Login attempt - CSRF cookie:', req.cookies._csrf);
+    console.log('🔐 Login attempt - CSRF token header:', req.headers['csrf-token']);
+    console.log('🔐 Login attempt - All cookies:', req.cookies);
     try {
         const { username, password, mfa_token } = req.body || {};
 
@@ -874,7 +901,7 @@ app.post('/api/auth/refresh', async (req, res) => {
     }
 });
 
-app.post('/api/auth/logout', logoutLimiter, authenticateToken, async (req, res) => {
+app.post('/api/auth/logout', csrfProtection, logoutLimiter, authenticateToken, async (req, res) => {
     try {
         const sessionId = req.authUser.sessionId;
         
@@ -929,7 +956,7 @@ app.get('/api/auth/sessions', sessionLimiter, authenticateToken, async (req, res
 });
 
 // DELETE /api/auth/sessions/:sessionId - Delete specific session
-app.delete('/api/auth/sessions/:sessionId', sessionLimiter, authenticateToken, async (req, res) => {
+app.delete('/api/auth/sessions/:sessionId', csrfProtection, sessionLimiter, authenticateToken, async (req, res) => {
     try {
         const userId = req.authUser.id;
         const targetSessionId = req.params.sessionId;
@@ -965,7 +992,7 @@ app.delete('/api/auth/sessions/:sessionId', sessionLimiter, authenticateToken, a
 });
 
 // POST /api/auth/logout-all - Logout from all devices
-app.post('/api/auth/logout-all', logoutLimiter, authenticateToken, async (req, res) => {
+app.post('/api/auth/logout-all', csrfProtection, logoutLimiter, authenticateToken, async (req, res) => {
     try {
         const userId = req.authUser.id;
         
@@ -1551,7 +1578,7 @@ app.post('/api/audit/log', authenticateToken, async (req, res) => {
         // Osiguraj da user_id odgovara autentifikovanom korisniku
         logData.userId = authUser.id;
         logData.user_id = authUser.id;
-        logData.user_name = `${authUser.ime} ${authUser.prezime}`;
+        logData.user_name = formatUserName(authUser);
         logData.user_role = authUser.role;
         logData.ip_address = req.ip || 'unknown';
         logData.user_agent = req.headers['user-agent'] || 'unknown';
