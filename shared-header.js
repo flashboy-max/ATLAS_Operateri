@@ -173,12 +173,17 @@
     if (!footer) return;
 
     const profileLink = resolveHref({ href: 'moj-profil.html' });
+    const sessionsLink = resolveHref({ href: 'my-sessions.html' });
     const settingsLink = resolveHref({ href: 'postavke.html' });
 
     footer.innerHTML = `
       <a href="${profileLink}" class="user-dropdown-link">
         <i class="fas fa-user-circle"></i>
         <span>Moj profil</span>
+      </a>
+      <a href="${sessionsLink}" class="user-dropdown-link">
+        <i class="fas fa-shield-alt"></i>
+        <span>Moje sesije</span>
       </a>
       <a href="${settingsLink}" class="user-dropdown-link">
         <i class="fas fa-cog"></i>

@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="sr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Moje Sesije - ATLAS Operateri</title>
+    
+    <!-- Styles -->
+    <link rel="stylesheet" href="common.css">
+    <link rel="stylesheet" href="shared-header.css">
+    <link rel="stylesheet" href="my-sessions.css">
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <!-- Shared Header -->
+    <div id="sharedHeader"></div>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <div class="sessions-container">
+            <!-- Header -->
+            <div class="sessions-header">
+                <div class="header-title">
+                    <h1><i class="fas fa-shield-alt"></i> Aktivne Sesije</h1>
+                    <p class="subtitle">Upravljajte svojim aktivnim sesijama na različitim uređajima</p>
+                </div>
+                <button id="logoutAllBtn" class="btn btn-danger btn-logout-all">
+                    <i class="fas fa-sign-out-alt"></i> Odjavi Sa Svih Uređaja
+                </button>
+            </div>
+
+            <!-- Info Box -->
+            <div class="info-box">
+                <i class="fas fa-info-circle"></i>
+                <div class="info-content">
+                    <strong>Sigurnost:</strong>
+                    <p>Ako vidite sesiju koju ne prepoznajete, odmah je odjavite i promijenite lozinku.</p>
+                </div>
+            </div>
+
+            <!-- Loading Spinner -->
+            <div id="loadingSpinner" class="loading-spinner">
+                <i class="fas fa-spinner fa-spin"></i>
+                <p>Učitavanje sesija...</p>
+            </div>
+
+            <!-- Sessions List -->
+            <div id="sessionsList" class="sessions-list"></div>
+
+            <!-- Empty State -->
+            <div id="emptyState" class="empty-state" style="display: none;">
+                <i class="fas fa-desktop"></i>
+                <h3>Nema Aktivnih Sesija</h3>
+                <p>Trenutno nemate aktivnih sesija.</p>
+            </div>
+
+            <!-- Error Message -->
+            <div id="errorMessage" class="error-message" style="display: none;"></div>
+        </div>
+    </main>
+
+    <!-- Confirmation Dialog -->
+    <div id="confirmDialog" class="modal" style="display: none;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2><i class="fas fa-exclamation-triangle"></i> Potvrda</h2>
+            </div>
+            <div class="modal-body">
+                <p id="confirmMessage"></p>
+            </div>
+            <div class="modal-footer">
+                <button id="confirmYes" class="btn btn-danger">
+                    <i class="fas fa-check"></i> Da, Odjavi
+                </button>
+                <button id="confirmNo" class="btn btn-secondary">
+                    <i class="fas fa-times"></i> Otkaži
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="auth.js"></script>
+    <script src="shared-header.js"></script>
+    <script src="my-sessions.js"></script>
+</body>
+</html>
