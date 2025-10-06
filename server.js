@@ -6,6 +6,7 @@ dotenv.config();
 
 import express from 'express';
 import cors from 'cors';
+import helmet from 'helmet';
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
@@ -24,12 +25,28 @@ import {
 } from './scripts/helpers/auth-helpers.js';
 import redis from './scripts/helpers/redis-client.js';
 import sessionManager from './scripts/helpers/session-manager.js';
+import { 
+    globalLimiter, 
+    loginLimiter, 
+    apiLimiter, 
+    logoutLimiter, 
+    sessionLimiter 
+} from './rate-limit-config.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 const app = express();
 const prisma = new PrismaClient();
+
+// ==========================================
+// Security Headers - Helmet.js
+// ==========================================
+app.use(helmet({
+    contentSecurityPolicy: false, // Disabled for now (can be configured later)
+    crossOriginEmbedderPolicy: false, // Allow embedding in development
+}));
+console.log('🛡️ Helmet.js security headers enabled');
 
 // ==========================================
 // Environment Variables (from .env)
@@ -289,42 +306,20 @@ class Logger {
 // Cookie Parser (required for CSRF and session management)
 app.use(cookieParser());
 
-// Rate Limiting Configuration
-const loginLimiter = rateLimit({
-    windowMs: parseInt(process.env.RATE_LIMIT_WINDOW_MS) || 15 * 60 * 1000, // 15 min
-    max: parseInt(process.env.RATE_LIMIT_MAX) || 10, // 10 attempts per window
-    message: {
-        error: 'Previše pokušaja prijave. Pokušajte ponovo za 15 minuta.',
-        retryAfter: Math.ceil((parseInt(process.env.RATE_LIMIT_WINDOW_MS) || 15 * 60 * 1000) / 1000)
-    },
-    standardHeaders: true,
-    legacyHeaders: false,
-    skip: (req) => {
-        // Skip rate limiting for successful requests with valid tokens
-        return req.authUser && req.method !== 'POST';
+// Apply global rate limiter to all routes
+app.use(globalLimiter);
+
+// CSRF Protection
+const csrfProtection = csurf({ 
+    cookie: {
+        httpOnly: true,
+        secure: NODE_ENV === 'production',
+        sameSite: 'strict'
     }
 });
+app.use(csrfProtection);
 
-// General API Rate Limiting
-const apiLimiter = rateLimit({
-    windowMs: parseInt(process.env.API_RATE_LIMIT_WINDOW_MS) || 60 * 1000, // 1 min
-    max: parseInt(process.env.API_RATE_LIMIT_MAX) || 100, // 100 requests per minute
-    message: {
-        error: 'Previše API zahtjeva. Pokušajte ponovo za minutu.',
-        retryAfter: 60
-    },
-    standardHeaders: true,
-    legacyHeaders: false
-});
-
-// Apply rate limiting to API routes
-app.use('/api/', apiLimiter);
-
-// CSRF Protection (will be enabled after implementing HttpOnly cookies)
-// const csrfProtection = csurf({ cookie: true });
-// app.use(csrfProtection);
-
-console.log('✅ Security middleware configured (Rate limiting, Cookie parser)');
+console.log('✅ Security middleware configured (Rate limiting, Cookie parser, CSRF protection)');
 
 // ==========================================
 // CORS & Body Parser Middleware
@@ -552,6 +547,12 @@ ensureOperatorsDir();
 // ----------------------------
 // Auth routes
 // ----------------------------
+
+// CSRF Token endpoint (no authentication required)
+app.get('/api/auth/csrf-token', (req, res) => {
+    res.json({ csrfToken: req.csrfToken() });
+});
+
 app.post('/api/auth/login', loginLimiter, async (req, res) => {
     try {
         const { username, password, mfa_token } = req.body || {};
@@ -873,7 +874,7 @@ app.post('/api/auth/refresh', async (req, res) => {
     }
 });
 
-app.post('/api/auth/logout', authenticateToken, async (req, res) => {
+app.post('/api/auth/logout', logoutLimiter, authenticateToken, async (req, res) => {
     try {
         const sessionId = req.authUser.sessionId;
         
@@ -906,7 +907,7 @@ app.get('/api/auth/session', authenticateToken, (req, res) => {
 });
 
 // GET /api/auth/sessions - List all user sessions
-app.get('/api/auth/sessions', authenticateToken, async (req, res) => {
+app.get('/api/auth/sessions', sessionLimiter, authenticateToken, async (req, res) => {
     try {
         const userId = req.authUser.id;
         const currentSessionId = req.authUser.sessionId;
@@ -928,7 +929,7 @@ app.get('/api/auth/sessions', authenticateToken, async (req, res) => {
 });
 
 // DELETE /api/auth/sessions/:sessionId - Delete specific session
-app.delete('/api/auth/sessions/:sessionId', authenticateToken, async (req, res) => {
+app.delete('/api/auth/sessions/:sessionId', sessionLimiter, authenticateToken, async (req, res) => {
     try {
         const userId = req.authUser.id;
         const targetSessionId = req.params.sessionId;
@@ -964,7 +965,7 @@ app.delete('/api/auth/sessions/:sessionId', authenticateToken, async (req, res) 
 });
 
 // POST /api/auth/logout-all - Logout from all devices
-app.post('/api/auth/logout-all', authenticateToken, async (req, res) => {
+app.post('/api/auth/logout-all', logoutLimiter, authenticateToken, async (req, res) => {
     try {
         const userId = req.authUser.id;
         

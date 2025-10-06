@@ -65,14 +65,29 @@ class AuthSystem {
     constructor() {
         this.currentUser = null;
         this.isLoading = false;
+        this.csrfToken = null;
         this.init().catch(error => {
             console.error('AuthSystem init failed:', error);
         });
     }
 
     async init() {
+        await this.fetchCsrfToken();
         await this.checkExistingSession();
         this.setupEventListeners();
+    }
+
+    async fetchCsrfToken() {
+        try {
+            const response = await fetch('/api/auth/csrf-token', {
+                credentials: 'include'
+            });
+            const data = await response.json();
+            this.csrfToken = data.csrfToken;
+            console.log('✅ CSRF token fetched');
+        } catch (error) {
+            console.error('Failed to fetch CSRF token:', error);
+        }
     }
 
     setupEventListeners() {
@@ -657,7 +672,8 @@ class AuthSystem {
         const response = await fetch('/api/auth/login', {
             method: 'POST',
             headers: {
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
+                'CSRF-Token': this.csrfToken
             },
             credentials: 'include', // Include httpOnly cookies
             body: JSON.stringify(requestBody)
@@ -836,9 +852,16 @@ class AuthSystem {
 
     static getAuthHeaders(explicitToken) {
         const token = explicitToken || this.getToken();
-        return {
+        const headers = {
             'Authorization': token ? `Bearer ${token}` : ''
         };
+        
+        // Include CSRF token if available
+        if (window.authSystem?.csrfToken) {
+            headers['CSRF-Token'] = window.authSystem.csrfToken;
+        }
+        
+        return headers;
     }
 
     static async fetchWithAuth(url, options = {}) {
@@ -864,6 +887,7 @@ class AuthSystem {
 }
 
 const authSystem = new AuthSystem();
+window.authSystem = authSystem; // Make available globally for CSRF token access
 
 // Auto-refresh timer for Redis sessions
 let refreshTimer = null;
