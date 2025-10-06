@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="sr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Frontend Auth - Redis Sessions</title>
+    <style>
+        body { font-family: Arial, sans-serif; max-width: 800px; margin: 0 auto; padding: 20px; }
+        .test-section { margin: 20px 0; padding: 15px; border: 1px solid #ddd; border-radius: 5px; }
+        .success { background-color: #e8f5e8; border-color: #5cb85c; }
+        .error { background-color: #f2dede; border-color: #d43f3a; }
+        .warning { background-color: #fcf8e3; border-color: #faebcc; }
+        button { padding: 10px 15px; margin: 5px; cursor: pointer; }
+        pre { background: #f5f5f5; padding: 10px; overflow: auto; font-size: 12px; }
+        .storage-info { font-size: 12px; color: #666; }
+    </style>
+</head>
+<body>
+    <h1>🧪 Test Frontend Auth - Redis Sessions</h1>
+    
+    <div class="test-section">
+        <h3>1. Test Login</h3>
+        <button onclick="testLogin()">Login as Admin</button>
+        <button onclick="clearStorage()">Clear Storage</button>
+        <div id="loginResult"></div>
+    </div>
+
+    <div class="test-section">
+        <h3>2. Storage Status</h3>
+        <button onclick="showStorageStatus()">Show Storage</button>
+        <div id="storageStatus" class="storage-info"></div>
+    </div>
+
+    <div class="test-section">
+        <h3>3. Test Authenticated Request</h3>
+        <button onclick="testAuthRequest()">Fetch Session Info</button>
+        <button onclick="testFetchWithAuth()">Test fetchWithAuth()</button>
+        <div id="authResult"></div>
+    </div>
+
+    <div class="test-section">
+        <h3>4. Test Token Refresh</h3>
+        <button onclick="testRefreshToken()">Refresh Token</button>
+        <button onclick="simulateExpiry()">Simulate Near Expiry</button>
+        <div id="refreshResult"></div>
+    </div>
+
+    <div class="test-section">
+        <h3>5. Test List Sessions</h3>
+        <button onclick="testListSessions()">List Active Sessions</button>
+        <div id="sessionsResult"></div>
+    </div>
+
+    <div class="test-section">
+        <h3>6. Test Logout</h3>
+        <button onclick="testLogout()">Logout</button>
+        <div id="logoutResult"></div>
+    </div>
+
+    <script src="auth.js"></script>
+    <script>
+        // Test functions
+        async function testLogin() {
+            const resultDiv = document.getElementById('loginResult');
+            resultDiv.innerHTML = '<p>⏳ Logging in...</p>';
+            
+            try {
+                console.log('🔧 Starting login test...');
+                console.log('🔧 AuthSystem:', AuthSystem);
+                console.log('🔧 AuthSystem.login function:', typeof AuthSystem.login);
+                
+                const result = await AuthSystem.login('admin', 'admin123', false);
+                
+                console.log('🔧 Login result:', result);
+                
+                resultDiv.innerHTML = `
+                    <div class="success">
+                        <h4>✅ Login Successful!</h4>
+                        <pre>${JSON.stringify(result, null, 2)}</pre>
+                    </div>
+                `;
+                showStorageStatus();
+            } catch (error) {
+                console.error('🔧 Login error details:', error);
+                console.error('🔧 Error stack:', error.stack);
+                
+                resultDiv.innerHTML = `
+                    <div class="error">
+                        <h4>❌ Login Failed</h4>
+                        <p>Error: ${error.message}</p>
+                        <pre>Stack: ${error.stack}</pre>
+                    </div>
+                `;
+            }
+        }
+
+        function showStorageStatus() {
+            const statusDiv = document.getElementById('storageStatus');
+            const accessToken = AuthSystem.getToken();
+            const refreshToken = AuthSystem.getRefreshToken();
+            const tokenExpiry = AuthSystem.getTokenExpiry();
+            const user = AuthSystem.getStoredUser();
+            
+            const expiryTime = tokenExpiry ? new Date(tokenExpiry).toLocaleString() : 'N/A';
+            const timeRemaining = tokenExpiry ? Math.round((tokenExpiry - Date.now()) / 1000 / 60) : 'N/A';
+            const isNearExpiry = AuthSystem.isTokenNearExpiry ? AuthSystem.isTokenNearExpiry() : 'N/A';
+            
+            statusDiv.innerHTML = `
+                <strong>Storage Status:</strong><br>
+                • Access Token: ${accessToken ? accessToken.substring(0, 60) + '...' : 'None'}<br>
+                • Refresh Token: ${refreshToken ? refreshToken.substring(0, 40) + '...' : 'None'}<br>
+                • Token Expiry: ${expiryTime}<br>
+                • Time Remaining: ${timeRemaining} minutes<br>
+                • Near Expiry: ${isNearExpiry}<br>
+                • User: ${user ? user.username + ' (' + user.role + ')' : 'None'}<br>
+                • Persistence: ${localStorage.getItem('atlas_auth_storage') || 'session'}
+            `;
+        }
+
+        async function testAuthRequest() {
+            const resultDiv = document.getElementById('authResult');
+            resultDiv.innerHTML = '<p>⏳ Testing authenticated request...</p>';
+            
+            try {
+                const token = AuthSystem.getToken();
+                if (!token) {
+                    throw new Error('No token found - please login first');
+                }
+
+                const response = await fetch('/api/auth/session', {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                }
+
+                const data = await response.json();
+                resultDiv.innerHTML = `
+                    <div class="success">
+                        <h4>✅ Session Valid</h4>
+                        <pre>${JSON.stringify(data, null, 2)}</pre>
+                    </div>
+                `;
+            } catch (error) {
+                resultDiv.innerHTML = `
+                    <div class="error">
+                        <h4>❌ Auth Request Failed</h4>
+                        <p>Error: ${error.message}</p>
+                    </div>
+                `;
+            }
+        }
+
+        async function testFetchWithAuth() {
+            const resultDiv = document.getElementById('authResult');
+            resultDiv.innerHTML = '<p>⏳ Testing fetchWithAuth() wrapper...</p>';
+            
+            try {
+                const response = await AuthSystem.fetchWithAuth('/api/auth/session');
+                const data = await response.json();
+                
+                resultDiv.innerHTML = `
+                    <div class="success">
+                        <h4>✅ fetchWithAuth() Success</h4>
+                        <pre>${JSON.stringify(data, null, 2)}</pre>
+                    </div>
+                `;
+            } catch (error) {
+                resultDiv.innerHTML = `
+                    <div class="error">
+                        <h4>❌ fetchWithAuth() Failed</h4>
+                        <p>Error: ${error.message}</p>
+                    </div>
+                `;
+            }
+        }
+
+        async function testRefreshToken() {
+            const resultDiv = document.getElementById('refreshResult');
+            resultDiv.innerHTML = '<p>⏳ Refreshing token...</p>';
+            
+            try {
+                const newToken = await AuthSystem.refreshAccessToken();
+                resultDiv.innerHTML = `
+                    <div class="success">
+                        <h4>✅ Token Refreshed</h4>
+                        <p>New Access Token: ${newToken.substring(0, 60)}...</p>
+                    </div>
+                `;
+                showStorageStatus();
+            } catch (error) {
+                resultDiv.innerHTML = `
+                    <div class="error">
+                        <h4>❌ Token Refresh Failed</h4>
+                        <p>Error: ${error.message}</p>
+                    </div>
+                `;
+            }
+        }
+
+        function simulateExpiry() {
+            // Set token expiry to near expiry (1 minute from now)
+            const storage = localStorage.getItem('atlas_auth_storage') === 'local' ? localStorage : sessionStorage;
+            const nearExpiry = Date.now() + 60000; // 1 minute from now
+            storage.setItem('atlas_auth_token_expiry', nearExpiry.toString());
+            
+            document.getElementById('refreshResult').innerHTML = `
+                <div class="warning">
+                    <h4>⚠️ Simulated Near Expiry</h4>
+                    <p>Token expiry set to 1 minute from now. Auto-refresh should trigger.</p>
+                </div>
+            `;
+            showStorageStatus();
+        }
+
+        async function testListSessions() {
+            const resultDiv = document.getElementById('sessionsResult');
+            resultDiv.innerHTML = '<p>⏳ Fetching sessions...</p>';
+            
+            try {
+                const response = await AuthSystem.fetchWithAuth('/api/auth/sessions');
+                const data = await response.json();
+                
+                resultDiv.innerHTML = `
+                    <div class="success">
+                        <h4>✅ Active Sessions (${data.sessions.length})</h4>
+                        <pre>${JSON.stringify(data, null, 2)}</pre>
+                    </div>
+                `;
+            } catch (error) {
+                resultDiv.innerHTML = `
+                    <div class="error">
+                        <h4>❌ List Sessions Failed</h4>
+                        <p>Error: ${error.message}</p>
+                    </div>
+                `;
+            }
+        }
+
+        async function testLogout() {
+            const resultDiv = document.getElementById('logoutResult');
+            resultDiv.innerHTML = '<p>⏳ Logging out...</p>';
+            
+            try {
+                await AuthSystem.logout({ redirect: false });
+                resultDiv.innerHTML = `
+                    <div class="success">
+                        <h4>✅ Logout Successful</h4>
+                        <p>Session cleared from storage.</p>
+                    </div>
+                `;
+                showStorageStatus();
+            } catch (error) {
+                resultDiv.innerHTML = `
+                    <div class="error">
+                        <h4>❌ Logout Failed</h4>
+                        <p>Error: ${error.message}</p>
+                    </div>
+                `;
+            }
+        }
+
+        function clearStorage() {
+            AuthSystem.clearSession();
+            document.getElementById('loginResult').innerHTML = '<p>🧹 Storage cleared</p>';
+            showStorageStatus();
+        }
+
+        // Auto-update storage status every 5 seconds
+        setInterval(showStorageStatus, 5000);
+        
+        // Initial status
+        showStorageStatus();
+        
+        console.log('🔧 Test page loaded. AuthSystem:', AuthSystem);
+    </script>
+</body>
+</html>

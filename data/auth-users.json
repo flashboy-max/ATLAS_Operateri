@@ -13,7 +13,7 @@
       "agencija_naziv": "Sistem administrator",
       "aktivan": true,
       "kreiran": "2025-10-06",
-      "poslednje_logovanje": "2025-10-06T14:39:14.850Z",
+      "poslednje_logovanje": "2025-10-06T17:27:40.119Z",
       "created_by": null,
       "azuriran": "2025-10-06T08:30:53.385Z",
       "mfa_enabled": false
@@ -31,7 +31,7 @@
       "aktivan": true,
       "mfa_enabled": false,
       "mfa_secret": null,
-      "poslednje_logovanje": "2025-10-06T13:47:32.710Z",
+      "poslednje_logovanje": "2025-10-06T15:58:20.346Z",
       "datum_kreiranja": "2025-10-06T06:30:18.135Z"
     },
     {
@@ -47,7 +47,7 @@
       "aktivan": true,
       "mfa_enabled": false,
       "mfa_secret": null,
-      "poslednje_logovanje": "2025-10-05T21:14:49.912Z",
+      "poslednje_logovanje": "2025-10-06T16:27:50.104Z",
       "datum_kreiranja": "2025-10-06T06:30:18.145Z"
     },
     {

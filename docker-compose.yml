@@ -1,0 +1,52 @@
+version: '3.8'
+
+services:
+  # PostgreSQL Database
+  postgres:
+    image: postgres:16-alpine
+    container_name: atlas-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: atlas_user
+      POSTGRES_PASSWORD: atlas_pass_2024
+      POSTGRES_DB: atlas_db
+    ports:
+      - "5432:5432"
+    volumes:
+      - atlas-postgres-data:/var/lib/postgresql/data
+    networks:
+      - atlas-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U atlas_user -d atlas_db"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Redis Cache & Session Store
+  redis:
+    image: redis:7-alpine
+    container_name: atlas-redis
+    restart: unless-stopped
+    command: redis-server --appendonly yes --requirepass atlas_redis_2024
+    ports:
+      - "6379:6379"
+    volumes:
+      - atlas-redis-data:/data
+    networks:
+      - atlas-network
+    healthcheck:
+      test: ["CMD", "redis-cli", "-a", "atlas_redis_2024", "ping"]
+      interval: 10s
+      timeout: 3s
+      retries: 5
+
+volumes:
+  atlas-postgres-data:
+    name: atlas-postgres-data
+  atlas-redis-data:
+    name: atlas-redis-data
+
+networks:
+  atlas-network:
+    name: atlas-network
+    driver: bridge

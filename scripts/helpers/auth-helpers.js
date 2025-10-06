@@ -70,6 +70,7 @@ export function sanitizeUser(user, isPrismaFormat = false) {
             role: safeUser.role,
             ime: safeUser.firstName,
             prezime: safeUser.lastName,
+            full_name: safeUser.firstName && safeUser.lastName ? `${safeUser.firstName} ${safeUser.lastName}` : (safeUser.firstName || safeUser.lastName || ''),
             email: safeUser.email,
             agencija: agency?.code || null,  // Use agency CODE (MUP_KS) for filtering compatibility
             agencija_naziv: safeUser.agencyName || agency?.name || null,
@@ -81,6 +82,10 @@ export function sanitizeUser(user, isPrismaFormat = false) {
     } else {
         // JSON format
         const { password_hash, mfa_secret, ...safeUser } = user;
+        // Add full_name to JSON format as well for consistency
+        if (!safeUser.full_name && safeUser.ime && safeUser.prezime) {
+            safeUser.full_name = `${safeUser.ime} ${safeUser.prezime}`;
+        }
         return safeUser;
     }
 }

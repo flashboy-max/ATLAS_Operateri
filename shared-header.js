@@ -134,9 +134,17 @@
     const dropdownEmail = document.getElementById('atlasDropdownEmail');
     const dropdownAgency = document.getElementById('atlasDropdownAgency');
 
-    if (userNameDisplay) userNameDisplay.textContent = `${user.ime} ${user.prezime}`;
+    if (userNameDisplay) {
+      // Try Redis session format first (full_name), then fall back to legacy format (ime + prezime)
+      const displayName = user.full_name || `${user.ime || ''} ${user.prezime || ''}`.trim() || user.username || 'Korisnik';
+      userNameDisplay.textContent = displayName;
+    }
     if (userRoleDisplay) userRoleDisplay.textContent = roleToDisplay(user.role);
-    if (dropdownName) dropdownName.textContent = `${user.ime} ${user.prezime}`;
+    if (dropdownName) {
+      // Try Redis session format first (full_name), then fall back to legacy format (ime + prezime)
+      const displayName = user.full_name || `${user.ime || ''} ${user.prezime || ''}`.trim() || user.username || 'Korisnik';
+      dropdownName.textContent = displayName;
+    }
     if (dropdownEmail) dropdownEmail.textContent = user.email || 'Nije postavljeno';
     if (dropdownAgency) dropdownAgency.textContent = user.agencija_naziv || 'ATLAS sistem';
 
