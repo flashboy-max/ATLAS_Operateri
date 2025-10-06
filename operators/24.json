@@ -1,13 +1,13 @@
 {
   "id": 24,
   "naziv": "Supernova (Blicnet d.o.o. Banja Luka)",
-  "komercijalni_naziv": "",
+  "komercijalni_naziv": "Supernova",
   "status": "aktivan",
-  "opis": "",
+  "opis": "Telekomunikacioni operater (Blicnet grupa)",
   "napomena": "",
   "kontakt": {
     "adresa": "",
-    "telefon": "",
+    "telefon": "[potrebno dopuniti]",
     "email": "",
     "web": "",
     "customer_service": {},
@@ -17,7 +17,9 @@
   "detaljne_usluge": {
     "mobilne": [],
     "fiksne": [],
-    "internet": [],
+    "internet": [
+      "internet_ftth"
+    ],
     "tv": [],
     "cloud_poslovne": [],
     "dodatne": []
@@ -31,7 +33,7 @@
     "napomene": "Potrebna provera zakonskih obaveza"
   },
   "datum_azuriranja": "2025-09-08",
-  "kontakt_osoba": "",
+  "kontakt_osoba": "N/A",
   "kategorija": "alternativni",
   "tipovi": [
     "ostali"

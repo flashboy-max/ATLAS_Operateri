@@ -478,6 +478,16 @@
     color: white;
 }
 
+.action-btn-small.mfa-reset {
+    background: #FEF3C7;
+    color: #92400E;
+}
+
+.action-btn-small.mfa-reset:hover {
+    background: #F59E0B;
+    color: white;
+}
+
 /* === MODAL === */
 .modal {
     position: fixed;

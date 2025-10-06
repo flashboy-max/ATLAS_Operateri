@@ -76,7 +76,6 @@ class Dashboard {
     async getStatsForRole(role) {
         // Fetch dynamic stats from API
         const operatorsCount = await this.fetchOperatorsCount();
-        const usersCount = await this.fetchUsersCount();
         
         const baseStats = [
             {
@@ -99,28 +98,33 @@ class Dashboard {
             }
         ];
 
-        if (role === 'SUPERADMIN') {
-            return [
-                ...baseStats,
-                {
-                    icon: 'fas fa-users',
-                    label: 'Ukupno korisnika',
-                    value: usersCount.total,
-                    color: 'info'
-                }
-            ];
-        }
+        // 🔧 Only fetch users count for SUPERADMIN and ADMIN
+        if (role === 'SUPERADMIN' || role === 'ADMIN') {
+            const usersCount = await this.fetchUsersCount();
+            
+            if (role === 'SUPERADMIN') {
+                return [
+                    ...baseStats,
+                    {
+                        icon: 'fas fa-users',
+                        label: 'Ukupno korisnika',
+                        value: usersCount.total,
+                        color: 'info'
+                    }
+                ];
+            }
 
-        if (role === 'ADMIN') {
-            return [
-                ...baseStats,
-                {
-                    icon: 'fas fa-user-shield',
-                    label: 'Korisnici agencije',
-                    value: usersCount.agency,
-                    color: 'info'
-                }
-            ];
+            if (role === 'ADMIN') {
+                return [
+                    ...baseStats,
+                    {
+                        icon: 'fas fa-user-shield',
+                        label: 'Korisnici agencije',
+                        value: usersCount.agency,
+                        color: 'info'
+                    }
+                ];
+            }
         }
 
         return baseStats;
@@ -266,6 +270,11 @@ class Dashboard {
     }
 
     async getRecentActivities(limit = 5) {
+        // 🔧 Only SUPERADMIN and ADMIN can access system logs
+        if (this.currentUser.role !== 'SUPERADMIN' && this.currentUser.role !== 'ADMIN') {
+            return this.getMockActivities(limit);
+        }
+
         try {
             const token = (typeof AuthSystem !== 'undefined' && typeof AuthSystem.getToken === 'function')
                 ? AuthSystem.getToken()

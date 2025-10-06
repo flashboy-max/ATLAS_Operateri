@@ -1,13 +1,13 @@
 {
   "id": 18,
   "naziv": "M&H Company d.o.o",
-  "komercijalni_naziv": "",
+  "komercijalni_naziv": "M&H Company",
   "status": "aktivan",
-  "opis": "",
+  "opis": "Internet provajder - FTTH i Fixed Wireless usluge",
   "napomena": "",
   "kontakt": {
     "adresa": " [potrebno dopuniti]",
-    "telefon": "-",
+    "telefon": "[potrebno dopuniti]",
     "email": "info@mhcompany.ba",
     "web": "",
     "customer_service": {},
@@ -44,7 +44,7 @@
     "napomene": "Potrebna provera zakonskih obaveza"
   },
   "datum_azuriranja": "2025-09-08",
-  "kontakt_osoba": "",
+  "kontakt_osoba": "N/A",
   "kategorija": "alternativni",
   "tipovi": [
     "isp"

@@ -1,0 +1,167 @@
+{
+  "agencies": [
+    {
+      "code": "FUP",
+      "name": "Federalna uprava policije (FUP)",
+      "category": "Entitetski nivo"
+    },
+    {
+      "code": "GP_BIH",
+      "name": "Granična policija BiH (GP BiH)",
+      "category": "Državni nivo"
+    },
+    {
+      "code": "MSB_BIH",
+      "name": "Ministarstvo bezbjednosti BiH (MSB BiH)",
+      "category": "Državni nivo"
+    },
+    {
+      "code": "MUP_BIH",
+      "name": "Ministarstvo sigurnosti BiH",
+      "category": "Državni nivo"
+    },
+    {
+      "code": "MUP_BPK",
+      "name": "MUP Bosansko-podrinjskog kantona Goražde (MUP BPK)",
+      "category": "Kantonalni MUP-ovi u Federaciji BiH"
+    },
+    {
+      "code": "MUP_HNK",
+      "name": "MUP Hercegovačko-neretvanskog kantona (MUP HNK)",
+      "category": "Kantonalni MUP-ovi u Federaciji BiH"
+    },
+    {
+      "code": "MUP_K10",
+      "name": "MUP Kantona 10 – Livno (MUP K10)",
+      "category": "Kantonalni MUP-ovi u Federaciji BiH"
+    },
+    {
+      "code": "MUP_KS",
+      "name": "MUP Kantona Sarajevo (MUP KS)",
+      "category": "Kantonalni MUP-ovi u Federaciji BiH"
+    },
+    {
+      "code": "MUP_PK",
+      "name": "MUP Posavskog kantona (MUP PK)",
+      "category": "Kantonalni MUP-ovi u Federaciji BiH"
+    },
+    {
+      "code": "MUP_RS",
+      "name": "MUP Republike Srpske (MUP RS)",
+      "category": "Entitetski nivo"
+    },
+    {
+      "code": "MUP_SBK",
+      "name": "MUP Srednjobosanskog kantona (MUP SBK)",
+      "category": "Kantonalni MUP-ovi u Federaciji BiH"
+    },
+    {
+      "code": "MUP_TK",
+      "name": "MUP Tuzlanskog kantona (MUP TK)",
+      "category": "Kantonalni MUP-ovi u Federaciji BiH"
+    },
+    {
+      "code": "MUP_USK",
+      "name": "MUP Unsko-sanskog kantona (MUP USK)",
+      "category": "Kantonalni MUP-ovi u Federaciji BiH"
+    },
+    {
+      "code": "MUP_ZDK",
+      "name": "MUP Zeničko-dobojskog kantona (MUP ZDK)",
+      "category": "Kantonalni MUP-ovi u Federaciji BiH"
+    },
+    {
+      "code": "MUP_ZHK",
+      "name": "MUP Zapadnohercegovačkog kantona (MUP ZHK)",
+      "category": "Kantonalni MUP-ovi u Federaciji BiH"
+    },
+    {
+      "code": "PBD_BIH",
+      "name": "Policija Brčko distrikta BiH (PBD BiH)",
+      "category": "Policija Brčko distrikta"
+    },
+    {
+      "code": "SIPA",
+      "name": "Državna agencija za istrage i zaštitu (SIPA)",
+      "category": "Državni nivo"
+    }
+  ],
+  "groupedByCategory": {
+    "Entitetski nivo": [
+      {
+        "code": "FUP",
+        "name": "Federalna uprava policije (FUP)"
+      },
+      {
+        "code": "MUP_RS",
+        "name": "MUP Republike Srpske (MUP RS)"
+      }
+    ],
+    "Državni nivo": [
+      {
+        "code": "GP_BIH",
+        "name": "Granična policija BiH (GP BiH)"
+      },
+      {
+        "code": "MSB_BIH",
+        "name": "Ministarstvo bezbjednosti BiH (MSB BiH)"
+      },
+      {
+        "code": "MUP_BIH",
+        "name": "Ministarstvo sigurnosti BiH"
+      },
+      {
+        "code": "SIPA",
+        "name": "Državna agencija za istrage i zaštitu (SIPA)"
+      }
+    ],
+    "Kantonalni MUP-ovi u Federaciji BiH": [
+      {
+        "code": "MUP_BPK",
+        "name": "MUP Bosansko-podrinjskog kantona Goražde (MUP BPK)"
+      },
+      {
+        "code": "MUP_HNK",
+        "name": "MUP Hercegovačko-neretvanskog kantona (MUP HNK)"
+      },
+      {
+        "code": "MUP_K10",
+        "name": "MUP Kantona 10 – Livno (MUP K10)"
+      },
+      {
+        "code": "MUP_KS",
+        "name": "MUP Kantona Sarajevo (MUP KS)"
+      },
+      {
+        "code": "MUP_PK",
+        "name": "MUP Posavskog kantona (MUP PK)"
+      },
+      {
+        "code": "MUP_SBK",
+        "name": "MUP Srednjobosanskog kantona (MUP SBK)"
+      },
+      {
+        "code": "MUP_TK",
+        "name": "MUP Tuzlanskog kantona (MUP TK)"
+      },
+      {
+        "code": "MUP_USK",
+        "name": "MUP Unsko-sanskog kantona (MUP USK)"
+      },
+      {
+        "code": "MUP_ZDK",
+        "name": "MUP Zeničko-dobojskog kantona (MUP ZDK)"
+      },
+      {
+        "code": "MUP_ZHK",
+        "name": "MUP Zapadnohercegovačkog kantona (MUP ZHK)"
+      }
+    ],
+    "Policija Brčko distrikta": [
+      {
+        "code": "PBD_BIH",
+        "name": "Policija Brčko distrikta BiH (PBD BiH)"
+      }
+    ]
+  }
+}

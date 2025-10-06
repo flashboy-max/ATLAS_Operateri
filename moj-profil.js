@@ -190,6 +190,14 @@ class MojProfil {
             });
         }
 
+        // Cancel button
+        const cancelBtn = document.getElementById('cancelPasswordBtn');
+        if (cancelBtn) {
+            cancelBtn.addEventListener('click', () => {
+                this.hideChangePasswordModal();
+            });
+        }
+
         // Modal overlay click
         const modal = document.getElementById('changePasswordModal');
         if (modal) {
@@ -335,8 +343,381 @@ class MojProfil {
     }
 }
 
+// ================================================
+// MFA (Multi-Factor Authentication) Handler
+// ================================================
+
+class MfaHandler {
+    constructor() {
+        this.currentSecret = null;
+        this.backupCodes = [];
+        this.setupEventListeners();
+        this.loadMfaStatus();
+    }
+
+    setupEventListeners() {
+        // Enable MFA button
+        const enableBtn = document.getElementById('enableMfaBtn');
+        if (enableBtn) {
+            enableBtn.addEventListener('click', () => this.startMfaSetup());
+        }
+
+        // Disable MFA button
+        const disableBtn = document.getElementById('disableMfaBtn');
+        if (disableBtn) {
+            disableBtn.addEventListener('click', () => this.showDisableMfaModal());
+        }
+
+        // MFA Setup Modal
+        this.setupMfaSetupModal();
+        this.setupMfaDisableModal();
+    }
+
+    async loadMfaStatus() {
+        try {
+            const user = AuthSystem.getCurrentUser();
+            const isMfaRequired = user.role === 'SUPERADMIN' || user.role === 'ADMIN';
+            
+            // Show/hide MFA required badge
+            const mfaRequiredBadge = document.getElementById('mfaRequiredBadge');
+            if (mfaRequiredBadge) {
+                mfaRequiredBadge.style.display = isMfaRequired ? 'inline-block' : 'none';
+            }
+
+            // Update MFA status display
+            const mfaEnabled = user.mfa_enabled || false;
+            this.updateMfaStatusDisplay(mfaEnabled);
+
+        } catch (error) {
+            console.error('Error loading MFA status:', error);
+        }
+    }
+
+    updateMfaStatusDisplay(enabled) {
+        const enabledDiv = document.getElementById('mfaEnabled');
+        const disabledDiv = document.getElementById('mfaDisabled');
+
+        if (enabled) {
+            if (enabledDiv) enabledDiv.style.display = 'flex';
+            if (disabledDiv) disabledDiv.style.display = 'none';
+        } else {
+            if (enabledDiv) enabledDiv.style.display = 'none';
+            if (disabledDiv) disabledDiv.style.display = 'flex';
+        }
+    }
+
+    async startMfaSetup() {
+        try {
+            // Use AuthSystem.getToken() instead of localStorage directly
+            const token = AuthSystem.getToken();
+            console.log('🔍 MFA Setup Debug:', {
+                token: token ? token.substring(0, 50) + '...' : null,
+                tokenType: typeof token,
+                tokenLength: token ? token.length : 0,
+                hasAuthSystem: typeof AuthSystem !== 'undefined',
+                authSystemToken: typeof AuthSystem !== 'undefined' ? AuthSystem.getToken() : 'N/A'
+            });
+            
+            if (!token) {
+                throw new Error('No authentication token found');
+            }
+            
+            const response = await fetch('/api/auth/mfa/setup', {
+                method: 'POST',
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json'
+                }
+            });
+
+            const data = await response.json();
+
+            if (!response.ok) {
+                throw new Error(data.error || 'MFA setup failed');
+            }
+
+            // Store setup data
+            this.currentSecret = data.secret;
+            this.backupCodes = data.backupCodes || [];
+
+            // Display QR code
+            this.displayQrCode(data.qrCode);
+            this.displayManualSecret(data.secret);
+            this.displayBackupCodes(data.backupCodes);
+
+            // Show setup modal
+            this.showMfaSetupModal();
+
+        } catch (error) {
+            console.error('MFA setup error:', error);
+            this.showNotification('Greška pri pokretanju MFA setup-a: ' + error.message, 'error');
+        }
+    }
+
+    displayQrCode(qrCodeDataUrl) {
+        const qrDisplay = document.getElementById('qrCodeDisplay');
+        if (qrDisplay) {
+            qrDisplay.innerHTML = `<img src="${qrCodeDataUrl}" alt="MFA QR Code" />`;
+        }
+    }
+
+    displayManualSecret(secret) {
+        const manualSecret = document.getElementById('manualSecret');
+        if (manualSecret) {
+            manualSecret.value = secret;
+        }
+
+        // Copy button functionality
+        const copyBtn = document.getElementById('copySecretBtn');
+        if (copyBtn) {
+            copyBtn.addEventListener('click', () => {
+                navigator.clipboard.writeText(secret).then(() => {
+                    this.showNotification('Kod je kopiran u clipboard!', 'success');
+                }).catch(() => {
+                    this.showNotification('Greška pri kopiranju koda', 'error');
+                });
+            });
+        }
+    }
+
+    displayBackupCodes(codes) {
+        const backupCodesContainer = document.getElementById('backupCodes');
+        if (backupCodesContainer && codes) {
+            backupCodesContainer.innerHTML = codes.map(code => 
+                `<div class="backup-code">${code}</div>`
+            ).join('');
+        }
+    }
+
+    setupMfaSetupModal() {
+        const modal = document.getElementById('mfaSetupModal');
+        const closeBtn = document.getElementById('closeMfaSetupModal');
+        const cancelBtn = document.getElementById('cancelMfaSetupBtn');
+        const nextBtn = document.getElementById('nextMfaStepBtn');
+        const completeBtn = document.getElementById('completeMfaSetupBtn');
+
+        // Close modal
+        [closeBtn, cancelBtn].forEach(btn => {
+            if (btn) {
+                btn.addEventListener('click', () => this.hideMfaSetupModal());
+            }
+        });
+
+        // Next step
+        if (nextBtn) {
+            nextBtn.addEventListener('click', () => this.showMfaVerificationStep());
+        }
+
+        // Complete setup
+        if (completeBtn) {
+            completeBtn.addEventListener('click', () => this.completeMfaSetup());
+        }
+
+        // Modal overlay click
+        if (modal) {
+            modal.addEventListener('click', (e) => {
+                if (e.target === modal) {
+                    this.hideMfaSetupModal();
+                }
+            });
+        }
+    }
+
+    showMfaSetupModal() {
+        const modal = document.getElementById('mfaSetupModal');
+        if (modal) {
+            modal.style.display = 'flex';
+            document.body.style.overflow = 'hidden';
+        }
+    }
+
+    hideMfaSetupModal() {
+        const modal = document.getElementById('mfaSetupModal');
+        if (modal) {
+            modal.style.display = 'none';
+            document.body.style.overflow = 'auto';
+            
+            // Reset modal state
+            document.getElementById('mfaSetupStep1').style.display = 'block';
+            document.getElementById('mfaSetupStep2').style.display = 'none';
+            document.getElementById('nextMfaStepBtn').style.display = 'inline-block';
+            document.getElementById('completeMfaSetupBtn').style.display = 'none';
+        }
+    }
+
+    showMfaVerificationStep() {
+        document.getElementById('mfaSetupStep1').style.display = 'none';
+        document.getElementById('mfaSetupStep2').style.display = 'block';
+        document.getElementById('nextMfaStepBtn').style.display = 'none';
+        document.getElementById('completeMfaSetupBtn').style.display = 'inline-block';
+    }
+
+    async completeMfaSetup() {
+        try {
+            const codeInput = document.getElementById('mfaVerificationCode');
+            const code = codeInput.value.trim();
+
+            if (!code || code.length !== 6) {
+                this.showNotification('Molimo unesite 6-cifreni kod', 'error');
+                return;
+            }
+
+            const token = AuthSystem.getToken();
+            const response = await fetch('/api/auth/mfa/verify', {
+                method: 'POST',
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ token: code })
+            });
+
+            const data = await response.json();
+
+            if (!response.ok) {
+                throw new Error(data.error || 'MFA verification failed');
+            }
+
+            // Success
+            this.showNotification('MFA je uspješno omogućen!', 'success');
+            this.hideMfaSetupModal();
+            this.updateMfaStatusDisplay(true);
+
+            // Update user data
+            const user = AuthSystem.getCurrentUser();
+            user.mfa_enabled = true;
+            localStorage.setItem('user_data', JSON.stringify(user));
+
+        } catch (error) {
+            console.error('MFA verification error:', error);
+            this.showNotification('Greška pri verifikaciji: ' + error.message, 'error');
+        }
+    }
+
+    setupMfaDisableModal() {
+        const modal = document.getElementById('mfaDisableModal');
+        const closeBtn = document.getElementById('closeMfaDisableModal');
+        const cancelBtn = document.getElementById('cancelMfaDisableBtn');
+        const form = document.getElementById('mfaDisableForm');
+
+        // Close modal
+        [closeBtn, cancelBtn].forEach(btn => {
+            if (btn) {
+                btn.addEventListener('click', () => this.hideMfaDisableModal());
+            }
+        });
+
+        // Form submission
+        if (form) {
+            form.addEventListener('submit', (e) => {
+                e.preventDefault();
+                this.disableMfa();
+            });
+        }
+
+        // Modal overlay click
+        if (modal) {
+            modal.addEventListener('click', (e) => {
+                if (e.target === modal) {
+                    this.hideMfaDisableModal();
+                }
+            });
+        }
+    }
+
+    showDisableMfaModal() {
+        const modal = document.getElementById('mfaDisableModal');
+        if (modal) {
+            modal.style.display = 'flex';
+            document.body.style.overflow = 'hidden';
+        }
+    }
+
+    hideMfaDisableModal() {
+        const modal = document.getElementById('mfaDisableModal');
+        if (modal) {
+            modal.style.display = 'none';
+            document.body.style.overflow = 'auto';
+            
+            // Reset form
+            const form = document.getElementById('mfaDisableForm');
+            if (form) form.reset();
+        }
+    }
+
+    async disableMfa() {
+        try {
+            const password = document.getElementById('disablePassword').value;
+            const mfaCode = document.getElementById('disableMfaCode').value;
+
+            console.log('🔓 Attempting MFA disable...');
+            console.log('   Password length:', password?.length);
+            console.log('   MFA code:', mfaCode);
+
+            if (!password || !mfaCode) {
+                this.showNotification('Molimo popunite sva polja', 'error');
+                return;
+            }
+
+            const token = AuthSystem.getToken();
+            console.log('   Token present:', !!token);
+
+            const requestBody = {
+                password: password,
+                mfa_token: mfaCode
+            };
+            console.log('   Request body:', JSON.stringify(requestBody, null, 2));
+
+            const response = await fetch('/api/auth/mfa/disable', {
+                method: 'POST',
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(requestBody)
+            });
+
+            console.log('   Response status:', response.status, response.statusText);
+
+            const data = await response.json();
+            console.log('   Response data:', data);
+
+            if (!response.ok) {
+                console.error('❌ MFA disable failed:', data);
+                throw new Error(data.error || 'MFA disable failed');
+            }
+
+            // Success
+            this.showNotification('MFA je uspješno onemogućen', 'success');
+            this.hideMfaDisableModal();
+            this.updateMfaStatusDisplay(false);
+
+            // Update user data
+            const user = AuthSystem.getCurrentUser();
+            user.mfa_enabled = false;
+            localStorage.setItem('user_data', JSON.stringify(user));
+
+        } catch (error) {
+            console.error('MFA disable error:', error);
+            this.showNotification('Greška pri onemogućavanju MFA: ' + error.message, 'error');
+        }
+    }
+
+    showNotification(message, type = 'info') {
+        // Reuse existing notification system
+        if (window.NotificationSystem) {
+            window.NotificationSystem.show(message, type);
+        } else {
+            console.log(`${type.toUpperCase()}: ${message}`);
+        }
+    }
+}
+
 // Initialize when DOM is ready
 document.addEventListener('DOMContentLoaded', () => {
     console.log('🚀 DOM je spreman, inicijalizujem MojProfil...');
     new MojProfil();
+    
+    // Initialize MFA handler
+    new MfaHandler();
 });

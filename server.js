@@ -1,3 +1,9 @@
+// ==========================================
+// ATLAS Server - Load Environment Variables FIRST
+// ==========================================
+import dotenv from 'dotenv';
+dotenv.config();
+
 import express from 'express';
 import cors from 'cors';
 import fs from 'fs';
@@ -6,13 +12,25 @@ import { fileURLToPath } from 'url';
 import jwt from 'jsonwebtoken';
 import bcrypt from 'bcryptjs';
 import rateLimit from 'express-rate-limit';
+import cookieParser from 'cookie-parser';
+import csurf from 'csurf';
+import { PrismaClient } from '@prisma/client';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 const app = express();
-const PORT = process.env.PORT || 3001;
-const JWT_SECRET = process.env.AUTH_JWT_SECRET || 'atlas-dev-secret';
+const prisma = new PrismaClient();
+
+// ==========================================
+// Environment Variables (from .env)
+// ==========================================
+const PORT = process.env.PORT || 3000;
+const JWT_SECRET = process.env.JWT_SECRET || 'FALLBACK_DEV_SECRET_CHANGE_IN_PRODUCTION';
+const JWT_REFRESH_SECRET = process.env.JWT_REFRESH_SECRET || 'FALLBACK_REFRESH_SECRET_CHANGE_IN_PRODUCTION';
+const NODE_ENV = process.env.NODE_ENV || 'development';
+
+console.log(`🚀 ATLAS Server starting in ${NODE_ENV} mode on port ${PORT}`);
 const TOKEN_EXPIRY = process.env.AUTH_JWT_EXPIRES_IN || '24h';
 
 const operatorsDir = path.join(__dirname, 'operators');
@@ -240,6 +258,53 @@ class Logger {
     }
 }
 
+// ==========================================
+// Security & Rate Limiting Middleware
+// ==========================================
+
+// Cookie Parser (required for CSRF and session management)
+app.use(cookieParser());
+
+// Rate Limiting Configuration
+const loginLimiter = rateLimit({
+    windowMs: parseInt(process.env.RATE_LIMIT_WINDOW_MS) || 15 * 60 * 1000, // 15 min
+    max: parseInt(process.env.RATE_LIMIT_MAX) || 10, // 10 attempts per window
+    message: {
+        error: 'Previše pokušaja prijave. Pokušajte ponovo za 15 minuta.',
+        retryAfter: Math.ceil((parseInt(process.env.RATE_LIMIT_WINDOW_MS) || 15 * 60 * 1000) / 1000)
+    },
+    standardHeaders: true,
+    legacyHeaders: false,
+    skip: (req) => {
+        // Skip rate limiting for successful requests with valid tokens
+        return req.authUser && req.method !== 'POST';
+    }
+});
+
+// General API Rate Limiting
+const apiLimiter = rateLimit({
+    windowMs: parseInt(process.env.API_RATE_LIMIT_WINDOW_MS) || 60 * 1000, // 1 min
+    max: parseInt(process.env.API_RATE_LIMIT_MAX) || 100, // 100 requests per minute
+    message: {
+        error: 'Previše API zahtjeva. Pokušajte ponovo za minutu.',
+        retryAfter: 60
+    },
+    standardHeaders: true,
+    legacyHeaders: false
+});
+
+// Apply rate limiting to API routes
+app.use('/api/', apiLimiter);
+
+// CSRF Protection (will be enabled after implementing HttpOnly cookies)
+// const csrfProtection = csurf({ cookie: true });
+// app.use(csrfProtection);
+
+console.log('✅ Security middleware configured (Rate limiting, Cookie parser)');
+
+// ==========================================
+// CORS & Body Parser Middleware
+// ==========================================
 
 app.use(cors({
     origin: true,
@@ -274,13 +339,6 @@ app.use((req, res, next) => {
     });
     
     next();
-});
-
-const loginLimiter = rateLimit({
-    windowMs: 15 * 60 * 1000,
-    max: 20,
-    standardHeaders: true,
-    legacyHeaders: false,
 });
 
 function ensureOperatorsDir() {
@@ -326,7 +384,8 @@ function authenticateToken(req, res, next) {
     try {
         const payload = jwt.verify(token, JWT_SECRET);
         const data = readAuthData();
-        const user = data.users.find(u => u.id === payload.sub && u.aktivan);
+        const userId = payload.sub || payload.userId; // Support both formats
+        const user = data.users.find(u => u.id === userId && u.aktivan);
 
         if (!user) {
             return res.status(401).json({ error: 'Session expired or user disabled' });
@@ -335,6 +394,13 @@ function authenticateToken(req, res, next) {
         req.authUser = sanitizeUser(user);
         req.authUser.role = user.role;
         req.authUser.tokenPayload = payload;
+        
+        // Handle limited token (for MFA setup)
+        if (payload.mfa_setup_required) {
+            req.authUser.mfa_setup_required = true;
+            req.authUser.permissions = payload.permissions || [];
+        }
+        
         req.authRawUser = user;
         req.authData = data;
         next();
@@ -346,9 +412,41 @@ function authenticateToken(req, res, next) {
 
 function requireRoles(...roles) {
     return (req, res, next) => {
+        console.log('🔐 requireRoles check:', {
+            requiredRoles: roles,
+            userRole: req.authUser?.role,
+            userId: req.authUser?.id,
+            username: req.authUser?.username,
+            path: req.path,
+            mfa_setup_required: req.authUser?.mfa_setup_required,
+            permissions: req.authUser?.permissions
+        });
+
+        // If user has limited token, only allow specific endpoints
+        if (req.authUser.mfa_setup_required && req.authUser.permissions?.includes('mfa_setup_only')) {
+            // Allow access to MFA setup and basic profile endpoints
+            const allowedPaths = [
+                '/api/auth/mfa/setup',
+                '/api/auth/mfa/verify', 
+                '/api/auth/session',
+                '/api/auth/logout'
+            ];
+            
+            const currentPath = req.path || req.url;
+            if (!allowedPaths.includes(currentPath)) {
+                return res.status(403).json({ 
+                    error: 'Morate postaviti MFA da biste pristupili ovoj funkciji.',
+                    mfa_setup_required: true 
+                });
+            }
+        }
+        
         if (!roles.includes(req.authUser.role)) {
+            console.log('❌ Access denied: role not in allowed roles');
             return res.status(403).json({ error: 'Insufficient permissions' });
         }
+        
+        console.log('✅ Access granted');
         next();
     };
 }
@@ -360,7 +458,7 @@ ensureOperatorsDir();
 // ----------------------------
 app.post('/api/auth/login', loginLimiter, (req, res) => {
     try {
-        const { username, password } = req.body || {};
+        const { username, password, mfa_token } = req.body || {};
 
         if (!username || !password) {
             Logger.log(Logger.logTypes.SECURITY, 'Login attempt with missing credentials', null, {
@@ -393,12 +491,132 @@ app.post('/api/auth/login', loginLimiter, (req, res) => {
             return res.status(401).json({ error: 'Neispravni kredencijali' });
         }
 
+        // MFA Check - Required for SUPERADMIN and ADMIN, optional for KORISNIK
+        const mfaRequired = user.role === 'SUPERADMIN' || user.role === 'ADMIN';
+        
+        // 🔧 Check if MFA is explicitly disabled (mfa_enabled: false)
+        if (user.mfa_enabled === false && mfaRequired) {
+            // Admin has explicitly disabled MFA - this is allowed, give full access
+            Logger.log(Logger.logTypes.SECURITY, `Admin login with MFA disabled: ${username}`, user.id, {
+                username,
+                role: user.role,
+                ip: req.ip
+            });
+            
+            // Continue with normal login (skip MFA checks)
+        } else if (user.mfa_enabled || mfaRequired) {
+            // Check if admin doesn't have MFA setup - allow limited login for setup
+            if (mfaRequired && !user.mfa_secret && user.mfa_enabled !== false) {
+                Logger.log(Logger.logTypes.SECURITY, `Admin login without MFA setup - creating limited token for user: ${username}`, user.id, {
+                    username,
+                    role: user.role,
+                    ip: req.ip
+                });
+                
+                const limitedToken = jwt.sign({ 
+                    sub: user.id, 
+                    username: user.username, 
+                    role: user.role,
+                    mfa_setup_required: true,
+                    permissions: ['mfa_setup_only'] // Very limited permissions
+                }, JWT_SECRET, { expiresIn: '1h' }); // Short expiry
+                
+                user.poslednje_logovanje = new Date().toISOString();
+                writeAuthData(data);
+                
+                return res.status(200).json({ 
+                    success: true,
+                    token: limitedToken,
+                    user: {
+                        id: user.id,
+                        username: user.username,
+                        ime: user.ime,
+                        prezime: user.prezime,
+                        role: user.role,
+                        agencija: user.agencija,
+                        agencija_naziv: user.agencija_naziv,
+                        mfa_setup_required: true
+                    },
+                    message: 'Privremeno ulogovanje. Morate postaviti MFA da biste pristupili svim funkcijama.'
+                });
+            }
+            
+            if (!mfa_token) {
+                Logger.log(Logger.logTypes.SECURITY, `Login attempt without MFA token for user: ${username}`, user.id, {
+                    username,
+                    role: user.role,
+                    mfa_required: mfaRequired,
+                    ip: req.ip,
+                    userAgent: req.get('User-Agent')
+                });
+                return res.status(200).json({ 
+                    mfa_required: true,
+                    message: mfaRequired ? 
+                        'MFA je obavezan za administratore. Unesite 6-cifreni kod iz aplikacije.' :
+                        'MFA je omogućen za ovaj nalog. Unesite 6-cifreni kod.'
+                });
+            }
+
+            // Verify MFA token
+            if (!user.mfa_secret) {
+                Logger.log(Logger.logTypes.SECURITY, `MFA token provided but no secret stored for user: ${username}`, user.id, {
+                    username,
+                    ip: req.ip
+                });
+                return res.status(403).json({ 
+                    error: 'MFA setup je obavezan.',
+                    mfa_setup_required: true,
+                    message: 'Molimo vas da postavite MFA prije sljedeće prijave.'
+                });
+            }
+
+            const mfaValid = speakeasy.totp.verify({
+                secret: user.mfa_secret,
+                encoding: 'base32',
+                token: mfa_token,
+                window: 2 // ±60 seconds tolerance
+            });
+
+            if (!mfaValid) {
+                Logger.log(Logger.logTypes.SECURITY, `Failed MFA verification for user: ${username}`, user.id, {
+                    username,
+                    role: user.role,
+                    token_provided: mfa_token.substring(0, 2) + '****',
+                    ip: req.ip,
+                    userAgent: req.get('User-Agent')
+                });
+                return res.status(401).json({ error: 'Neispravan MFA kod. Provjerite aplikaciju i pokušajte ponovo.' });
+            }
+
+            Logger.log(Logger.logTypes.SECURITY, `Successful MFA verification for user: ${username}`, user.id, {
+                username,
+                role: user.role,
+                ip: req.ip
+            });
+        }
+
+        // Force MFA setup for SUPERADMIN and ADMIN if not enabled
+        // 🔧 Only block if mfa_enabled is not explicitly false (undefined or null means not set up yet)
+        if (mfaRequired && !user.mfa_enabled && user.mfa_enabled !== false) {
+            Logger.log(Logger.logTypes.SECURITY, `Admin user without MFA attempted login: ${username}`, user.id, {
+                username,
+                role: user.role,
+                ip: req.ip
+            });
+            return res.status(403).json({ 
+                error: 'MFA setup je obavezan za administratore.',
+                mfa_setup_required: true,
+                message: 'Molimo vas da postavite MFA prije sljedeće prijave.'
+            });
+        }
+
         user.poslednje_logovanje = new Date().toISOString();
         writeAuthData({ ...data, users: data.users });
 
         Logger.log(Logger.logTypes.LOGIN, `User logged in successfully: ${username}`, user.id, {
             username,
             role: user.role,
+            mfa_used: !!mfa_token,
             ip: req.ip,
             userAgent: req.get('User-Agent')
         });
@@ -721,6 +939,52 @@ app.post('/api/system/log-error', authenticateToken, (req, res) => {
     }
 });
 
+// ==========================================
+// AGENCIES API
+// ==========================================
+
+// Get all agencies (for dropdowns)
+app.get('/api/agencies', authenticateToken, async (req, res) => {
+    try {
+        const agencies = await prisma.agency.findMany({
+            orderBy: { code: 'asc' }
+        });
+
+        // Category mapping
+        const AGENCY_CATEGORIES = {
+            'SIPA': 'Državni nivo',
+            'GP_BIH': 'Državni nivo',
+            'MSB_BIH': 'Državni nivo',
+            'MUP_BIH': 'Državni nivo',
+            'FUP': 'Entitetski nivo',
+            'MUP_RS': 'Entitetski nivo',
+            'PBD_BIH': 'Policija Brčko distrikta',
+            'MUP_USK': 'Kantonalni MUP-ovi u Federaciji BiH',
+            'MUP_PK': 'Kantonalni MUP-ovi u Federaciji BiH',
+            'MUP_TK': 'Kantonalni MUP-ovi u Federaciji BiH',
+            'MUP_ZDK': 'Kantonalni MUP-ovi u Federaciji BiH',
+            'MUP_BPK': 'Kantonalni MUP-ovi u Federaciji BiH',
+            'MUP_SBK': 'Kantonalni MUP-ovi u Federaciji BiH',
+            'MUP_KS': 'Kantonalni MUP-ovi u Federaciji BiH',
+            'MUP_HNK': 'Kantonalni MUP-ovi u Federaciji BiH',
+            'MUP_ZHK': 'Kantonalni MUP-ovi u Federaciji BiH',
+            'MUP_K10': 'Kantonalni MUP-ovi u Federaciji BiH'
+        };
+
+        // Transform to frontend format
+        const agenciesData = agencies.map(a => ({
+            id: a.code,
+            naziv: a.name,
+            tip: AGENCY_CATEGORIES[a.code] || 'Ostalo'
+        }));
+
+        res.json(agenciesData);
+    } catch (error) {
+        console.error('Get agencies error:', error);
+        res.status(500).json({ error: 'Failed to load agencies' });
+    }
+});
+
 // System logs endpoint
 app.get('/api/system/logs', authenticateToken, requireRoles('SUPERADMIN', 'ADMIN'), async (req, res) => {
     try {
@@ -986,6 +1250,397 @@ app.delete('/api/operator/:id', authenticateToken, requireRoles('SUPERADMIN'), (
         res.status(500).json({ error: 'Failed to delete operator' });
     }
 });
+
+// ==========================================
+// MFA (Multi-Factor Authentication) Endpoints
+// ==========================================
+
+import speakeasy from 'speakeasy';
+import qrcode from 'qrcode';
+
+// Debug endpoint to check token format
+app.get('/api/debug/token', authenticateToken, (req, res) => {
+    return res.json({
+        payload: req.authUser.tokenPayload,
+        user: req.authUser,
+        mfa_setup_required: req.authUser.mfa_setup_required,
+        permissions: req.authUser.permissions
+    });
+});
+
+// Clear localStorage helper
+app.get('/api/debug/clear-session', (req, res) => {
+    res.send(`
+        <script>
+            localStorage.clear();
+            sessionStorage.clear();
+            alert('Session cleared! Redirecting to login...');
+            window.location.href = '/login.html';
+        </script>
+    `);
+});
+
+// Generate MFA setup (QR code)
+app.post('/api/auth/mfa/setup', authenticateToken, async (req, res) => {
+    try {
+        
+        const user = req.authUser;
+        
+        // Check if user is using limited token for MFA setup
+        const hasLimitedToken = user.mfa_setup_required && user.permissions?.includes('mfa_setup_only');
+        
+        // Don't regenerate if already has MFA (unless using limited token)
+        if (user.mfa_enabled && !hasLimitedToken) {
+            return res.status(400).json({ 
+                error: 'MFA je već omogućen za ovaj nalog. Onemogući prvo da postaviš novi.' 
+            });
+        }
+
+        // Generate secret
+        const secret = speakeasy.generateSecret({
+            name: `ATLAS (${user.username})`,
+            issuer: 'ATLAS System',
+            length: 32
+        });
+
+        // Store temporary secret (not permanent until verified)
+        user.mfa_temp_secret = secret.base32;
+        
+        // Also store in raw user data and save to file
+        req.authRawUser.mfa_temp_secret = secret.base32;
+        writeAuthData(req.authData);
+
+        // Generate QR code
+        const qrCodeUrl = await qrcode.toDataURL(secret.otpauth_url);
+
+        Logger.log(Logger.logTypes.SECURITY, 'MFA setup initiated', user.id, {
+            action: 'MFA_SETUP_START',
+            action_display: 'MFA setup započet',
+            status: 'SUCCESS',
+            user_name: `${user.ime} ${user.prezime}`,
+            user_role: user.role,
+            target: 'MFA System',
+            ip_address: req.ip,
+            metadata: {
+                username: user.username,
+                issuer: 'ATLAS System'
+            }
+        });
+
+        res.json({
+            qrCode: qrCodeUrl,
+            secret: secret.base32, // For manual entry
+            backupCodes: generateBackupCodes() // 10 backup codes
+        });
+
+    } catch (error) {
+        Logger.log(Logger.logTypes.ERROR, 'MFA setup failed', req.authUser?.id, {
+            action: 'MFA_SETUP_ERROR',
+            action_display: 'Greška pri MFA setup-u',
+            status: 'FAILED',
+            user_name: req.authUser ? `${req.authUser.ime} ${req.authUser.prezime}` : 'Unknown',
+            user_role: req.authUser?.role || 'SYSTEM',
+            target: 'MFA System',
+            ip_address: req.ip,
+            metadata: { error: error.message }
+        });
+        console.error('MFA setup error:', error);
+        res.status(500).json({ error: 'Greška pri generisanju MFA setup-a' });
+    }
+});
+
+// Verify and enable MFA
+app.post('/api/auth/mfa/verify', authenticateToken, async (req, res) => {
+    try {
+        const { token } = req.body;
+        const user = req.authUser;
+        const rawUser = req.authRawUser;
+
+        if (!rawUser || !rawUser.mfa_temp_secret) {
+            return res.status(400).json({ error: 'MFA setup nije pokrenuo. Započni setup ponovo.' });
+        }
+
+        // Verify TOTP token
+        const verified = speakeasy.totp.verify({
+            secret: rawUser.mfa_temp_secret,
+            encoding: 'base32',
+            token: token,
+            window: 2 // Allow ±60 seconds tolerance
+        });
+
+        if (!verified) {
+            Logger.log(Logger.logTypes.SECURITY, 'MFA verification failed', user.id, {
+                action: 'MFA_VERIFY_FAILED',
+                action_display: 'MFA verifikacija neuspješna',
+                status: 'FAILED',
+                user_name: `${user.ime} ${user.prezime}`,
+                user_role: user.role,
+                target: 'MFA System',
+                ip_address: req.ip,
+                metadata: { 
+                    username: user.username,
+                    token_provided: token.substring(0, 2) + '****' // Partial token for audit
+                }
+            });
+            return res.status(400).json({ error: 'Neispravan MFA kod. Pokušaj ponovo.' });
+        }
+
+        // Enable MFA permanently
+        rawUser.mfa_enabled = true;
+        rawUser.mfa_secret = rawUser.mfa_temp_secret;
+        delete rawUser.mfa_temp_secret;
+
+        // Update auth data
+        writeAuthData(req.authData);
+
+        Logger.log(Logger.logTypes.SECURITY, 'MFA enabled successfully', user.id, {
+            action: 'MFA_ENABLED',
+            action_display: 'MFA uspješno omogućen',
+            status: 'SUCCESS',
+            user_name: `${user.ime} ${user.prezime}`,
+            user_role: user.role,
+            target: 'MFA System',
+            ip_address: req.ip,
+            metadata: { username: user.username }
+        });
+
+        res.json({ 
+            message: 'MFA je uspješno omogućen!',
+            mfa_enabled: true
+        });
+
+    } catch (error) {
+        Logger.log(Logger.logTypes.ERROR, 'MFA verification error', req.authUser?.id, {
+            action: 'MFA_VERIFY_ERROR',
+            action_display: 'Greška pri MFA verifikaciji',
+            status: 'FAILED',
+            user_name: req.authUser ? `${req.authUser.ime} ${req.authUser.prezime}` : 'Unknown',
+            user_role: req.authUser?.role || 'SYSTEM',
+            target: 'MFA System',
+            ip_address: req.ip,
+            metadata: { error: error.message }
+        });
+        console.error('MFA verification error:', error);
+        res.status(500).json({ error: 'Greška pri verifikaciji MFA koda' });
+    }
+});
+
+// Disable MFA
+app.post('/api/auth/mfa/disable', authenticateToken, async (req, res) => {
+    try {
+        console.log('🔓 [MFA DISABLE] Request received');
+        
+        const { password, mfa_token } = req.body;
+        const sessionUser = req.authUser; // Sanitized user from token
+
+        console.log('   User ID:', sessionUser.id);
+        console.log('   Username:', sessionUser.username);
+
+        // 🔧 Load RAW user with password hash from authData
+        const authDataForMfa = readAuthData();
+        const rawUser = authDataForMfa.korisnici?.find(u => u.id === sessionUser.id) || 
+                        authDataForMfa.users?.find(u => u.id === sessionUser.id);
+
+        if (!rawUser) {
+            console.log('❌ User not found in auth data');
+            return res.status(404).json({ error: 'Korisnik nije pronađen.' });
+        }
+
+        console.log('   MFA Enabled:', rawUser.mfa_enabled);
+        console.log('   Password provided:', !!password, 'length:', password?.length);
+        console.log('   Password hash present:', !!rawUser.password_hash);
+        console.log('   MFA token provided:', !!mfa_token, 'value:', mfa_token);
+        console.log('   MFA secret present:', !!rawUser.mfa_secret);
+
+        if (!rawUser.mfa_enabled) {
+            console.log('❌ MFA not enabled for this user');
+            return res.status(400).json({ error: 'MFA nije omogućen za ovaj nalog.' });
+        }
+
+        // Verify current password
+        console.log('🔑 Verifying password...');
+        const passwordValid = await bcrypt.compare(password, rawUser.password_hash);
+        console.log('   Password valid:', passwordValid);
+        
+        if (!passwordValid) {
+            console.log('❌ Invalid password');
+            return res.status(400).json({ error: 'Neispravna lozinka.' });
+        }
+
+        // Verify MFA token
+        console.log('🔐 Verifying MFA token...');
+        console.log('   Secret:', rawUser.mfa_secret?.substring(0, 10) + '...');
+        console.log('   Token:', mfa_token);
+        
+        const mfaValid = speakeasy.totp.verify({
+            secret: rawUser.mfa_secret,
+            encoding: 'base32',
+            token: mfa_token,
+            window: 2
+        });
+        console.log('   MFA valid:', mfaValid);
+
+        if (!mfaValid) {
+            console.log('❌ Invalid MFA token');
+            return res.status(400).json({ error: 'Neispravan MFA kod.' });
+        }
+
+        // 🔧 Update PostgreSQL database using Prisma (instead of JSON)
+        console.log('💾 Updating database...');
+        console.log('   Prisma user model: User');
+        console.log('   Where: { id:', rawUser.id, '}');
+        
+        await prisma.user.update({
+            where: { id: rawUser.id },
+            data: {
+                mfaEnabled: false,
+                mfaSecret: null
+            }
+        });
+        console.log('   ✅ Database updated');
+
+        // Also update JSON for backward compatibility (temporary)
+        console.log('📝 Updating JSON file...');
+        const authData = readAuthData();
+        console.log('   Total users in JSON:', authData.korisnici?.length || authData.users?.length);
+        
+        const userIndex = authData.korisnici?.findIndex(u => u.id === rawUser.id) ?? 
+                          authData.users?.findIndex(u => u.id === rawUser.id) ?? -1;
+        
+        console.log('   User index:', userIndex);
+        
+        if (userIndex !== -1) {
+            const users = authData.korisnici || authData.users;
+            users[userIndex].mfa_enabled = false;
+            delete users[userIndex].mfa_secret;
+            delete users[userIndex].mfa_backup_codes;
+            writeAuthData(authData);
+            console.log('   ✅ JSON file updated');
+        } else {
+            console.log('   ⚠️ User not found in JSON');
+        }
+
+        console.log('✅ [MFA DISABLE] Success!');
+
+        Logger.log(Logger.logTypes.SECURITY, 'MFA disabled', rawUser.id, {
+            action: 'MFA_DISABLED',
+            action_display: 'MFA onemogućen',
+            status: 'SUCCESS',
+            user_name: `${rawUser.ime} ${rawUser.prezime}`,
+            user_role: rawUser.role,
+            target: 'MFA System',
+            ip_address: req.ip,
+            metadata: { username: rawUser.username }
+        });
+
+        res.json({ 
+            message: 'MFA je uspješno onemogućen.',
+            mfa_enabled: false
+        });
+
+    } catch (error) {
+        Logger.log(Logger.logTypes.ERROR, 'MFA disable error', req.authUser?.id, {
+            action: 'MFA_DISABLE_ERROR',
+            action_display: 'Greška pri onemogućavanju MFA',
+            status: 'FAILED',
+            user_name: req.authUser ? `${req.authUser.ime} ${req.authUser.prezime}` : 'Unknown',
+            user_role: req.authUser?.role || 'SYSTEM',
+            target: 'MFA System',
+            ip_address: req.ip,
+            metadata: { error: error.message }
+        });
+        console.error('MFA disable error:', error);
+        res.status(500).json({ error: 'Greška pri onemogućavanju MFA' });
+    }
+});
+
+// Superadmin reset MFA for user
+app.post('/api/auth/mfa/reset/:userId', authenticateToken, requireRoles('SUPERADMIN'), async (req, res) => {
+    try {
+        const { userId } = req.params;
+        const admin = req.authUser;
+        
+        if (!admin || admin.role !== 'SUPERADMIN') {
+            return res.status(403).json({ error: 'Samo superadmin može resetovati MFA' });
+        }
+
+        const authData = readAuthData();
+        const targetUser = authData.users.find(u => u.id === parseInt(userId));
+        
+        if (!targetUser) {
+            return res.status(404).json({ error: 'Korisnik nije pronađen' });
+        }
+
+        // Allow reset for all users, not just those with MFA enabled
+        const hadMfa = targetUser.mfa_enabled;
+
+        // Reset MFA for target user (remove all MFA-related fields)
+        targetUser.mfa_enabled = false;
+        delete targetUser.mfa_secret;
+        delete targetUser.mfa_temp_secret;
+
+        // Save changes
+        writeAuthData(authData);
+
+        // Log the action
+        Logger.log(Logger.logTypes.SECURITY, 'MFA reset by superadmin', admin.id, {
+            action: 'MFA_RESET_BY_ADMIN',
+            action_display: 'MFA resetovan od strane superadmin-a',
+            status: 'SUCCESS',
+            user_name: `${admin.ime} ${admin.prezime}`,
+            user_role: admin.role,
+            target: 'MFA System',
+            ip_address: req.ip,
+            metadata: { 
+                target_user: targetUser.username,
+                target_user_name: `${targetUser.ime} ${targetUser.prezime}`,
+                had_mfa_before: hadMfa,
+                reason: 'Superadmin MFA reset'
+            }
+        });
+
+        const message = hadMfa 
+            ? `MFA je uspješno resetovan za korisnika ${targetUser.username}. Korisnik će morati ponovo da podesi MFA.`
+            : `MFA postavke su resetovane za korisnika ${targetUser.username}. Korisnik može da podesi MFA od početka.`;
+
+        res.json({ 
+            success: true,
+            message: message,
+            user: {
+                id: targetUser.id,
+                username: targetUser.username,
+                ime: targetUser.ime,
+                prezime: targetUser.prezime,
+                mfa_enabled: false,
+                had_mfa_before: hadMfa
+            }
+        });
+
+    } catch (error) {
+        Logger.log(Logger.logTypes.ERROR, 'MFA reset error', req.authUser?.id, {
+            action: 'MFA_RESET_ERROR',
+            action_display: 'Greška pri resetovanju MFA',
+            status: 'FAILED',
+            user_name: req.authUser ? `${req.authUser.ime} ${req.authUser.prezime}` : 'Unknown',
+            user_role: req.authUser?.role || 'SYSTEM',
+            target: 'MFA System',
+            ip_address: req.ip,
+            metadata: { error: error.message, target_user_id: req.params.userId }
+        });
+        console.error('MFA reset error:', error);
+        res.status(500).json({ error: 'Greška pri resetovanju MFA' });
+    }
+});
+
+// Generate backup codes helper
+function generateBackupCodes() {
+    const codes = [];
+    for (let i = 0; i < 10; i++) {
+        // Generate 8-digit backup codes
+        codes.push(Math.random().toString().slice(2, 10));
+    }
+    return codes;
+}
 
 export { app };
 

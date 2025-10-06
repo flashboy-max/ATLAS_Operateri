@@ -165,6 +165,16 @@ class AuthSystem {
 
         try {
             const result = await AuthSystem.login(username, password, rememberMe);
+            
+            console.log('🔍 Login result:', result); // DEBUG
+            
+            // Check if MFA is required
+            if (result.mfa_required) {
+                console.log('🔐 MFA required, showing prompt...'); // DEBUG
+                this.showMfaPrompt(username, password, rememberMe, result.message);
+                return;
+            }
+            
             this.currentUser = result.user;
             this.showAlert(`Dobrodosli, ${result.user.ime} ${result.user.prezime}!`, 'success');
 
@@ -179,6 +189,209 @@ class AuthSystem {
             document.getElementById('password').focus();
         } finally {
             this.isLoading = false;
+        }
+    }
+
+    showMfaPrompt(username, password, rememberMe, message) {
+        console.log('🔧 Showing MFA prompt, looking for container...'); // DEBUG
+        
+        // Hide login form and show MFA form
+        const loginContainer = document.querySelector('.login-right');
+        if (!loginContainer) {
+            console.error('❌ .login-right not found!');
+            return;
+        }
+        
+        console.log('✅ Found .login-right, replacing content...'); // DEBUG
+        
+        loginContainer.innerHTML = `
+            <div class="login-box">
+                <div class="login-header">
+                    <h2><i class="fas fa-shield-alt"></i> Sigurnosni kod</h2>
+                    <p>Unesite 6-cifreni kod iz vaše authenticator aplikacije</p>
+                    ${message ? `<div class="alert alert-info">${message}</div>` : ''}
+                </div>
+                <form id="mfaForm" class="login-form">
+                    <div class="form-group">
+                        <label for="mfaCode">
+                            <i class="fas fa-mobile-alt"></i>
+                            6-cifreni MFA kod
+                        </label>
+                        <input type="text" 
+                               id="mfaCode" 
+                               name="mfaCode" 
+                               placeholder="123456" 
+                               maxlength="6" 
+                               pattern="[0-9]{6}" 
+                               class="form-control mfa-input" 
+                               required 
+                               autofocus>
+                    </div>
+                    <div class="mfa-actions">
+                        <button type="submit" id="mfaLoginBtn" class="btn btn-primary btn-lg">
+                            <i class="fas fa-sign-in-alt me-2"></i> Prijavi se
+                        </button>
+                        <button type="button" id="backToLoginBtn" class="btn btn-outline-secondary btn-lg">
+                            <i class="fas fa-arrow-left me-2"></i> Nazad na prijavu
+                        </button>
+                    </div>
+                </form>
+            </div>
+        `;
+
+        console.log('✅ MFA form injected, setting up events...'); // DEBUG
+
+        // Add MFA-specific styles
+        const style = document.createElement('style');
+        style.textContent = `
+            .mfa-input {
+                text-align: center !important;
+                font-size: 1.5rem !important;
+                font-family: 'Courier New', monospace !important;
+                letter-spacing: 4px !important;
+                font-weight: bold !important;
+                padding: 1rem !important;
+                border: 2px solid #007bff !important;
+                border-radius: 8px !important;
+                background: #f8f9fa !important;
+            }
+            .mfa-input:focus {
+                border-color: #0056b3 !important;
+                box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25) !important;
+                background: white !important;
+            }
+            .mfa-actions {
+                display: flex;
+                flex-direction: column;
+                gap: 1rem;
+                margin-top: 1.5rem;
+            }
+            .mfa-actions .btn {
+                padding: 0.75rem 2rem !important;
+                font-weight: 600 !important;
+                border-radius: 8px !important;
+                transition: all 0.3s ease !important;
+            }
+            .mfa-actions .btn-primary {
+                background: linear-gradient(135deg, #007bff, #0056b3) !important;
+                border: none !important;
+                box-shadow: 0 4px 15px rgba(0, 123, 255, 0.3) !important;
+            }
+            .mfa-actions .btn-primary:hover {
+                transform: translateY(-2px) !important;
+                box-shadow: 0 6px 20px rgba(0, 123, 255, 0.4) !important;
+            }
+            .mfa-actions .btn-outline-secondary {
+                border: 2px solid #6c757d !important;
+                color: #6c757d !important;
+                background: transparent !important;
+            }
+            .mfa-actions .btn-outline-secondary:hover {
+                background: #6c757d !important;
+                color: white !important;
+                transform: translateY(-2px) !important;
+            }
+            .me-2 {
+                margin-right: 0.5rem !important;
+            }
+            .alert {
+                padding: 0.75rem 1rem;
+                margin-bottom: 1rem;
+                border: 1px solid transparent;
+                border-radius: 0.375rem;
+            }
+            .alert-info {
+                color: #055160;
+                background-color: #d1ecf1;
+                border-color: #b6d4da;
+            }
+        `;
+        document.head.appendChild(style);
+
+        // Setup MFA form listeners
+        this.setupMfaForm(username, password, rememberMe);
+    }
+
+    setupMfaForm(username, password, rememberMe) {
+        const mfaForm = document.getElementById('mfaForm');
+        const backBtn = document.getElementById('backToLoginBtn');
+        const mfaInput = document.getElementById('mfaCode');
+
+        // Auto-format MFA input (numbers only)
+        mfaInput.addEventListener('input', (e) => {
+            e.target.value = e.target.value.replace(/[^0-9]/g, '');
+        });
+
+        // MFA form submission
+        mfaForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const mfaCode = document.getElementById('mfaCode').value.trim();
+            
+            if (mfaCode.length !== 6) {
+                this.showAlert('Molimo unesite 6-cifreni kod', 'error');
+                return;
+            }
+
+            await this.handleMfaLogin(username, password, mfaCode, rememberMe);
+        });
+
+        // Back to login
+        backBtn.addEventListener('click', () => {
+            window.location.reload(); // Simplest way to reset
+        });
+    }
+
+    async handleMfaLogin(username, password, mfaCode, rememberMe) {
+        if (this.isLoading) return;
+        this.isLoading = true;
+
+        const submitBtn = document.getElementById('mfaLoginBtn');
+        if (submitBtn) {
+            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Verifikujem...';
+            submitBtn.disabled = true;
+        }
+
+        try {
+            // Call login with MFA token
+            const result = await AuthSystem.login(username, password, rememberMe, mfaCode);
+            
+            if (result.mfa_required) {
+                this.showAlert('Neispravan MFA kod. Pokušajte ponovo.', 'error');
+                document.getElementById('mfaCode').value = '';
+                document.getElementById('mfaCode').focus();
+                return;
+            }
+
+            this.currentUser = result.user;
+            this.showAlert(`Dobrodošli, ${result.user.ime} ${result.user.prezime}!`, 'success');
+
+            setTimeout(() => {
+                window.location.href = 'dashboard.html';
+            }, 800);
+
+        } catch (error) {
+            console.error('MFA login failed:', error);
+            
+            // Check if MFA setup is required
+            if (error.message.includes('MFA setup je obavezan')) {
+                this.showAlert('MFA setup je potreban za administratore. Prijavite se sa korisnicima koji nisu admini da postavite MFA.', 'warning');
+                // Redirect back to login
+                setTimeout(() => {
+                    window.location.reload();
+                }, 3000);
+                return;
+            }
+            
+            const message = error?.message || 'Neispravan MFA kod';
+            this.showAlert(message, 'error');
+            document.getElementById('mfaCode').value = '';
+            document.getElementById('mfaCode').focus();
+        } finally {
+            this.isLoading = false;
+            if (submitBtn) {
+                submitBtn.innerHTML = '<i class="fas fa-sign-in-alt"></i> Prijavi se';
+                submitBtn.disabled = false;
+            }
         }
     }
 
@@ -272,13 +485,20 @@ class AuthSystem {
         localStorage.removeItem(this.storageKeys.persistence);
     }
 
-    static async login(username, password, rememberMe = false) {
+    static async login(username, password, rememberMe = false, mfaToken = null) {
+        const requestBody = { username, password };
+        
+        // Add MFA token if provided
+        if (mfaToken) {
+            requestBody.mfa_token = mfaToken;
+        }
+
         const response = await fetch('/api/auth/login', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify({ username, password })
+            body: JSON.stringify(requestBody)
         });
 
         if (!response.ok) {
@@ -287,11 +507,33 @@ class AuthSystem {
         }
 
         const data = await response.json();
+        
+        console.log('🔍 Raw server response:', data); // DEBUG
+        
+        // Check if MFA is required
+        if (data.mfa_required) {
+            console.log('🔐 Server says MFA required'); // DEBUG
+            // Return special response for MFA required
+            return {
+                mfa_required: true,
+                message: data.message || 'MFA kod je potreban'
+            };
+        }
+        
         if (!data.token || !data.user) {
             throw new Error('Nevalidan odgovor servera');
         }
 
         this.persistSession(data.user, data.token, rememberMe);
+
+        // Check if user needs MFA setup
+        if (data.user.mfa_setup_required) {
+            console.log('⚠️ User needs MFA setup - limited access'); // DEBUG
+            // Show notification about limited access
+            if (data.message) {
+                console.log('🚨 MFA Setup Required:', data.message); // Simple console notification for now
+            }
+        }
 
         // 🔍 AUDIT LOG: Uspješna prijava
         if (typeof AuditLogger !== 'undefined') {

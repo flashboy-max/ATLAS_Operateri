@@ -7,6 +7,7 @@ class UserManagement {
         this.currentUser = null;
         this.users = [];
         this.filteredUsers = [];
+        this.agencies = []; // 🆕 Agencies from database
         this.editingUserId = null;
         this.userToDelete = null;
         this.isLoading = false;
@@ -35,6 +36,7 @@ class UserManagement {
         await SharedHeader.init(this.currentUser);
         this.updatePageHeading();
 
+        await this.loadAgencies(); // 🆕 Load agencies first
         await this.loadUsers();
 
         this.setupStats();
@@ -81,6 +83,26 @@ class UserManagement {
         }
 
         this.filteredUsers = [...this.users];
+    }
+
+    async loadAgencies() {
+        try {
+            const response = await fetch('/api/agencies', {
+                headers: {
+                    'Authorization': `Bearer ${AuthSystem.getToken()}`
+                }
+            });
+
+            if (!response.ok) {
+                throw new Error('Failed to load agencies');
+            }
+
+            this.agencies = await response.json();
+            console.log('✅ Loaded agencies:', this.agencies.length);
+        } catch (error) {
+            console.error('❌ Failed to load agencies:', error);
+            this.agencies = [];
+        }
     }
 
     updatePageHeading() {
@@ -167,39 +189,33 @@ class UserManagement {
         
         // Group agencies by type
         const groupedAgencies = {
-            'državni': [],
-            'entitetski': [],
-            'brčko': [],
-            'kantonalni': []
+            'Državni nivo': [],
+            'Entitetski nivo': [],
+            'Policija Brčko distrikta': [],
+            'Kantonalni MUP-ovi u Federaciji BiH': []
         };
         
-        AGENCIJE.forEach(agency => {
-            groupedAgencies[agency.tip].push(agency);
+        this.agencies.forEach(agency => {
+            if (groupedAgencies[agency.tip]) {
+                groupedAgencies[agency.tip].push(agency);
+            }
         });
         
         // Create optgroups for BOTH dropdowns separately (prevents duplication)
         // Za ADMIN, ovo ide samo u form dropdown
         if (this.currentUser.role === 'SUPERADMIN') {
-            ['državni', 'entitetski', 'brčko', 'kantonalni'].forEach(tip => {
-                if (groupedAgencies[tip].length > 0) {
+            Object.keys(groupedAgencies).forEach(categoryLabel => {
+                if (groupedAgencies[categoryLabel].length > 0) {
                     // Create filter dropdown optgroup
                     const filterOptgroup = document.createElement('optgroup');
-                    if (tip === 'državni') {
-                        filterOptgroup.label = 'Državni nivo';
-                    } else if (tip === 'entitetski') {
-                        filterOptgroup.label = 'Entitetski nivo';
-                    } else if (tip === 'brčko') {
-                        filterOptgroup.label = 'Policija Brčko distrikta';
-                    } else {
-                        filterOptgroup.label = 'Kantonalni MUP-ovi u Federaciji BiH';
-                    }
+                    filterOptgroup.label = categoryLabel;
                     
                     // Create form dropdown optgroup
                     const formOptgroup = document.createElement('optgroup');
-                    formOptgroup.label = filterOptgroup.label;
+                    formOptgroup.label = categoryLabel;
                     
                     // Add options to BOTH optgroups
-                    groupedAgencies[tip].forEach(agency => {
+                    groupedAgencies[categoryLabel].forEach(agency => {
                         const filterOption = document.createElement('option');
                         filterOption.value = agency.id;
                         filterOption.textContent = agency.naziv;
@@ -279,6 +295,11 @@ class UserManagement {
                         ${canEdit ? `
                             <button class="action-btn-small edit" onclick="userManagement.openEditModal(${user.id})" title="Uredi">
                                 <i class="fas fa-edit"></i>
+                            </button>
+                        ` : ''}
+                        ${this.currentUser.role === 'SUPERADMIN' && user.id !== this.currentUser.id ? `
+                            <button class="action-btn-small mfa-reset" onclick="userManagement.resetUserMfa(${user.id})" title="Resetuj MFA postavke">
+                                <i class="fas fa-shield-alt"></i>
                             </button>
                         ` : ''}
                         ${canDelete ? `
@@ -834,6 +855,56 @@ class UserManagement {
             'KORISNIK': 'Korisnik'
         };
         return roles[role] || role;
+    }
+
+    async resetUserMfa(userId) {
+        const user = this.users.find(u => u.id === userId);
+        if (!user) {
+            alert('Korisnik nije pronađen');
+            return;
+        }
+
+        const mfaStatus = user.mfa_enabled ? 'aktiviran' : 'neaktiviran';
+        const confirmMessage = `Da li ste sigurni da želite resetovati MFA postavke za korisnika ${user.ime} ${user.prezime}?\n\nTrenutni MFA status: ${mfaStatus}\n\nOva akcija će:\n- Obrisati sve MFA postavke\n- ${user.mfa_enabled ? 'Onemogućiti postojeći MFA' : 'Očistiti sve MFA podatke'}\n- Korisnik će morati ${user.mfa_enabled ? 'ponovo' : ''} da podesi MFA od početka`;
+        
+        if (!confirm(confirmMessage)) {
+            return;
+        }
+
+        try {
+            const token = AuthSystem.getToken();
+            if (!token) {
+                alert('Nemate dozvolu za ovu akciju');
+                return;
+            }
+
+            const response = await fetch(`/api/auth/mfa/reset/${userId}`, {
+                method: 'POST',
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json'
+                }
+            });
+
+            const result = await response.json();
+
+            if (!response.ok) {
+                throw new Error(result?.error || 'Resetovanje MFA nije uspjelo');
+            }
+
+            // Update user in local data
+            user.mfa_enabled = false;
+            delete user.mfa_secret;
+
+            // Refresh table
+            this.applyFilters();
+
+            alert(result.message || `MFA postavke su uspješno resetovane za korisnika ${user.ime} ${user.prezime}.`);
+
+        } catch (error) {
+            console.error('resetUserMfa error:', error);
+            alert(error.message || 'Resetovanje MFA nije uspjelo');
+        }
     }
 }
 

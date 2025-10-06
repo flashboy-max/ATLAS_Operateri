@@ -13,10 +13,11 @@
       "agencija_naziv": "Sistem administrator",
       "aktivan": true,
       "kreiran": "2025-10-06",
-      "poslednje_logovanje": "2025-10-06T08:39:57.385Z",
+      "poslednje_logovanje": "2025-10-05T22:14:48.131Z",
       "created_by": null,
       "azuriran": "2025-10-06T06:30:18.121Z",
-      "mfa_enabled": false
+      "mfa_enabled": true,
+      "mfa_secret": "JM2GKZROO53EC2BIKUSTKQ22LBJUE6JQFJUFILRDIUUF4YLMKNMA"
     },
     {
       "id": 2,
@@ -30,11 +31,10 @@
       "agencija_naziv": "Ministarstvo unutrašnjih poslova Kantona Sarajevo",
       "aktivan": true,
       "kreiran": "2025-10-06",
-      "poslednje_logovanje": "2025-10-06T07:21:11.444Z",
+      "poslednje_logovanje": "2025-10-05T22:19:51.091Z",
       "created_by": null,
       "azuriran": "2025-10-06T06:30:18.135Z",
-      "mfa_enabled": false,
-      "mfa_temp_secret": "FZYXWWBYGVCVMPT2JB3S6XSJGNRC6Z25N53WCPBBONGTQSRYG56Q"
+      "mfa_enabled": false
     },
     {
       "id": 3,
@@ -48,7 +48,7 @@
       "agencija_naziv": "Ministarstvo unutrašnjih poslova Kantona Sarajevo",
       "aktivan": true,
       "kreiran": "2025-10-06",
-      "poslednje_logovanje": "2025-10-06T07:19:09.149Z",
+      "poslednje_logovanje": "2025-10-05T21:14:49.912Z",
       "created_by": null,
       "azuriran": "2025-10-06T06:30:18.145Z",
       "mfa_enabled": false
@@ -61,8 +61,8 @@
       "ime": "Nedzad",
       "prezime": "Nedzo",
       "email": "nedzad.nedzo@mup-unsko-sanski.gov.ba",
-      "agencija": "MUP_USK",
-      "agencija_naziv": "Nepoznata agencija",
+      "agencija": null,
+      "agencija_naziv": "Sistem administrator",
       "aktivan": true,
       "kreiran": "2025-10-06",
       "poslednje_logovanje": "2025-09-28T16:45:00.000Z",
