@@ -13,9 +13,9 @@
       "agencija_naziv": "Sistem administrator",
       "aktivan": true,
       "kreiran": "2025-10-06",
-      "poslednje_logovanje": "2025-10-06T08:39:57.385Z",
+      "poslednje_logovanje": "2025-10-06T08:30:53.385Z",
       "created_by": null,
-      "azuriran": "2025-10-06T06:30:18.121Z",
+      "azuriran": "2025-10-06T08:30:53.385Z",
       "mfa_enabled": false
     },
     {
@@ -61,8 +61,8 @@
       "ime": "Nedzad",
       "prezime": "Nedzo",
       "email": "nedzad.nedzo@mup-unsko-sanski.gov.ba",
-      "agencija": "MUP_USK",
-      "agencija_naziv": "Nepoznata agencija",
+      "agencija": null,
+      "agencija_naziv": "Sistem administrator",
       "aktivan": true,
       "kreiran": "2025-10-06",
       "poslednje_logovanje": "2025-09-28T16:45:00.000Z",

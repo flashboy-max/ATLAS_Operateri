@@ -15,6 +15,7 @@ import rateLimit from 'express-rate-limit';
 import cookieParser from 'cookie-parser';
 import csurf from 'csurf';
 import { PrismaClient } from '@prisma/client';
+import { mapJsonToPrisma, mapPrismaToJson, mapPrismaToBasicInfo } from './scripts/helpers/operator-helpers.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -1091,7 +1092,7 @@ app.post('/api/audit/log', authenticateToken, async (req, res) => {
 // ----------------------------
 ensureOperatorsDir();
 
-app.post('/api/save-operator', authenticateToken, requireRoles('SUPERADMIN'), (req, res) => {
+app.post('/api/save-operator', authenticateToken, requireRoles('SUPERADMIN'), async (req, res) => {
     try {
         const { operatorId, operatorData } = req.body;
         const actor = req.authUser;
@@ -1126,19 +1127,34 @@ app.post('/api/save-operator', authenticateToken, requireRoles('SUPERADMIN'), (r
             return res.status(400).json({ error: 'Operator ID mismatch' });
         }
 
+        // Check if operator exists in PostgreSQL
+        const existingOperator = await prisma.operator.findUnique({
+            where: { id: BigInt(operatorId) }
+        });
+
+        // Map JSON data to Prisma format
+        const prismaData = mapJsonToPrisma(operatorData);
+
+        // UPSERT to PostgreSQL
+        const savedOperator = await prisma.operator.upsert({
+            where: { id: BigInt(operatorId) },
+            update: prismaData,
+            create: { ...prismaData, createdAt: new Date() }
+        });
+
+        // Backward compatibility: also save to JSON file
         const filePath = path.join(operatorsDir, `${operatorId}.json`);
-        const existed = fs.existsSync(filePath);
         fs.writeFileSync(filePath, JSON.stringify(operatorData, null, 2), 'utf8');
 
         if (actor) {
-            const actionCode = existed ? 'UPDATE_OPERATOR' : 'CREATE_OPERATOR';
+            const actionCode = existingOperator ? 'UPDATE_OPERATOR' : 'CREATE_OPERATOR';
             Logger.log(
-                existed ? Logger.logTypes.UPDATE_OPERATOR : Logger.logTypes.CREATE_OPERATOR,
-                `${existed ? 'Operator updated' : 'Operator created'}: ${operatorData.naziv}`,
+                existingOperator ? Logger.logTypes.UPDATE_OPERATOR : Logger.logTypes.CREATE_OPERATOR,
+                `${existingOperator ? 'Operator updated' : 'Operator created'}: ${operatorData.naziv}`,
                 actor.id,
                 {
                     action: actionCode,
-                    action_display: existed ? 'Azuriranje operatera' : 'Dodavanje operatera',
+                    action_display: existingOperator ? 'Azuriranje operatera' : 'Dodavanje operatera',
                     status: 'SUCCESS',
                     user_name: `${actor.ime} ${actor.prezime}`.trim(),
                     user_role: actor.role,
@@ -1149,7 +1165,7 @@ app.post('/api/save-operator', authenticateToken, requireRoles('SUPERADMIN'), (r
             );
         }
 
-        res.json({ success: true, message: 'Operator saved successfully', created: !existed });
+        res.json({ success: true, message: 'Operator saved successfully', created: !existingOperator });
     } catch (error) {
         Logger.log(Logger.logTypes.ERROR, `Error saving operator: ${error.message}`, req.authUser?.id, {
             action: 'CREATE_OPERATOR',
@@ -1165,64 +1181,120 @@ app.post('/api/save-operator', authenticateToken, requireRoles('SUPERADMIN'), (r
     }
 });
 
-app.get('/api/operator/:id', authenticateToken, (req, res) => {
+app.get('/api/operator/:id', authenticateToken, async (req, res) => {
     try {
         const operatorId = req.params.id;
-        const filePath = path.join(operatorsDir, `${operatorId}.json`);
 
-        if (!fs.existsSync(filePath)) {
-            return res.status(404).json({ error: 'Operator not found' });
+        // Try to load from PostgreSQL first
+        const operator = await prisma.operator.findUnique({
+            where: { id: BigInt(operatorId) }
+        });
+
+        if (operator) {
+            // Convert Prisma format to JSON format for frontend
+            const jsonFormat = mapPrismaToJson(operator);
+            return res.json(jsonFormat);
         }
 
-        const operatorData = JSON.parse(fs.readFileSync(filePath, 'utf8'));
-        res.json(operatorData);
+        // Fallback to JSON file (backward compatibility)
+        const filePath = path.join(operatorsDir, `${operatorId}.json`);
+        if (fs.existsSync(filePath)) {
+            const operatorData = JSON.parse(fs.readFileSync(filePath, 'utf8'));
+            return res.json(operatorData);
+        }
+
+        return res.status(404).json({ error: 'Operator not found' });
     } catch (error) {
         console.error('Error loading operator:', error);
         res.status(500).json({ error: 'Failed to load operator' });
     }
 });
 
-app.get('/api/operators', authenticateToken, (req, res) => {
+app.get('/api/operators', authenticateToken, async (req, res) => {
     try {
-        const files = fs.readdirSync(operatorsDir).filter(file => file.endsWith('.json'));
-        const operators = files.map(file => {
-            const filePath = path.join(operatorsDir, file);
-            const data = JSON.parse(fs.readFileSync(filePath, 'utf8'));
-            return {
-                id: data.id,
-                naziv: data.naziv,
-                file: file
-            };
+        // Get query parameters for filtering/search
+        const { search, status, type } = req.query;
+
+        // Build where clause
+        const whereClause = {};
+        
+        if (status) {
+            whereClause.status = status;
+        }
+
+        if (search) {
+            whereClause.OR = [
+                { legalName: { contains: search, mode: 'insensitive' } },
+                { commercialName: { contains: search, mode: 'insensitive' } }
+            ];
+        }
+
+        // Query PostgreSQL
+        const operators = await prisma.operator.findMany({
+            where: whereClause,
+            orderBy: { legalName: 'asc' }
         });
 
-        res.json(operators);
+        // Convert to basic info format (light response)
+        const basicInfoList = operators.map(op => mapPrismaToBasicInfo(op));
+
+        res.json(basicInfoList);
     } catch (error) {
         console.error('Error listing operators:', error);
-        res.status(500).json({ error: 'Failed to list operators' });
+        
+        // Fallback to JSON files if database fails
+        try {
+            const files = fs.readdirSync(operatorsDir).filter(file => file.endsWith('.json'));
+            const operators = files.map(file => {
+                const filePath = path.join(operatorsDir, file);
+                const data = JSON.parse(fs.readFileSync(filePath, 'utf8'));
+                return {
+                    id: data.id,
+                    naziv: data.naziv,
+                    file: file
+                };
+            });
+            res.json(operators);
+        } catch (fallbackError) {
+            console.error('Fallback also failed:', fallbackError);
+            res.status(500).json({ error: 'Failed to list operators' });
+        }
     }
 });
 
-app.delete('/api/operator/:id', authenticateToken, requireRoles('SUPERADMIN'), (req, res) => {
+app.delete('/api/operator/:id', authenticateToken, requireRoles('SUPERADMIN'), async (req, res) => {
     try {
         const operatorId = req.params.id;
-        const filePath = path.join(operatorsDir, `${operatorId}.json`);
         const actor = req.authUser;
 
-        if (!fs.existsSync(filePath)) {
+        // Check if operator exists in PostgreSQL
+        const operator = await prisma.operator.findUnique({
+            where: { id: BigInt(operatorId) }
+        });
+
+        if (!operator) {
             return res.status(404).json({ error: 'Operator not found' });
         }
 
-        const operatorData = JSON.parse(fs.readFileSync(filePath, 'utf8'));
-        fs.unlinkSync(filePath);
+        // Delete from PostgreSQL
+        await prisma.operator.delete({
+            where: { id: BigInt(operatorId) }
+        });
+
+        // Also delete JSON file (backward compatibility)
+        const filePath = path.join(operatorsDir, `${operatorId}.json`);
+        if (fs.existsSync(filePath)) {
+            fs.unlinkSync(filePath);
+        }
 
         if (actor) {
-            Logger.log(Logger.logTypes.DELETE_OPERATOR, `Operator deleted: ${operatorData.naziv}`, actor.id, {
+            Logger.log(Logger.logTypes.DELETE_OPERATOR, `Operator deleted: ${operator.legalName}`, actor.id, {
                 action: 'DELETE_OPERATOR',
                 action_display: 'Brisanje operatera',
                 status: 'SUCCESS',
                 user_name: `${actor.ime} ${actor.prezime}`.trim(),
                 user_role: actor.role,
-                target: `${operatorData.naziv} (ID: ${operatorData.id})`,
+                target: `${operator.legalName} (ID: ${operatorId})`,
                 ip: req.ip,
                 userAgent: req.get('User-Agent')
             });
@@ -1230,10 +1302,10 @@ app.delete('/api/operator/:id', authenticateToken, requireRoles('SUPERADMIN'), (
 
         res.json({
             success: true,
-            message: `Operator "${operatorData.naziv}" successfully deleted`,
+            message: `Operator "${operator.legalName}" successfully deleted`,
             deletedOperator: {
-                id: operatorData.id,
-                naziv: operatorData.naziv
+                id: Number(operator.id),
+                naziv: operator.legalName
             }
         });
     } catch (error) {

@@ -91,7 +91,7 @@ class SystemLogs {
         const userRole = raw.user_role || raw.role || 'SYSTEM';
         
         // 🔍 Unificiraj target - ukloni tehničke linkove
-        let target = raw.target || raw.message || '';
+        let target = String(raw.target || raw.message || '');
         
         // Ako je target URL (GET /api/...), unify ga
         if (target.includes('/api/') || target.includes('GET ') || target.includes('POST ')) {
@@ -101,7 +101,7 @@ class SystemLogs {
         const ipAddress = raw.ip_address || raw.ip || 'unknown';
 
         // 🔍 Unificiraj action_display - ukloni tehničke detalje
-        let actionDisplay = raw.action_display || raw.message || action;
+        let actionDisplay = String(raw.action_display || raw.message || action);
         if (actionDisplay.includes('/api/') || actionDisplay.includes('GET ') || actionDisplay.includes('POST ')) {
             actionDisplay = this.unifyActionDisplay(actionDisplay, action);
         }

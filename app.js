@@ -1416,6 +1416,7 @@ class ATLASApp {
                     // Mapiranje tip vrednosti na display text i ikone
                     const tipMappings = {
                         'mobilni': { icon: '📱', text: 'Mobilni', class: 'mobilni' },
+                        'fiksni': { icon: '☎️', text: 'Fiksni', class: 'fiksni' },
                         'mvno': { icon: '📡', text: 'MVNO', class: 'mvno' },
                         'isp': { icon: '🌐', text: 'ISP', class: 'isp' },
                         'kablovski': { icon: '📺', text: 'Kablovski', class: 'kablovski' },

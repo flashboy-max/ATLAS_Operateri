@@ -23,24 +23,24 @@
     }
   ],
   "detaljne_usluge": {
-    "mobilne": [],
+    "tv": [],
     "fiksne": [],
+    "dodatne": [],
+    "mobilne": [],
     "internet": [
       "internet_fixed_wireless",
       "internet_business"
     ],
-    "tv": [],
-    "cloud_poslovne": [],
-    "dodatne": []
+    "cloud_poslovne": []
   },
   "detaljne_tehnologije": {
-    "mobilne": [],
     "fiksne": [],
     "mrezne": [
       "tech_fixed_wireless",
       "tech_ipv4",
       "tech_ipv6"
-    ]
+    ],
+    "mobilne": []
   },
   "zakonske_obaveze": {
     "zakonito_presretanje": true,
@@ -54,6 +54,11 @@
   },
   "datum_azuriranja": "2025-10-06",
   "kontakt_osoba": "Marko Džeba - Direktor",
+  "kategorija": "alternativni",
+  "tipovi": [
+    "isp",
+    "kablovski"
+  ],
   "usluge": [
     {
       "kategorija": "unknown",
@@ -87,12 +92,5 @@
       "opis": "Internet Protocol version 6",
       "kapacitet": ""
     }
-  ],
-  "kategorija": "alternativni",
-  "tipovi": [
-    "isp",
-    "kablovski",
-    "enterprise",
-    "ostali"
   ]
 }

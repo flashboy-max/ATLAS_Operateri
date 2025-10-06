@@ -12,8 +12,7 @@
     "web": "https://www.eronet.ba",
     "customer_service": {
       "privatni": "0800 88 888",
-      "poslovni": "0800 88 000",
-      "info_telefon": "0800 88 888"
+      "poslovni": "0800 88 000"
     },
     "drustvene_mreze": {
       "facebook": "https://www.facebook.com/HTERONET.ba/",
@@ -39,6 +38,17 @@
     }
   ],
   "detaljne_usluge": {
+    "tv": [
+      "iptv"
+    ],
+    "fiksne": [
+      "fixed_pstn",
+      "fixed_isdn",
+      "fixed_voip"
+    ],
+    "dodatne": [
+      "device_sales"
+    ],
     "mobilne": [
       "mobile_prepaid",
       "mobile_postpaid",
@@ -47,39 +57,18 @@
       "mobile_mnp",
       "roaming_internet_options"
     ],
-    "fiksne": [
-      "fixed_pstn",
-      "fixed_isdn",
-      "fixed_voip"
-    ],
     "internet": [
       "internet_flat",
       "internet_flying",
       "internet_adsl_vdsl",
       "internet_ftth"
     ],
-    "tv": [
-      "iptv"
-    ],
     "cloud_poslovne": [
       "4xl_packages",
       "wholesale_network_services"
-    ],
-    "dodatne": [
-      "device_sales"
     ]
   },
   "detaljne_tehnologije": {
-    "mobilne": [
-      "tech_2g",
-      "tech_3g",
-      "tech_4g",
-      "tech_ims_mobile",
-      "tech_volte",
-      "tech_vowifi",
-      "tech_hlr_hss",
-      "tech_smsc_mmsc"
-    ],
     "fiksne": [
       "tech_pstn",
       "tech_voip_fixed",
@@ -89,6 +78,16 @@
     ],
     "mrezne": [
       "tech_ipv6"
+    ],
+    "mobilne": [
+      "tech_2g",
+      "tech_3g",
+      "tech_4g",
+      "tech_ims_mobile",
+      "tech_volte",
+      "tech_vowifi",
+      "tech_hlr_hss",
+      "tech_smsc_mmsc"
     ]
   },
   "zakonske_obaveze": {
@@ -101,13 +100,205 @@
     "posjeduje_misljenje_zuo": "Da",
     "napomene": "Kao dominantni operater, HT Eronet ima sve zakonske obaveze implementirane i dostupne u skladu sa BiH zakonom."
   },
-  "datum_azuriranja": "2025-09-08",
+  "datum_azuriranja": "2025-10-06",
   "kontakt_osoba": "Slaven Zelenika - Rukovoditelj Odjela za internu kontrolu i sigurnost",
   "kategorija": "dominantni",
   "tipovi": [
     "mobilni",
+    "mvno",
     "isp",
     "kablovski",
-    "enterprise"
+    "enterprise",
+    "ostali"
+  ],
+  "usluge": [
+    {
+      "kategorija": "unknown",
+      "naziv": "IPTV",
+      "opis": "TV preko IP mreže",
+      "status": "aktivna"
+    },
+    {
+      "kategorija": "unknown",
+      "naziv": "PSTN Fiksni telefon",
+      "opis": "Klasični analogni fiksni telefon",
+      "status": "aktivna"
+    },
+    {
+      "kategorija": "unknown",
+      "naziv": "ISDN",
+      "opis": "Integrated Services Digital Network",
+      "status": "aktivna"
+    },
+    {
+      "kategorija": "unknown",
+      "naziv": "VoIP Fiksni",
+      "opis": "IP telefonija za fiksne korisnike",
+      "status": "aktivna"
+    },
+    {
+      "kategorija": "unknown",
+      "naziv": "Prodaja uređaja",
+      "opis": "Prodaja telekom opreme",
+      "status": "aktivna"
+    },
+    {
+      "kategorija": "unknown",
+      "naziv": "Mobilni Prepaid",
+      "opis": "Mobilne usluge na prepaid osnovu",
+      "status": "aktivna"
+    },
+    {
+      "kategorija": "unknown",
+      "naziv": "Mobilni Postpaid",
+      "opis": "Mobilne usluge na postpaid osnovu",
+      "status": "aktivna"
+    },
+    {
+      "kategorija": "unknown",
+      "naziv": "VoLTE/VoWiFi",
+      "opis": "Voice over LTE i WiFi pozivi",
+      "status": "aktivna"
+    },
+    {
+      "kategorija": "unknown",
+      "naziv": "Roaming",
+      "opis": "Usluge u roaming-u",
+      "status": "aktivna"
+    },
+    {
+      "kategorija": "unknown",
+      "naziv": "Prenos broja (MNP)",
+      "opis": "Mobile Number Portability",
+      "status": "aktivna"
+    },
+    {
+      "kategorija": "unknown",
+      "naziv": "Roaming Internet",
+      "opis": "Telekomunikaciona usluga za krajnje korisnike",
+      "status": "aktivna"
+    },
+    {
+      "kategorija": "unknown",
+      "naziv": "Flat Internet",
+      "opis": "Neograničeni internet bez FUP ograničenja",
+      "status": "aktivna"
+    },
+    {
+      "kategorija": "unknown",
+      "naziv": "Flying Internet",
+      "opis": "Telekomunikaciona usluga za krajnje korisnike",
+      "status": "aktivna"
+    },
+    {
+      "kategorija": "unknown",
+      "naziv": "ADSL/VDSL Internet",
+      "opis": "Internet preko bakarnih linija",
+      "status": "aktivna"
+    },
+    {
+      "kategorija": "unknown",
+      "naziv": "FTTH Internet",
+      "opis": "Fiber to the Home internet",
+      "status": "aktivna"
+    },
+    {
+      "kategorija": "unknown",
+      "naziv": "4xl Packages",
+      "opis": "Telekomunikaciona usluga za krajnje korisnike",
+      "status": "aktivna"
+    },
+    {
+      "kategorija": "unknown",
+      "naziv": "Wholesale Network Services",
+      "opis": "Telekomunikaciona usluga za krajnje korisnike",
+      "status": "aktivna"
+    }
+  ],
+  "tehnologije": [
+    {
+      "tip": "unknown",
+      "naziv": "PSTN",
+      "opis": "Public Switched Telephone Network",
+      "kapacitet": ""
+    },
+    {
+      "tip": "unknown",
+      "naziv": "VoIP Fiksni",
+      "opis": "Voice over IP za fiksne linije",
+      "kapacitet": ""
+    },
+    {
+      "tip": "unknown",
+      "naziv": "xDSL",
+      "opis": "Digital Subscriber Line familija",
+      "kapacitet": ""
+    },
+    {
+      "tip": "unknown",
+      "naziv": "FTTH/FTTB",
+      "opis": "Fiber to the Home/Building",
+      "kapacitet": ""
+    },
+    {
+      "tip": "unknown",
+      "naziv": "IPTV Platform",
+      "opis": "Internet Protocol Television platforma",
+      "kapacitet": ""
+    },
+    {
+      "tip": "unknown",
+      "naziv": "IPv6",
+      "opis": "Internet Protocol version 6",
+      "kapacitet": ""
+    },
+    {
+      "tip": "unknown",
+      "naziv": "2G/GSM",
+      "opis": "Druga generacija mobilnih mreža",
+      "kapacitet": ""
+    },
+    {
+      "tip": "unknown",
+      "naziv": "3G/UMTS",
+      "opis": "Treća generacija mobilnih mreža",
+      "kapacitet": ""
+    },
+    {
+      "tip": "unknown",
+      "naziv": "4G/LTE",
+      "opis": "Četvrta generacija - LTE",
+      "kapacitet": ""
+    },
+    {
+      "tip": "unknown",
+      "naziv": "IMS Mobile",
+      "opis": "IP Multimedia Subsystem za mobilne usluge",
+      "kapacitet": ""
+    },
+    {
+      "tip": "unknown",
+      "naziv": "VoLTE",
+      "opis": "Voice over LTE tehnologija",
+      "kapacitet": ""
+    },
+    {
+      "tip": "unknown",
+      "naziv": "VoWiFi",
+      "opis": "Voice over WiFi tehnologija",
+      "kapacitet": ""
+    },
+    {
+      "tip": "unknown",
+      "naziv": "HLR/HSS",
+      "opis": "Home Location Register/Home Subscriber Server",
+      "kapacitet": ""
+    },
+    {
+      "tip": "unknown",
+      "naziv": "SMSC/MMSC",
+      "opis": "SMS/MMS Message Center",
+      "kapacitet": ""
+    }
   ]
 }

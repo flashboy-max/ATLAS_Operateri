@@ -4,7 +4,7 @@
   "komercijalni_naziv": "BH Telecom",
   "status": "aktivan",
   "opis": "Najveći telekom operater u BiH sa kompletnom ponudom telekomunikacijskih usluga. Lider na tržištu mobilne i fiksne telefonije, interneta i digitalnih usluga.",
-  "napomena": "",
+  "napomena": "[potrebno dopuniti]",
   "kontakt": {
     "adresa": "",
     "telefon": "",
@@ -38,6 +38,20 @@
     }
   ],
   "detaljne_usluge": {
+    "tv": [
+      "iptv"
+    ],
+    "fiksne": [
+      "fixed_pstn",
+      "fixed_isdn",
+      "fixed_voip",
+      "voice_mail"
+    ],
+    "dodatne": [
+      "device_sales",
+      "router_sales",
+      "system_integration"
+    ],
     "mobilne": [
       "mobile_prepaid",
       "mobile_postpaid",
@@ -46,20 +60,11 @@
       "mobile_roaming",
       "mobile_mnp"
     ],
-    "fiksne": [
-      "fixed_pstn",
-      "fixed_isdn",
-      "fixed_voip",
-      "voice_mail"
-    ],
     "internet": [
       "internet_ftth",
       "internet_adsl_vdsl",
       "internet_mobile",
       "dedicated_internet"
-    ],
-    "tv": [
-      "iptv"
     ],
     "cloud_poslovne": [
       "cloud_hosting",
@@ -69,25 +74,9 @@
       "smart_city",
       "smart_home",
       "digital_signature"
-    ],
-    "dodatne": [
-      "device_sales",
-      "router_sales",
-      "system_integration"
     ]
   },
   "detaljne_tehnologije": {
-    "mobilne": [
-      "tech_2g",
-      "tech_3g",
-      "tech_4g",
-      "tech_5g_ready",
-      "tech_volte",
-      "tech_vowifi",
-      "tech_hlr_hss",
-      "tech_eir",
-      "tech_smsc_mmsc"
-    ],
     "fiksne": [
       "tech_pstn",
       "tech_isdn",
@@ -103,6 +92,17 @@
       "tech_mpls",
       "tech_sdwan",
       "tech_cdn"
+    ],
+    "mobilne": [
+      "tech_2g",
+      "tech_3g",
+      "tech_4g",
+      "tech_5g_ready",
+      "tech_volte",
+      "tech_vowifi",
+      "tech_hlr_hss",
+      "tech_eir",
+      "tech_smsc_mmsc"
     ]
   },
   "zakonske_obaveze": {
@@ -115,14 +115,66 @@
     "posjeduje_misljenje_zuo": "Da",
     "napomene": "Kao dominantni operater, BH Telecom ima sve zakonske obaveze implementirane i dostupne u skladu sa BiH zakonom. Vlastita medijacija za zakonito presretanje."
   },
-  "datum_azuriranja": "2025-10-01",
+  "datum_azuriranja": "2025-10-06",
   "kontakt_osoba": "Nedim Fazlibegović - Šef službe za ZPT i saradnju sa sudovima",
   "kategorija": "dominantni",
-  "adresa": "",
-  "telefon": "",
-  "email": "",
-  "web": "",
+  "tipovi": [
+    "mobilni",
+    "mvno",
+    "isp",
+    "kablovski",
+    "enterprise",
+    "ostali"
+  ],
   "usluge": [
+    {
+      "kategorija": "unknown",
+      "naziv": "IPTV",
+      "opis": "TV preko IP mreže",
+      "status": "aktivna"
+    },
+    {
+      "kategorija": "unknown",
+      "naziv": "PSTN Fiksni telefon",
+      "opis": "Klasični analogni fiksni telefon",
+      "status": "aktivna"
+    },
+    {
+      "kategorija": "unknown",
+      "naziv": "ISDN",
+      "opis": "Integrated Services Digital Network",
+      "status": "aktivna"
+    },
+    {
+      "kategorija": "unknown",
+      "naziv": "VoIP Fiksni",
+      "opis": "IP telefonija za fiksne korisnike",
+      "status": "aktivna"
+    },
+    {
+      "kategorija": "unknown",
+      "naziv": "Voice Mail",
+      "opis": "Govorna pošta",
+      "status": "aktivna"
+    },
+    {
+      "kategorija": "unknown",
+      "naziv": "Prodaja uređaja",
+      "opis": "Prodaja telekom opreme",
+      "status": "aktivna"
+    },
+    {
+      "kategorija": "unknown",
+      "naziv": "Prodaja rutera",
+      "opis": "Prodaja mrežne opreme",
+      "status": "aktivna"
+    },
+    {
+      "kategorija": "unknown",
+      "naziv": "Sistemska integracija",
+      "opis": "IT sistemi i integracija",
+      "status": "aktivna"
+    },
     {
       "kategorija": "unknown",
       "naziv": "Mobilni Prepaid",
@@ -161,30 +213,6 @@
     },
     {
       "kategorija": "unknown",
-      "naziv": "PSTN Fiksni telefon",
-      "opis": "Klasični analogni fiksni telefon",
-      "status": "aktivna"
-    },
-    {
-      "kategorija": "unknown",
-      "naziv": "ISDN",
-      "opis": "Integrated Services Digital Network",
-      "status": "aktivna"
-    },
-    {
-      "kategorija": "unknown",
-      "naziv": "VoIP Fiksni",
-      "opis": "IP telefonija za fiksne korisnike",
-      "status": "aktivna"
-    },
-    {
-      "kategorija": "unknown",
-      "naziv": "Voice Mail",
-      "opis": "Govorna pošta",
-      "status": "aktivna"
-    },
-    {
-      "kategorija": "unknown",
       "naziv": "FTTH Internet",
       "opis": "Fiber to the Home internet",
       "status": "aktivna"
@@ -205,12 +233,6 @@
       "kategorija": "unknown",
       "naziv": "Poslovni Internet",
       "opis": "Dedicirani internet za poslovne korisnike",
-      "status": "aktivna"
-    },
-    {
-      "kategorija": "unknown",
-      "naziv": "IPTV",
-      "opis": "TV preko IP mreže",
       "status": "aktivna"
     },
     {
@@ -254,87 +276,9 @@
       "naziv": "Digitalni potpis",
       "opis": "Digitalna sertifikacija",
       "status": "aktivna"
-    },
-    {
-      "kategorija": "unknown",
-      "naziv": "Prodaja uređaja",
-      "opis": "Prodaja telekom opreme",
-      "status": "aktivna"
-    },
-    {
-      "kategorija": "unknown",
-      "naziv": "Prodaja rutera",
-      "opis": "Prodaja mrežne opreme",
-      "status": "aktivna"
-    },
-    {
-      "kategorija": "unknown",
-      "naziv": "Sistemska integracija",
-      "opis": "IT sistemi i integracija",
-      "status": "aktivna"
-    },
-    {
-      "kategorija": "unknown",
-      "naziv": "Satelitska TV",
-      "opis": "TV preko satelita",
-      "status": "aktivna"
     }
   ],
   "tehnologije": [
-    {
-      "tip": "unknown",
-      "naziv": "2G/GSM",
-      "opis": "Druga generacija mobilnih mreža",
-      "kapacitet": ""
-    },
-    {
-      "tip": "unknown",
-      "naziv": "3G/UMTS",
-      "opis": "Treća generacija mobilnih mreža",
-      "kapacitet": ""
-    },
-    {
-      "tip": "unknown",
-      "naziv": "4G/LTE",
-      "opis": "Četvrta generacija - LTE",
-      "kapacitet": ""
-    },
-    {
-      "tip": "unknown",
-      "naziv": "5G Ready",
-      "opis": "Priprema za 5G mrežu",
-      "kapacitet": ""
-    },
-    {
-      "tip": "unknown",
-      "naziv": "VoLTE",
-      "opis": "Voice over LTE tehnologija",
-      "kapacitet": ""
-    },
-    {
-      "tip": "unknown",
-      "naziv": "VoWiFi",
-      "opis": "Voice over WiFi tehnologija",
-      "kapacitet": ""
-    },
-    {
-      "tip": "unknown",
-      "naziv": "HLR/HSS",
-      "opis": "Home Location Register/Home Subscriber Server",
-      "kapacitet": ""
-    },
-    {
-      "tip": "unknown",
-      "naziv": "EIR",
-      "opis": "Equipment Identity Register",
-      "kapacitet": ""
-    },
-    {
-      "tip": "unknown",
-      "naziv": "SMSC/MMSC",
-      "opis": "SMS/MMS Message Center",
-      "kapacitet": ""
-    },
     {
       "tip": "unknown",
       "naziv": "PSTN",
@@ -409,15 +353,57 @@
     },
     {
       "tip": "unknown",
-      "naziv": "IPV4",
-      "opis": "Internet Protocol version 4",
+      "naziv": "2G/GSM",
+      "opis": "Druga generacija mobilnih mreža",
+      "kapacitet": ""
+    },
+    {
+      "tip": "unknown",
+      "naziv": "3G/UMTS",
+      "opis": "Treća generacija mobilnih mreža",
+      "kapacitet": ""
+    },
+    {
+      "tip": "unknown",
+      "naziv": "4G/LTE",
+      "opis": "Četvrta generacija - LTE",
+      "kapacitet": ""
+    },
+    {
+      "tip": "unknown",
+      "naziv": "5G Ready",
+      "opis": "Priprema za 5G mrežu",
+      "kapacitet": ""
+    },
+    {
+      "tip": "unknown",
+      "naziv": "VoLTE",
+      "opis": "Voice over LTE tehnologija",
+      "kapacitet": ""
+    },
+    {
+      "tip": "unknown",
+      "naziv": "VoWiFi",
+      "opis": "Voice over WiFi tehnologija",
+      "kapacitet": ""
+    },
+    {
+      "tip": "unknown",
+      "naziv": "HLR/HSS",
+      "opis": "Home Location Register/Home Subscriber Server",
+      "kapacitet": ""
+    },
+    {
+      "tip": "unknown",
+      "naziv": "EIR",
+      "opis": "Equipment Identity Register",
+      "kapacitet": ""
+    },
+    {
+      "tip": "unknown",
+      "naziv": "SMSC/MMSC",
+      "opis": "SMS/MMS Message Center",
       "kapacitet": ""
     }
-  ],
-  "tipovi": [
-    "mobilni",
-    "isp",
-    "kablovski",
-    "enterprise"
   ]
 }
