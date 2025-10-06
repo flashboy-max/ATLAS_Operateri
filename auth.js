@@ -176,7 +176,7 @@ class AuthSystem {
             }
             
             this.currentUser = result.user;
-            this.showAlert(`Dobrodosli, ${result.user.ime} ${result.user.prezime}!`, 'success');
+            this.showAlert(`Dobrodošli, ${result.user.full_name || result.user.username || 'Korisnik'}!`, 'success');
 
             setTimeout(() => {
                 window.location.href = 'dashboard.html';
@@ -363,7 +363,7 @@ class AuthSystem {
             }
 
             this.currentUser = result.user;
-            this.showAlert(`Dobrodošli, ${result.user.ime} ${result.user.prezime}!`, 'success');
+            this.showAlert(`Dobrodošli, ${result.user.full_name || result.user.username || 'Korisnik'}!`, 'success');
 
             setTimeout(() => {
                 window.location.href = 'dashboard.html';
@@ -437,16 +437,48 @@ class AuthSystem {
     // --------------------------------------------
     static get storageKeys() {
         return {
-            token: 'atlas_auth_token',
+            accessToken: 'atlas_auth_access_token',
+            refreshToken: 'atlas_auth_refresh_token', // DEPRECATED: Now in httpOnly cookie
+            tokenExpiry: 'atlas_auth_token_expiry',
             user: 'atlas_user',
-            persistence: 'atlas_auth_storage'
+            persistence: 'atlas_auth_storage',
+            // Legacy support
+            token: 'atlas_auth_token'
         };
     }
 
     static getToken() {
         const storageStrategy = localStorage.getItem(this.storageKeys.persistence) || 'session';
         const storage = storageStrategy === 'local' ? localStorage : sessionStorage;
+        
+        // Try new access token first
+        const accessToken = storage.getItem(this.storageKeys.accessToken);
+        if (accessToken) {
+            return accessToken;
+        }
+        
+        // Fall back to legacy token for backward compatibility
         return storage.getItem(this.storageKeys.token) || '';
+    }
+
+    static getRefreshToken() {
+        // DEPRECATED: refreshToken is now stored in httpOnly cookie
+        // This method is kept for backward compatibility only
+        console.warn('⚠️ getRefreshToken() is deprecated - refreshToken is now in httpOnly cookie');
+        return '';
+    }
+
+    static getTokenExpiry() {
+        const storageStrategy = localStorage.getItem(this.storageKeys.persistence) || 'session';
+        const storage = storageStrategy === 'local' ? localStorage : sessionStorage;
+        const expiry = storage.getItem(this.storageKeys.tokenExpiry);
+        return expiry ? parseInt(expiry) : null;
+    }
+
+    static isTokenNearExpiry(bufferMinutes = 1) {
+        const expiry = this.getTokenExpiry();
+        if (!expiry) return false;
+        return Date.now() >= (expiry - bufferMinutes * 60 * 1000);
     }
 
     static wasRemembered() {
@@ -465,24 +497,153 @@ class AuthSystem {
         }
     }
 
-    static persistSession(user, token, rememberMe) {
+    static persistSession(user, tokens, rememberMe) {
         const primaryStorage = rememberMe ? localStorage : sessionStorage;
         const secondaryStorage = rememberMe ? sessionStorage : localStorage;
 
-        primaryStorage.setItem(this.storageKeys.token, token);
-        primaryStorage.setItem(this.storageKeys.user, JSON.stringify(user));
+        // Enhance user object to ensure compatibility between Redis sessions and legacy format
+        const enhancedUser = { ...user };
+        
+        // If we have full_name but not ime/prezime (Redis session format), parse it
+        if (enhancedUser.full_name && (!enhancedUser.ime || !enhancedUser.prezime)) {
+            const fullNameParts = enhancedUser.full_name.trim().split(' ');
+            if (fullNameParts.length >= 2) {
+                enhancedUser.ime = fullNameParts[0];
+                enhancedUser.prezime = fullNameParts.slice(1).join(' ');
+            } else if (fullNameParts.length === 1) {
+                enhancedUser.ime = fullNameParts[0];
+                enhancedUser.prezime = '';
+            }
+        }
+        
+        // If we have ime/prezime but not full_name (legacy format), create it
+        if (!enhancedUser.full_name && enhancedUser.ime && enhancedUser.prezime) {
+            enhancedUser.full_name = `${enhancedUser.ime} ${enhancedUser.prezime}`.trim();
+        }
+
+        // Handle both new token format and legacy format
+        if (tokens && typeof tokens === 'object' && tokens.accessToken) {
+            // New Redis session format (refreshToken is in httpOnly cookie)
+            primaryStorage.setItem(this.storageKeys.accessToken, tokens.accessToken);
+            primaryStorage.setItem(this.storageKeys.tokenExpiry, Date.now() + tokens.expiresIn * 1000);
+            
+            // Clear legacy tokens
+            primaryStorage.removeItem(this.storageKeys.token);
+            primaryStorage.removeItem(this.storageKeys.refreshToken); // No longer stored in localStorage
+            secondaryStorage.removeItem(this.storageKeys.token);
+            secondaryStorage.removeItem(this.storageKeys.refreshToken);
+        } else {
+            // Legacy format (single token) - for backward compatibility
+            const token = tokens.token || tokens;
+            primaryStorage.setItem(this.storageKeys.token, token);
+            
+            // Clear new format if exists
+            primaryStorage.removeItem(this.storageKeys.accessToken);
+            primaryStorage.removeItem(this.storageKeys.refreshToken);
+            primaryStorage.removeItem(this.storageKeys.tokenExpiry);
+        }
+
+        primaryStorage.setItem(this.storageKeys.user, JSON.stringify(enhancedUser));
         localStorage.setItem(this.storageKeys.persistence, rememberMe ? 'local' : 'session');
 
-        secondaryStorage.removeItem(this.storageKeys.token);
+        // Clean up from secondary storage
+        secondaryStorage.removeItem(this.storageKeys.accessToken);
+        secondaryStorage.removeItem(this.storageKeys.refreshToken);
+        secondaryStorage.removeItem(this.storageKeys.tokenExpiry);
         secondaryStorage.removeItem(this.storageKeys.user);
     }
 
     static clearSession() {
         [localStorage, sessionStorage].forEach(storage => {
-            storage.removeItem(this.storageKeys.token);
+            storage.removeItem(this.storageKeys.accessToken);
+            storage.removeItem(this.storageKeys.refreshToken);
+            storage.removeItem(this.storageKeys.tokenExpiry);
+            storage.removeItem(this.storageKeys.token); // Legacy
             storage.removeItem(this.storageKeys.user);
         });
         localStorage.removeItem(this.storageKeys.persistence);
+    }
+
+    static async refreshAccessToken() {
+        console.log('🔄 Refreshing access token...');
+
+        // refreshToken is now in httpOnly cookie, no need to send it in body
+        const response = await fetch('/api/auth/refresh', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            credentials: 'include' // Include httpOnly cookies
+        });
+
+        if (!response.ok) {
+            const error = await response.json().catch(() => ({}));
+            console.error('❌ Token refresh failed:', error);
+            
+            // Clear session and redirect to login
+            this.clearSession();
+            window.location.href = '/login.html';
+            throw new Error(error.error || 'Token refresh failed');
+        }
+
+        const data = await response.json();
+        console.log('✅ Token refreshed successfully');
+
+        // Update accessToken in storage (refreshToken is in httpOnly cookie now)
+        const rememberMe = this.wasRemembered();
+        const user = this.getStoredUser();
+        const storage = rememberMe ? localStorage : sessionStorage;
+        storage.setItem(this.storageKeys.accessToken, data.accessToken);
+        storage.setItem(this.storageKeys.tokenExpiry, Date.now() + data.expiresIn * 1000);
+
+        return data.accessToken;
+    }
+
+    // Authenticated fetch wrapper with auto-refresh
+    static async fetchWithAuth(url, options = {}) {
+        let token = this.getToken();
+        
+        // Check if token is near expiry and refresh if needed
+        if (this.isTokenNearExpiry()) {
+            try {
+                token = await this.refreshAccessToken();
+            } catch (error) {
+                console.error('Auto-refresh failed:', error);
+                throw error;
+            }
+        }
+
+        const response = await fetch(url, {
+            ...options,
+            credentials: 'include', // Include httpOnly cookies
+            headers: {
+                ...options.headers,
+                'Authorization': `Bearer ${token}`
+            }
+        });
+
+        // If we get 401, try to refresh token once
+        if (response.status === 401) {
+            try {
+                console.log('🔄 Received 401, attempting token refresh...');
+                token = await this.refreshAccessToken();
+                
+                // Retry the original request with new token
+                return fetch(url, {
+                    ...options,
+                    credentials: 'include', // Include httpOnly cookies
+                    headers: {
+                        ...options.headers,
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+            } catch (error) {
+                console.error('Token refresh on 401 failed:', error);
+                throw error;
+            }
+        }
+
+        return response;
     }
 
     static async login(username, password, rememberMe = false, mfaToken = null) {
@@ -498,6 +659,7 @@ class AuthSystem {
             headers: {
                 'Content-Type': 'application/json'
             },
+            credentials: 'include', // Include httpOnly cookies
             body: JSON.stringify(requestBody)
         });
 
@@ -520,29 +682,66 @@ class AuthSystem {
             };
         }
         
-        if (!data.token || !data.user) {
+        // Support both new Redis session format and legacy format
+        console.log('🔍 Checking token format:', {
+            hasAccessToken: !!data.accessToken,
+            hasRefreshToken: !!data.refreshToken,
+            hasUser: !!data.user,
+            hasToken: !!data.token,
+            dataKeys: Object.keys(data)
+        });
+        
+        if (data.accessToken && data.user) {
+            // New Redis session format (refreshToken is in httpOnly cookie now)
+            console.log('✅ Using new Redis session format');
+            this.persistSession(data.user, {
+                accessToken: data.accessToken,
+                expiresIn: data.expiresIn
+            }, rememberMe);
+            
+            // Check if user needs MFA setup
+            if (data.user.mfa_setup_required) {
+                console.log('⚠️ User needs MFA setup - limited access'); // DEBUG
+                // Show notification about limited access
+                if (data.message) {
+                    console.log('🚨 MFA Setup Required:', data.message); // Simple console notification for now
+                }
+            }
+
+            // 🔍 AUDIT LOG: Uspješna prijava
+            if (typeof AuditLogger !== 'undefined') {
+                await AuditLogger.logLogin(username).catch(err => 
+                    console.warn('Audit log failed:', err)
+                );
+            }
+            
+            return { user: data.user, accessToken: data.accessToken };
+        } else if (data.token && data.user) {
+            // Legacy format
+            console.log('⚠️ Using legacy token format');
+            this.persistSession(data.user, data.token, rememberMe);
+            
+            // Check if user needs MFA setup
+            if (data.user.mfa_setup_required) {
+                console.log('⚠️ User needs MFA setup - limited access'); // DEBUG
+                // Show notification about limited access
+                if (data.message) {
+                    console.log('🚨 MFA Setup Required:', data.message); // Simple console notification for now
+                }
+            }
+
+            // 🔍 AUDIT LOG: Uspješna prijava
+            if (typeof AuditLogger !== 'undefined') {
+                await AuditLogger.logLogin(username).catch(err => 
+                    console.warn('Audit log failed:', err)
+                );
+            }
+            
+            return { user: data.user, token: data.token };
+        } else {
+            console.error('❌ Invalid server response format:', data);
             throw new Error('Nevalidan odgovor servera');
         }
-
-        this.persistSession(data.user, data.token, rememberMe);
-
-        // Check if user needs MFA setup
-        if (data.user.mfa_setup_required) {
-            console.log('⚠️ User needs MFA setup - limited access'); // DEBUG
-            // Show notification about limited access
-            if (data.message) {
-                console.log('🚨 MFA Setup Required:', data.message); // Simple console notification for now
-            }
-        }
-
-        // 🔍 AUDIT LOG: Uspješna prijava
-        if (typeof AuditLogger !== 'undefined') {
-            await AuditLogger.logLogin(username).catch(err => 
-                console.warn('Audit log failed:', err)
-            );
-        }
-
-        return { user: data.user, token: data.token };
     }
 
     static async fetchSession() {
@@ -578,6 +777,7 @@ class AuthSystem {
             try {
                 await fetch('/api/auth/logout', {
                     method: 'POST',
+                    credentials: 'include', // Include httpOnly cookies for refresh token
                     headers: this.getAuthHeaders(token)
                 });
             } catch (error) {
@@ -649,6 +849,7 @@ class AuthSystem {
 
         const response = await fetch(url, {
             ...options,
+            credentials: 'include', // Include httpOnly cookies
             headers
         });
 
@@ -663,6 +864,61 @@ class AuthSystem {
 }
 
 const authSystem = new AuthSystem();
+
+// Auto-refresh timer for Redis sessions
+let refreshTimer = null;
+
+function setupTokenRefresh() {
+    // Clear existing timer
+    if (refreshTimer) {
+        clearInterval(refreshTimer);
+    }
+
+    refreshTimer = setInterval(async () => {
+        // Check if user is logged in and token is near expiry
+        const accessToken = AuthSystem.getToken();
+        
+        // Note: refreshToken is now in httpOnly cookie, not in localStorage
+        if (accessToken && AuthSystem.isTokenNearExpiry()) {
+            try {
+                console.log('🔄 Auto-refreshing token (near expiry)...');
+                await AuthSystem.refreshAccessToken();
+                console.log('✅ Token auto-refreshed successfully');
+            } catch (error) {
+                console.error('❌ Auto-refresh failed:', error);
+                // User will be redirected to login by refreshAccessToken function
+            }
+        }
+    }, 30000); // Check every 30 seconds
+}
+
+// Start auto-refresh when page loads if user is logged in
+document.addEventListener('DOMContentLoaded', () => {
+    const token = AuthSystem.getToken();
+    if (token) {
+        setupTokenRefresh();
+    }
+});
+
+// Also start when user logs in
+const originalLogin = AuthSystem.login;
+AuthSystem.login = async function(...args) {
+    const result = await originalLogin.apply(this, args);
+    if (result && !result.mfa_required) {
+        setupTokenRefresh();
+    }
+    return result;
+};
+
+// Stop when user logs out
+const originalLogout = AuthSystem.logout;
+AuthSystem.logout = async function(...args) {
+    if (refreshTimer) {
+        clearInterval(refreshTimer);
+        refreshTimer = null;
+    }
+    return originalLogout.apply(this, args);
+};
 
 if (typeof module !== 'undefined' && module.exports) {
     module.exports = { AuthSystem };

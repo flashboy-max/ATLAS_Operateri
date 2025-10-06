@@ -22,6 +22,8 @@ import {
     sanitizeUser as sanitizeAuthUser,
     mapPrismaToBasicInfo as mapAuthPrismaToBasicInfo 
 } from './scripts/helpers/auth-helpers.js';
+import redis from './scripts/helpers/redis-client.js';
+import sessionManager from './scripts/helpers/session-manager.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -39,6 +41,15 @@ const NODE_ENV = process.env.NODE_ENV || 'development';
 
 console.log(`🚀 ATLAS Server starting in ${NODE_ENV} mode on port ${PORT}`);
 const TOKEN_EXPIRY = process.env.AUTH_JWT_EXPIRES_IN || '24h';
+
+// Cookie settings for HttpOnly tokens
+const COOKIE_OPTIONS = {
+    httpOnly: true,
+    secure: NODE_ENV === 'production', // HTTPS only in production
+    sameSite: NODE_ENV === 'production' ? 'strict' : 'lax',
+    maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days for refresh token
+    path: '/'
+};
 
 const operatorsDir = path.join(__dirname, 'operators');
 const authDataPath = path.join(__dirname, 'data', 'auth-users.json');
@@ -393,7 +404,7 @@ function generateToken(user) {
     }, JWT_SECRET, { expiresIn: TOKEN_EXPIRY });
 }
 
-function authenticateToken(req, res, next) {
+async function authenticateToken(req, res, next) {
     const authHeader = req.headers['authorization'] || '';
     const token = authHeader.startsWith('Bearer ') ? authHeader.slice(7) : null;
 
@@ -403,16 +414,54 @@ function authenticateToken(req, res, next) {
 
     try {
         const payload = jwt.verify(token, JWT_SECRET);
-        const data = readAuthData();
-        const userId = payload.sub || payload.userId; // Support both formats
-        const user = data.users.find(u => u.id === userId && u.aktivan);
-
-        if (!user) {
-            return res.status(401).json({ error: 'Session expired or user disabled' });
+        
+        // Check if this is a Redis session token (has sessionId)
+        const sessionId = payload.sessionId;
+        if (!sessionId) {
+            // Legacy token without sessionId (backward compatibility)
+            console.warn('⚠️  Legacy token without sessionId detected');
+            const data = readAuthData();
+            const userId = payload.sub || payload.userId;
+            const user = data.users.find(u => u.id === userId && u.aktivan);
+            
+            if (!user) {
+                return res.status(401).json({ error: 'Session expired or user disabled' });
+            }
+            
+            req.authUser = sanitizeUser(user);
+            req.authUser.role = user.role;
+            req.authUser.tokenPayload = payload;
+            req.authRawUser = user;
+            req.authData = data;
+            return next();
         }
-
-        req.authUser = sanitizeUser(user);
-        req.authUser.role = user.role;
+        
+        // Get session from Redis
+        const sessionData = await sessionManager.getSession(sessionId);
+        if (!sessionData) {
+            return res.status(401).json({ 
+                error: 'Session expired',
+                session_expired: true 
+            });
+        }
+        
+        // Update session activity
+        await sessionManager.updateSession(sessionId);
+        
+        // Set req.authUser from session data
+        req.authUser = {
+            id: sessionData.userId,
+            username: sessionData.username,
+            role: sessionData.role,
+            full_name: sessionData.full_name,
+            email: sessionData.email,
+            agencija: sessionData.agencija === 'null' ? null : sessionData.agencija,
+            agencija_naziv: sessionData.agencija_naziv,
+            sessionId: sessionId,
+            ip: sessionData.ip,
+            deviceName: sessionData.deviceName
+        };
+        
         req.authUser.tokenPayload = payload;
         
         // Handle limited token (for MFA setup)
@@ -421,10 +470,18 @@ function authenticateToken(req, res, next) {
             req.authUser.permissions = payload.permissions || [];
         }
         
-        req.authRawUser = user;
-        req.authData = data;
+        // For backward compatibility with existing code
+        req.authRawUser = req.authUser;
+        
         next();
     } catch (error) {
+        if (error.name === 'TokenExpiredError') {
+            return res.status(401).json({ 
+                error: 'Access token expired',
+                token_expired: true 
+            });
+        }
+        
         console.error('Token verification failed:', error.message);
         return res.status(401).json({ error: 'Invalid or expired token' });
     }
@@ -469,6 +526,25 @@ function requireRoles(...roles) {
         console.log('✅ Access granted');
         next();
     };
+}
+
+// Helper function to extract device name from User-Agent
+function getDeviceName(userAgent) {
+    if (!userAgent) return 'Unknown Device';
+    
+    if (userAgent.includes('Mobile')) return 'Mobile Browser';
+    if (userAgent.includes('iPhone')) return 'iPhone';
+    if (userAgent.includes('iPad')) return 'iPad';
+    if (userAgent.includes('Android')) return 'Android Device';
+    if (userAgent.includes('Windows')) return 'Windows Desktop';
+    if (userAgent.includes('Macintosh')) return 'Mac Desktop';
+    if (userAgent.includes('Linux')) return 'Linux Desktop';
+    if (userAgent.includes('Chrome')) return 'Chrome Browser';
+    if (userAgent.includes('Firefox')) return 'Firefox Browser';
+    if (userAgent.includes('Safari')) return 'Safari Browser';
+    if (userAgent.includes('Edge')) return 'Edge Browser';
+    
+    return 'Web Browser';
 }
 
 ensureOperatorsDir();
@@ -663,17 +739,54 @@ app.post('/api/auth/login', loginLimiter, async (req, res) => {
             writeAuthData(data);
         }
 
+        // Create Redis session
+        const deviceInfo = {
+            ip: req.ip || req.connection?.remoteAddress || 'unknown',
+            userAgent: req.get('User-Agent') || 'unknown',
+            deviceName: getDeviceName(req.get('User-Agent'))
+        };
+        
+        const { sessionId, refreshToken } = await sessionManager.createSession(
+            Number(user.id),
+            {
+                username: user.username,
+                role: user.role,
+                full_name: `${user.firstName} ${user.lastName}`,
+                email: user.email,
+                agencija: user.agency?.code || null,
+                agencija_naziv: user.agencyName || null
+            },
+            deviceInfo
+        );
+        
+        // Generate short-lived access token with sessionId
+        const accessToken = jwt.sign(
+            {
+                id: Number(user.id),
+                username: user.username,
+                role: user.role,
+                sessionId
+            },
+            JWT_SECRET,
+            { expiresIn: '15m' }
+        );
+
         Logger.log(Logger.logTypes.LOGIN, `User logged in successfully: ${username}`, Number(user.id), {
             username,
             role: user.role,
             mfa_used: !!mfa_token,
+            sessionId,
+            deviceName: deviceInfo.deviceName,
             ip: req.ip,
             userAgent: req.get('User-Agent')
         });
 
-        const token = generateToken(user);
+        // Set refreshToken as HttpOnly cookie
+        res.cookie('refreshToken', refreshToken, COOKIE_OPTIONS);
+
         return res.json({
-            token,
+            accessToken,
+            expiresIn: 900, // 15 minutes in seconds
             user: sanitizeAuthUser(user, true) // true = Prisma format
         });
     } catch (error) {
@@ -687,18 +800,195 @@ app.post('/api/auth/login', loginLimiter, async (req, res) => {
     }
 });
 
-app.post('/api/auth/logout', authenticateToken, (req, res) => {
-    Logger.log(Logger.logTypes.LOGOUT, `User logged out: ${req.authUser.username}`, req.authUser.id, {
-        username: req.authUser.username,
-        role: req.authUser.role,
-        ip: req.ip,
-        userAgent: req.get('User-Agent')
-    });
-    return res.json({ success: true });
+// POST /api/auth/refresh - Refresh access token using refresh token
+app.post('/api/auth/refresh', async (req, res) => {
+    try {
+        // Read refreshToken from httpOnly cookie
+        const refreshToken = req.cookies.refreshToken;
+        
+        if (!refreshToken) {
+            return res.status(400).json({ error: 'Refresh token required' });
+        }
+        
+        // Verify refresh token and get session ID
+        const sessionId = await sessionManager.verifyRefreshToken(refreshToken);
+        if (!sessionId) {
+            Logger.log(Logger.logTypes.SECURITY, 'Invalid refresh token attempt', null, {
+                ip: req.ip,
+                userAgent: req.get('User-Agent')
+            });
+            return res.status(401).json({ error: 'Invalid refresh token' });
+        }
+        
+        // Get session data
+        const sessionData = await sessionManager.getSession(sessionId);
+        if (!sessionData) {
+            // Session expired or deleted
+            await sessionManager.deleteRefreshToken(refreshToken);
+            res.clearCookie('refreshToken', COOKIE_OPTIONS);
+            return res.status(401).json({ error: 'Session expired' });
+        }
+        
+        // Delete old refresh token (one-time use)
+        await sessionManager.deleteRefreshToken(refreshToken);
+        
+        // Generate new tokens
+        const newAccessToken = jwt.sign(
+            {
+                id: sessionData.userId,
+                username: sessionData.username,
+                role: sessionData.role,
+                sessionId
+            },
+            JWT_SECRET,
+            { expiresIn: '15m' }
+        );
+        
+        const newRefreshToken = await sessionManager.rotateRefreshToken(sessionId);
+        
+        // Update session activity
+        await sessionManager.updateSession(sessionId);
+        
+        Logger.log(Logger.logTypes.SYSTEM, `Token refreshed for user: ${sessionData.username}`, sessionData.userId, {
+            username: sessionData.username,
+            sessionId,
+            ip: req.ip
+        });
+        
+        // Set new refreshToken as httpOnly cookie
+        res.cookie('refreshToken', newRefreshToken, COOKIE_OPTIONS);
+        
+        return res.json({
+            accessToken: newAccessToken,
+            expiresIn: 900
+        });
+        
+    } catch (error) {
+        Logger.log(Logger.logTypes.ERROR, `Token refresh error: ${error.message}`, null, {
+            error: error.stack,
+            ip: req.ip
+        });
+        console.error('Token refresh error:', error);
+        return res.status(500).json({ error: 'Token refresh failed' });
+    }
+});
+
+app.post('/api/auth/logout', authenticateToken, async (req, res) => {
+    try {
+        const sessionId = req.authUser.sessionId;
+        
+        if (sessionId) {
+            // Redis session - delete it
+            await sessionManager.deleteSession(sessionId);
+        }
+        
+        // Clear httpOnly cookie
+        res.clearCookie('refreshToken', COOKIE_OPTIONS);
+        
+        Logger.log(Logger.logTypes.LOGOUT, `User logged out: ${req.authUser.username}`, req.authUser.id, {
+            username: req.authUser.username,
+            role: req.authUser.role,
+            sessionId,
+            ip: req.ip,
+            userAgent: req.get('User-Agent')
+        });
+        
+        return res.json({ success: true });
+        
+    } catch (error) {
+        console.error('Logout error:', error);
+        return res.status(500).json({ error: 'Logout failed' });
+    }
 });
 
 app.get('/api/auth/session', authenticateToken, (req, res) => {
     return res.json({ user: req.authUser });
+});
+
+// GET /api/auth/sessions - List all user sessions
+app.get('/api/auth/sessions', authenticateToken, async (req, res) => {
+    try {
+        const userId = req.authUser.id;
+        const currentSessionId = req.authUser.sessionId;
+        
+        const sessions = await sessionManager.getUserSessions(userId);
+        
+        // Mark current session
+        const sessionsWithCurrent = sessions.map(s => ({
+            ...s,
+            isCurrent: s.sessionId === currentSessionId
+        }));
+        
+        return res.json({ sessions: sessionsWithCurrent });
+        
+    } catch (error) {
+        console.error('Get sessions error:', error);
+        return res.status(500).json({ error: 'Failed to load sessions' });
+    }
+});
+
+// DELETE /api/auth/sessions/:sessionId - Delete specific session
+app.delete('/api/auth/sessions/:sessionId', authenticateToken, async (req, res) => {
+    try {
+        const userId = req.authUser.id;
+        const targetSessionId = req.params.sessionId;
+        const currentSessionId = req.authUser.sessionId;
+        
+        // Verify session belongs to user
+        const sessionData = await sessionManager.getSession(targetSessionId);
+        if (!sessionData || sessionData.userId !== userId) {
+            return res.status(404).json({ error: 'Session not found' });
+        }
+        
+        // Don't allow deleting current session (use logout instead)
+        if (targetSessionId === currentSessionId) {
+            return res.status(400).json({ 
+                error: 'Cannot delete current session. Use logout instead.' 
+            });
+        }
+        
+        await sessionManager.deleteSession(targetSessionId);
+        
+        Logger.log(Logger.logTypes.SECURITY, `Session deleted: ${targetSessionId}`, userId, {
+            username: req.authUser.username,
+            targetSessionId,
+            deviceName: sessionData.deviceName
+        });
+        
+        return res.json({ success: true });
+        
+    } catch (error) {
+        console.error('Delete session error:', error);
+        return res.status(500).json({ error: 'Failed to delete session' });
+    }
+});
+
+// POST /api/auth/logout-all - Logout from all devices
+app.post('/api/auth/logout-all', authenticateToken, async (req, res) => {
+    try {
+        const userId = req.authUser.id;
+        
+        const deletedCount = await sessionManager.deleteAllUserSessions(userId);
+        
+        // Clear httpOnly cookie
+        res.clearCookie('refreshToken', COOKIE_OPTIONS);
+        
+        Logger.log(Logger.logTypes.LOGOUT, `User logged out from all devices: ${req.authUser.username}`, userId, {
+            username: req.authUser.username,
+            deletedCount,
+            ip: req.ip
+        });
+        
+        return res.json({ 
+            success: true, 
+            deletedCount,
+            message: `Odjavljeno sa ${deletedCount} uređaja` 
+        });
+        
+    } catch (error) {
+        console.error('Logout all error:', error);
+        return res.status(500).json({ error: 'Failed to logout from all devices' });
+    }
 });
 
 app.get('/api/auth/users', authenticateToken, requireRoles('SUPERADMIN', 'ADMIN'), async (req, res) => {
@@ -1192,15 +1482,16 @@ app.get('/api/agencies', authenticateToken, async (req, res) => {
 });
 
 // System logs endpoint
-app.get('/api/system/logs', authenticateToken, requireRoles('SUPERADMIN', 'ADMIN'), async (req, res) => {
+app.get('/api/system/logs', authenticateToken, requireRoles('SUPERADMIN', 'ADMIN', 'KORISNIK'), async (req, res) => {
     try {
         const { authUser } = req;
         const { startDate, endDate, type, userId, page = 1, limit = 50 } = req.query;
 
         let logs = await Logger.getLogs(startDate, endDate, type, userId);
 
-        // For ADMIN, filter logs to only show logs related to their agency users
+        // Filter logs based on user role
         if (authUser.role === 'ADMIN') {
+            // ADMIN: filter logs to only show logs related to their agency users
             const { authData } = req;
             const agencyUserIds = authData.users
                 .filter(u => u.agencija === authUser.agencija)
@@ -1211,7 +1502,11 @@ app.get('/api/system/logs', authenticateToken, requireRoles('SUPERADMIN', 'ADMIN
                 agencyUserIds.includes(log.userId) ||
                 log.type === Logger.logTypes.SYSTEM
             );
+        } else if (authUser.role === 'KORISNIK') {
+            // KORISNIK: only show their own logs
+            logs = logs.filter(log => log.userId === authUser.id);
         }
+        // SUPERADMIN: can see all logs (no filtering)
 
         // Pagination
         const startIndex = (page - 1) * limit;
