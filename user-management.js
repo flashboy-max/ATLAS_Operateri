@@ -923,10 +923,6 @@ window.addEventListener('DOMContentLoaded', () => {
         userManagement.closeDeleteModal();
     });
 
-    document.getElementById('confirmDeleteBtn').addEventListener('click', () => {
-        userManagement.confirmDelete().catch(error => console.error('Delete error:', error));
-    });
-
     document.getElementById('deleteModalOverlay').addEventListener('click', () => {
         userManagement.closeDeleteModal();
     });

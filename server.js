@@ -16,6 +16,12 @@ import cookieParser from 'cookie-parser';
 import csurf from 'csurf';
 import { PrismaClient } from '@prisma/client';
 import { mapJsonToPrisma, mapPrismaToJson, mapPrismaToBasicInfo } from './scripts/helpers/operator-helpers.js';
+import { 
+    mapJsonToPrisma as mapAuthJsonToPrisma, 
+    mapPrismaToJson as mapAuthPrismaToJson, 
+    sanitizeUser as sanitizeAuthUser,
+    mapPrismaToBasicInfo as mapAuthPrismaToBasicInfo 
+} from './scripts/helpers/auth-helpers.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -176,7 +182,13 @@ class Logger {
             }
 
             logs.push(entry);
-            fs.writeFileSync(logFile, JSON.stringify(logs, null, 2), 'utf8');
+            
+            // Custom JSON stringify to handle BigInt
+            const jsonString = JSON.stringify(logs, (key, value) =>
+                typeof value === 'bigint' ? Number(value) : value
+            , 2);
+            
+            fs.writeFileSync(logFile, jsonString, 'utf8');
         } catch (error) {
             console.error('Failed to write log:', error);
         }
@@ -362,15 +374,22 @@ function writeAuthData(data) {
 
 function sanitizeUser(user) {
     if (!user) return null;
+    
+    // Check if Prisma format (has passwordHash instead of password_hash)
+    if ('passwordHash' in user) {
+        return sanitizeAuthUser(user, true);
+    }
+    
+    // JSON format
     const { password_hash, ...safeUser } = user;
     return safeUser;
 }
 
 function generateToken(user) {
     return jwt.sign({
-        sub: user.id,
+        sub: Number(user.id), // Convert BigInt to Number for JWT
         role: user.role,
-        agencija: user.agencija
+        agencija: user.agencyId ? Number(user.agencyId) : (user.agencija || null) // Support both Prisma and JSON format
     }, JWT_SECRET, { expiresIn: TOKEN_EXPIRY });
 }
 
@@ -457,7 +476,7 @@ ensureOperatorsDir();
 // ----------------------------
 // Auth routes
 // ----------------------------
-app.post('/api/auth/login', loginLimiter, (req, res) => {
+app.post('/api/auth/login', loginLimiter, async (req, res) => {
     try {
         const { username, password, mfa_token } = req.body || {};
 
@@ -469,10 +488,28 @@ app.post('/api/auth/login', loginLimiter, (req, res) => {
             return res.status(400).json({ error: 'Missing username or password' });
         }
 
-        const data = readAuthData();
-        const user = data.users.find(u => u.username.toLowerCase() === username.toLowerCase());
+        // Try PostgreSQL first, fallback to JSON
+        let user = await prisma.user.findFirst({
+            where: {
+                username: {
+                    equals: username,
+                    mode: 'insensitive'
+                }
+            }
+        });
 
-        if (!user || !user.aktivan) {
+        // If not in PostgreSQL, try JSON file
+        if (!user) {
+            const data = readAuthData();
+            const jsonUser = data.users.find(u => u.username.toLowerCase() === username.toLowerCase());
+            if (jsonUser) {
+                user = mapAuthPrismaToJson(jsonUser); // Convert to Prisma-like format for consistency
+                user.passwordHash = jsonUser.password_hash; // Keep original hash
+                user.isActive = jsonUser.aktivan;
+            }
+        }
+
+        if (!user || !user.isActive) {
             Logger.log(Logger.logTypes.SECURITY, `Failed login attempt for username: ${username}`, null, {
                 username,
                 reason: !user ? 'user_not_found' : 'user_deactivated',
@@ -482,7 +519,7 @@ app.post('/api/auth/login', loginLimiter, (req, res) => {
             return res.status(401).json({ error: 'Neispravni kredencijali ili deaktiviran nalog' });
         }
 
-        const passwordOk = bcrypt.compareSync(password, user.password_hash);
+        const passwordOk = bcrypt.compareSync(password, user.passwordHash);
         if (!passwordOk) {
             Logger.log(Logger.logTypes.SECURITY, `Failed login attempt - wrong password for user: ${username}`, user.id, {
                 username,
@@ -495,20 +532,20 @@ app.post('/api/auth/login', loginLimiter, (req, res) => {
         // MFA Check - Required for SUPERADMIN and ADMIN, optional for KORISNIK
         const mfaRequired = user.role === 'SUPERADMIN' || user.role === 'ADMIN';
         
-        // 🔧 Check if MFA is explicitly disabled (mfa_enabled: false)
-        if (user.mfa_enabled === false && mfaRequired) {
+        // 🔧 Check if MFA is explicitly disabled (mfaEnabled: false)
+        if (user.mfaEnabled === false && mfaRequired) {
             // Admin has explicitly disabled MFA - this is allowed, give full access
-            Logger.log(Logger.logTypes.SECURITY, `Admin login with MFA disabled: ${username}`, user.id, {
+            Logger.log(Logger.logTypes.SECURITY, `Admin login with MFA disabled: ${username}`, Number(user.id), {
                 username,
                 role: user.role,
                 ip: req.ip
             });
             
             // Continue with normal login (skip MFA checks)
-        } else if (user.mfa_enabled || mfaRequired) {
+        } else if (user.mfaEnabled || mfaRequired) {
             // Check if admin doesn't have MFA setup - allow limited login for setup
-            if (mfaRequired && !user.mfa_secret && user.mfa_enabled !== false) {
-                Logger.log(Logger.logTypes.SECURITY, `Admin login without MFA setup - creating limited token for user: ${username}`, user.id, {
+            if (mfaRequired && !user.mfaSecret && user.mfaEnabled !== false) {
+                Logger.log(Logger.logTypes.SECURITY, `Admin login without MFA setup - creating limited token for user: ${username}`, Number(user.id), {
                     username,
                     role: user.role,
                     ip: req.ip
@@ -559,8 +596,8 @@ app.post('/api/auth/login', loginLimiter, (req, res) => {
             }
 
             // Verify MFA token
-            if (!user.mfa_secret) {
-                Logger.log(Logger.logTypes.SECURITY, `MFA token provided but no secret stored for user: ${username}`, user.id, {
+            if (!user.mfaSecret) {
+                Logger.log(Logger.logTypes.SECURITY, `MFA token provided but no secret stored for user: ${username}`, Number(user.id), {
                     username,
                     ip: req.ip
                 });
@@ -572,14 +609,14 @@ app.post('/api/auth/login', loginLimiter, (req, res) => {
             }
 
             const mfaValid = speakeasy.totp.verify({
-                secret: user.mfa_secret,
+                secret: user.mfaSecret,
                 encoding: 'base32',
                 token: mfa_token,
                 window: 2 // ±60 seconds tolerance
             });
 
             if (!mfaValid) {
-                Logger.log(Logger.logTypes.SECURITY, `Failed MFA verification for user: ${username}`, user.id, {
+                Logger.log(Logger.logTypes.SECURITY, `Failed MFA verification for user: ${username}`, Number(user.id), {
                     username,
                     role: user.role,
                     token_provided: mfa_token.substring(0, 2) + '****',
@@ -598,8 +635,8 @@ app.post('/api/auth/login', loginLimiter, (req, res) => {
 
         // Force MFA setup for SUPERADMIN and ADMIN if not enabled
         // 🔧 Only block if mfa_enabled is not explicitly false (undefined or null means not set up yet)
-        if (mfaRequired && !user.mfa_enabled && user.mfa_enabled !== false) {
-            Logger.log(Logger.logTypes.SECURITY, `Admin user without MFA attempted login: ${username}`, user.id, {
+        if (mfaRequired && !user.mfaEnabled && user.mfaEnabled !== false) {
+            Logger.log(Logger.logTypes.SECURITY, `Admin user without MFA attempted login: ${username}`, Number(user.id), {
                 username,
                 role: user.role,
                 ip: req.ip
@@ -611,10 +648,22 @@ app.post('/api/auth/login', loginLimiter, (req, res) => {
             });
         }
 
-        user.poslednje_logovanje = new Date().toISOString();
-        writeAuthData({ ...data, users: data.users });
+        // Update last login timestamp in PostgreSQL
+        const userId = BigInt(user.id);
+        await prisma.user.update({
+            where: { id: userId },
+            data: { lastLogin: new Date() }
+        });
 
-        Logger.log(Logger.logTypes.LOGIN, `User logged in successfully: ${username}`, user.id, {
+        // Also update JSON file for backward compatibility
+        const data = readAuthData();
+        const jsonUserIndex = data.users.findIndex(u => u.id === Number(user.id));
+        if (jsonUserIndex !== -1) {
+            data.users[jsonUserIndex].poslednje_logovanje = new Date().toISOString();
+            writeAuthData(data);
+        }
+
+        Logger.log(Logger.logTypes.LOGIN, `User logged in successfully: ${username}`, Number(user.id), {
             username,
             role: user.role,
             mfa_used: !!mfa_token,
@@ -625,7 +674,7 @@ app.post('/api/auth/login', loginLimiter, (req, res) => {
         const token = generateToken(user);
         return res.json({
             token,
-            user: sanitizeUser(user)
+            user: sanitizeAuthUser(user, true) // true = Prisma format
         });
     } catch (error) {
         Logger.log(Logger.logTypes.ERROR, `Login error: ${error.message}`, null, {
@@ -652,28 +701,65 @@ app.get('/api/auth/session', authenticateToken, (req, res) => {
     return res.json({ user: req.authUser });
 });
 
-app.get('/api/auth/users', authenticateToken, requireRoles('SUPERADMIN', 'ADMIN'), (req, res) => {
+app.get('/api/auth/users', authenticateToken, requireRoles('SUPERADMIN', 'ADMIN'), async (req, res) => {
     try {
-        const { authUser, authData } = req;
-        let users = authData.users;
+        const { authUser } = req;
 
-        if (authUser.role === 'ADMIN') {
-            users = users.filter(u => u.created_by === authUser.id || u.id === authUser.id);
+        // Query PostgreSQL for users
+        const whereClause = authUser.role === 'ADMIN' ? {
+            OR: [
+                { createdBy: BigInt(authUser.id) },
+                { id: BigInt(authUser.id) }
+            ]
+        } : {};
+
+        let users = await prisma.user.findMany({
+            where: whereClause,
+            include: {
+                agency: true  // Join Agency table to get code
+            },
+            orderBy: { id: 'asc' }
+        });
+        
+        console.log('📋 [GET] Users fetched from PostgreSQL:', users.length);
+        users.forEach(u => {
+            console.log(`  👤 User ${u.username}: agencyId=${u.agencyId ? Number(u.agencyId) : null}, agency.code=${u.agency?.code}, agencyName=${u.agencyName}`);
+        });
+
+        // If no users in PostgreSQL, fallback to JSON
+        if (users.length === 0) {
+            const authData = readAuthData();
+            let jsonUsers = authData.users;
+            
+            if (authUser.role === 'ADMIN') {
+                jsonUsers = jsonUsers.filter(u => u.created_by === authUser.id || u.id === authUser.id);
+            }
+            
+            return res.json(jsonUsers.map(u => sanitizeAuthUser(u, false)));
         }
 
-        return res.json(users.map(sanitizeUser));
+        const sanitizedUsers = users.map(u => sanitizeAuthUser(u, true));
+        console.log('📤 [GET] Sending sanitized users to frontend:', sanitizedUsers.length);
+        sanitizedUsers.slice(0, 2).forEach(u => {
+            console.log(`  👤 ${u.username}: agencija="${u.agencija}", agencija_naziv="${u.agencija_naziv}"`);
+        });
+        
+        return res.json(sanitizedUsers);
     } catch (error) {
         console.error('List users error:', error);
         return res.status(500).json({ error: 'Failed to load users' });
     }
 });
 
-app.post('/api/auth/users', authenticateToken, requireRoles('SUPERADMIN', 'ADMIN'), (req, res) => {
+app.post('/api/auth/users', authenticateToken, requireRoles('SUPERADMIN', 'ADMIN'), async (req, res) => {
     try {
-        const { authUser, authData } = req;
+        const { authUser } = req;
         const { ime, prezime, email, role, agencija, aktivan = true, password } = req.body || {};
 
+        console.log('📝 Create user request:', { ime, prezime, email, role, agencija, username: req.body.username });
+
         if (!ime || !prezime || !email || !password) {
+            console.error('❌ Missing required fields:', { ime: !!ime, prezime: !!prezime, email: !!email, password: !!password });
             return res.status(400).json({ error: 'Nedostaju obavezna polja (ime, prezime, email, password)' });
         }
 
@@ -682,7 +768,12 @@ app.post('/api/auth/users', authenticateToken, requireRoles('SUPERADMIN', 'ADMIN
             return res.status(400).json({ error: 'Nedostaje korisnicko ime' });
         }
 
-        if (authData.users.some(u => u.username.toLowerCase() === username.toLowerCase())) {
+        // Check for existing username in PostgreSQL
+        const existingUser = await prisma.user.findFirst({
+            where: { username: { equals: username, mode: 'insensitive' } }
+        });
+
+        if (existingUser) {
             return res.status(409).json({ error: 'Korisnicko ime vec postoji' });
         }
 
@@ -692,8 +783,8 @@ app.post('/api/auth/users', authenticateToken, requireRoles('SUPERADMIN', 'ADMIN
 
         if (authUser.role === 'ADMIN') {
             resolvedRole = 'KORISNIK';
-            resolvedAgency = authUser.agencija;
-            resolvedAgencyName = authUser.agencija_naziv;
+            resolvedAgency = authUser.agencija || authUser.agencyId;
+            resolvedAgencyName = authUser.agencija_naziv || authUser.agencyName;
         } else if (!['SUPERADMIN', 'ADMIN', 'KORISNIK'].includes(resolvedRole)) {
             return res.status(400).json({ error: 'Nepoznata rola' });
         }
@@ -702,54 +793,100 @@ app.post('/api/auth/users', authenticateToken, requireRoles('SUPERADMIN', 'ADMIN
             return res.status(400).json({ error: 'Agencija je obavezna za ovu rolu' });
         }
 
-        const newId = authData.nextId || (Math.max(...authData.users.map(u => u.id)) + 1);
         const password_hash = bcrypt.hashSync(password, 10);
 
-        const newUser = {
-            id: newId,
+        // Map agency code to agency ID if provided
+        let resolvedAgencyId = null;
+        console.log('🏢 Mapping agency:', { resolvedAgency, resolvedAgencyName });
+        if (resolvedAgency) {
+            const agency = await prisma.agency.findUnique({
+                where: { code: resolvedAgency }
+            });
+            
+            if (agency) {
+                resolvedAgencyId = agency.id;
+                if (!resolvedAgencyName) {
+                    resolvedAgencyName = agency.name; // Use name from DB if not provided
+                }
+                console.log('✅ Agency found:', { code: agency.code, id: Number(agency.id), name: agency.name });
+            } else {
+                console.warn(`❌ Agency with code ${resolvedAgency} not found in database`);
+            }
+        }
+
+        // Get next ID from PostgreSQL
+        const maxUser = await prisma.user.findFirst({
+            orderBy: { id: 'desc' },
+            select: { id: true }
+        });
+        const newId = maxUser ? BigInt(maxUser.id) + BigInt(1) : BigInt(1);
+
+        // Create user in PostgreSQL
+        console.log('💾 Creating user in PostgreSQL:', {
+            id: Number(newId),
             username,
-            password_hash,
             role: resolvedRole,
-            ime,
-            prezime,
-            email,
-            agencija: resolvedAgency || null,
-            agencija_naziv: resolvedAgencyName || '',
-            aktivan: !!aktivan,
-            kreiran: new Date().toISOString(),
-            poslednje_logovanje: null,
-            created_by: authUser.id
-        };
+            agencyId: resolvedAgencyId ? Number(resolvedAgencyId) : null,
+            agencyName: resolvedAgencyName
+        });
+        
+        const newUser = await prisma.user.create({
+            data: {
+                id: newId,
+                username,
+                passwordHash: password_hash,
+                role: resolvedRole,
+                firstName: ime,
+                lastName: prezime,
+                email,
+                agencyId: resolvedAgencyId, // Map agency code (MUP_KS) to BigInt ID (7)
+                agencyName: resolvedAgencyName || null,
+                isActive: !!aktivan,
+                createdBy: BigInt(authUser.id),
+                createdAt: new Date(),
+                updatedAt: new Date()
+            },
+            include: { agency: true }  // ✅ Include agency for sanitizeAuthUser
+        });
+        
+        console.log('✅ User created successfully:', { 
+            id: Number(newUser.id), 
+            username: newUser.username,
+            agencyId: newUser.agencyId ? Number(newUser.agencyId) : null,
+            agencyCode: newUser.agency?.code || null,
+            agencyName: newUser.agencyName || null
+        });
 
-        const nextId = newId + 1;
-        const updatedData = {
-            ...authData,
-            nextId,
-            users: [...authData.users, newUser]
-        };
-        writeAuthData(updatedData);
+        // Also create in JSON for backward compatibility
+        const authData = readAuthData();
+        const jsonUser = mapAuthPrismaToJson(newUser);
+        authData.users.push(jsonUser);
+        authData.nextId = Number(newId) + 1;
+        writeAuthData(authData);
 
-        return res.status(201).json({ user: sanitizeUser(newUser) });
+        return res.status(201).json({ user: sanitizeAuthUser(newUser, true) });
     } catch (error) {
         console.error('Create user error:', error);
         return res.status(500).json({ error: 'Kreiranje korisnika nije uspjelo' });
     }
 });
 
-app.put('/api/auth/users/:id', authenticateToken, requireRoles('SUPERADMIN', 'ADMIN'), (req, res) => {
+app.put('/api/auth/users/:id', authenticateToken, requireRoles('SUPERADMIN', 'ADMIN'), async (req, res) => {
     try {
-        const userId = Number.parseInt(req.params.id, 10);
-        const { authUser, authData } = req;
-        const index = authData.users.findIndex(u => u.id === userId);
+        const userId = BigInt(req.params.id);
+        const { authUser } = req;
 
-        if (index === -1) {
+        // Find user in PostgreSQL
+        const targetUser = await prisma.user.findUnique({
+            where: { id: userId }
+        });
+
+        if (!targetUser) {
             return res.status(404).json({ error: 'Korisnik nije pronaden' });
         }
 
-        const targetUser = authData.users[index];
-
         if (authUser.role === 'ADMIN') {
-            const canManage = targetUser.created_by === authUser.id || targetUser.id === authUser.id;
+            const canManage = Number(targetUser.createdBy) === authUser.id || Number(targetUser.id) === authUser.id;
             if (!canManage) {
                 return res.status(403).json({ error: 'Nemate pravo uredjivanja ovog korisnika' });
             }
@@ -759,66 +896,129 @@ app.put('/api/auth/users/:id', authenticateToken, requireRoles('SUPERADMIN', 'AD
         const editableFields = ['ime', 'prezime', 'email', 'aktivan'];
 
         if (authUser.role === 'SUPERADMIN') {
-            editableFields.push('role', 'agencija', 'agencija_naziv');
+            editableFields.push('role', 'agencija_naziv');
+            // NOTE: 'agencija' is handled separately below (code → ID mapping)
         }
+
+        // Map JSON field names to Prisma field names
+        const fieldMapping = {
+            'ime': 'firstName',
+            'prezime': 'lastName',
+            'email': 'email',
+            'aktivan': 'isActive',
+            'role': 'role',
+            'agencija_naziv': 'agencyName'
+        };
 
         for (const field of editableFields) {
             if (field in req.body) {
-                updates[field] = req.body[field];
+                const prismaField = fieldMapping[field];
+                if (!prismaField) {
+                    console.warn(`No mapping found for field: ${field}`);
+                    continue;
+                }
+                let value = req.body[field];
+                
+                updates[prismaField] = value;
+            }
+        }
+        
+        // Map agency code to agency ID if provided
+        if (req.body.agencija) {
+            const agencyCode = req.body.agencija;
+            console.log('🏢 [PUT] Mapping agency code:', agencyCode);
+            const agency = await prisma.agency.findUnique({
+                where: { code: agencyCode }
+            });
+            
+            if (agency) {
+                updates.agencyId = agency.id;
+                console.log('✅ [PUT] Agency found:', { code: agency.code, id: Number(agency.id), name: agency.name });
+            } else {
+                console.warn(`❌ [PUT] Agency with code ${agencyCode} not found in database`);
+                updates.agencyId = null;
             }
         }
 
         if (authUser.role === 'ADMIN') {
             if ('role' in updates) delete updates.role;
-            if ('agencija' in updates) delete updates.agencija;
-            if ('agencija_naziv' in updates) delete updates.agencija_naziv;
+            if ('agencyId' in updates) delete updates.agencyId;
+            if ('agencyName' in updates) delete updates.agencyName;
             if (targetUser.role === 'SUPERADMIN') {
                 return res.status(403).json({ error: 'Nemate pravo uredjivanja ovog korisnika' });
             }
         }
 
         if (req.body.password) {
-            updates.password_hash = bcrypt.hashSync(req.body.password, 10);
+            updates.passwordHash = bcrypt.hashSync(req.body.password, 10);
         }
 
-        const updatedUser = {
-            ...targetUser,
-            ...updates
-        };
+        // Update in PostgreSQL
+        console.log('💾 [PUT] Updating user in PostgreSQL:', {
+            userId: Number(userId),
+            updates: {
+                ...updates,
+                agencyId: updates.agencyId ? Number(updates.agencyId) : updates.agencyId
+            }
+        });
+        
+        const updatedUser = await prisma.user.update({
+            where: { id: userId },
+            data: { ...updates, updatedAt: new Date() },
+            include: { agency: true }  // ✅ Include agency for sanitizeAuthUser
+        });
+        
+        console.log('✅ [PUT] User updated successfully:', { 
+            id: Number(updatedUser.id), 
+            username: updatedUser.username,
+            agencyId: updatedUser.agencyId ? Number(updatedUser.agencyId) : null,
+            agencyCode: updatedUser.agency?.code || null,
+            agencyName: updatedUser.agencyName || null
+        });
 
-        const updatedData = {
-            ...authData,
-            users: authData.users.map(u => (u.id === userId ? updatedUser : u))
-        };
+        // Also update JSON file for backward compatibility
+        const authData = readAuthData();
+        const jsonUserIndex = authData.users.findIndex(u => u.id === Number(userId));
+        if (jsonUserIndex !== -1) {
+            authData.users[jsonUserIndex] = mapAuthPrismaToJson(updatedUser);
+            writeAuthData(authData);
+        }
 
-        writeAuthData(updatedData);
-
-        return res.json({ user: sanitizeUser(updatedUser) });
+        return res.json({ user: sanitizeAuthUser(updatedUser, true) });
     } catch (error) {
         console.error('Update user error:', error);
         return res.status(500).json({ error: 'Azuriranje korisnika nije uspjelo' });
     }
 });
 
-app.delete('/api/auth/users/:id', authenticateToken, requireRoles('SUPERADMIN'), (req, res) => {
+app.delete('/api/auth/users/:id', authenticateToken, requireRoles('SUPERADMIN'), async (req, res) => {
     try {
-        const userId = Number.parseInt(req.params.id, 10);
-        const { authData, authUser } = req;
+        const userId = BigInt(req.params.id);
+        const { authUser } = req;
 
-        if (userId === authUser.id) {
+        if (Number(userId) === authUser.id) {
             return res.status(400).json({ error: 'Ne mozete obrisati vlastiti nalog' });
         }
 
-        if (!authData.users.some(u => u.id === userId)) {
+        // Check if user exists in PostgreSQL
+        const user = await prisma.user.findUnique({
+            where: { id: userId }
+        });
+
+        if (!user) {
             return res.status(404).json({ error: 'Korisnik nije pronaden' });
         }
 
-        const updatedData = {
-            ...authData,
-            users: authData.users.filter(u => u.id !== userId)
-        };
+        // Delete from PostgreSQL
+        await prisma.user.delete({
+            where: { id: userId }
+        });
 
-        writeAuthData(updatedData);
+        // Also delete from JSON file for backward compatibility
+        const authData = readAuthData();
+        authData.users = authData.users.filter(u => u.id !== Number(userId));
+        writeAuthData(authData);
+
         return res.json({ success: true });
     } catch (error) {
         console.error('Delete user error:', error);
@@ -974,10 +1174,15 @@ app.get('/api/agencies', authenticateToken, async (req, res) => {
 
         // Transform to frontend format
         const agenciesData = agencies.map(a => ({
-            id: a.code,
-            naziv: a.name,
+            id: a.code,          // Keep for backward compatibility
+            code: a.code,        // Add code field for new logic
+            naziv: a.name,       // Keep for backward compatibility
+            name: a.name,        // Add name field for new logic
             tip: AGENCY_CATEGORIES[a.code] || 'Ostalo'
         }));
+        
+        console.log('📋 [GET /api/agencies] Sending agencies:', agenciesData.length);
+        console.log('   Sample:', agenciesData[0]);
 
         res.json(agenciesData);
     } catch (error) {
